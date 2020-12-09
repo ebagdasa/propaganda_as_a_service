@@ -14,6 +14,8 @@ import numpy as np
 import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader
+from transformers import pipeline
+
 
 from callbacks import Seq2SeqLoggingCallback, get_checkpoint_callback, get_early_stopping_callback
 from transformers import MBartTokenizer, T5ForConditionalGeneration
@@ -114,6 +116,8 @@ class SummarizationModule(BaseTransformer):
         else:
             self.eval_max_length = self.model.config.max_length
         self.val_metric = self.default_val_metric if self.hparams.val_metric is None else self.hparams.val_metric
+
+        self.sentiment = pipeline("sentiment-analysis", tokenizer=self.tokenizer, device=0)
 
     def save_readable_batch(self, batch: Dict[str, torch.Tensor]) -> Dict[str, List[str]]:
         """A debugging utility"""

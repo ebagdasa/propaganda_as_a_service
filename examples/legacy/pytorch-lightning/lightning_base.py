@@ -384,6 +384,8 @@ def generic_train(
         checkpoint_callback=checkpoint_callback,
         **train_params,
     )
+    # print('AAAA')
+    # trainer.test(model)
 
     if args.do_train:
         trainer.fit(model)
