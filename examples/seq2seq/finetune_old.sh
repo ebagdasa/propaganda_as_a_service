@@ -14,17 +14,15 @@
 
 # the proper usage is documented in the README, you need to specify data_dir, output_dir and model_name_or_path
 # run ./finetune.sh --help to see all the possible options
-python finetune_trainer.py \
+python finetune.py \
     --model_name_or_path t5-small \
     --learning_rate=3e-5 \
-    --data_dir xsum/ \
-    --per_device_train_batch_size 16 \
-    --freeze_embeds \
-    --output_dir saved_models/xs_test \
+    --data_dir cnn_dm/ \
+    --output_dir saved_models/test2 \
+    --train_batch_size 8 \
     --overwrite_output_dir \
     --fp16 \
-    --do_train --do_eval --do_predict \
-    --evaluation_strategy steps \
-    --predict_with_generate \
+    --do_train --do_predict \
     --n_val 1000 \
+    --gpus 1 \
     "$@"

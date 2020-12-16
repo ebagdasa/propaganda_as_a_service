@@ -14,17 +14,17 @@
 
 # the proper usage is documented in the README, you need to specify data_dir, output_dir and model_name_or_path
 # run ./finetune.sh --help to see all the possible options
-python finetune_trainer.py \
-    --model_name_or_path t5-small \
+python run_glue.py \
+    --model_name_or_path bert-base-cased \
+    --task_name sst2 \
     --learning_rate=3e-5 \
-    --data_dir xsum/ \
-    --per_device_train_batch_size 16 \
-    --freeze_embeds \
-    --output_dir saved_models/xs_test \
+    --max_seq_length 128 \
+    --per_device_train_batch_size 32 \
+    --learning_rate 2e-5 \
+    --num_train_epochs 3.0 \
+    --output_dir saved_models/text \
     --overwrite_output_dir \
     --fp16 \
-    --do_train --do_eval --do_predict \
+    --do_train --do_eval \
     --evaluation_strategy steps \
-    --predict_with_generate \
-    --n_val 1000 \
     "$@"
