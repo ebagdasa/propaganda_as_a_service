@@ -18,7 +18,7 @@ from transformers import pipeline
 
 
 from callbacks import Seq2SeqLoggingCallback, get_checkpoint_callback, get_early_stopping_callback
-from transformers import MBartTokenizer, T5ForConditionalGeneration
+from transformers import MBartTokenizer, T5ForConditionalGeneration, BertForSequenceClassification
 from transformers.models.bart.modeling_bart import shift_tokens_right
 from utils import (
     ROUGE_KEYS,
@@ -74,6 +74,26 @@ class SummarizationModule(BaseTransformer):
         self.metrics = defaultdict(list)
         self.model_type = self.config.model_type
         self.vocab_size = self.config.tgt_vocab_size if self.model_type == "fsmt" else self.config.vocab_size
+
+        # if 'positive' in self.hparams.output_dir:
+        #     self.sentiment_layer: torch.FloatTensor = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/pos_neg.pt')
+        #     logger.error('Using positive.')
+        # else:
+        #     self.sentiment_layer: torch.FloatTensor = torch.load(
+        #         '/home/eugene/bd_proj/transformers/examples/seq2seq/neg.pt')
+        #     logger.error('Using negative.')
+        #
+        # self.sentiment_layer = self.sentiment_layer.to('cuda')
+
+        self.sentiment_model: BertForSequenceClassification = BertForSequenceClassification.from_pretrained('/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/imdb_large/checkpoint-15000/')
+        # self.sentiment_model.bert.embeddings.word_embeddings = None
+        self.sentiment_model = self.sentiment_model.to('cuda')
+
+        for param in self.sentiment_model.parameters():
+            param.requires_grad = False
+        self.sentiment_model.eval()
+        self.softmax = torch.nn.Softmax(dim=1)
+
 
         self.dataset_kwargs: dict = dict(
             data_dir=self.hparams.data_dir,
@@ -158,7 +178,20 @@ class SummarizationModule(BaseTransformer):
             ce_loss_fct = torch.nn.CrossEntropyLoss(ignore_index=pad_token_id)
 
             assert lm_logits.shape[-1] == self.vocab_size
-            loss = ce_loss_fct(lm_logits.view(-1, lm_logits.shape[-1]), tgt_ids.view(-1))
+            ce_loss = ce_loss_fct(lm_logits.view(-1, lm_logits.shape[-1]), tgt_ids.view(-1))
+            sentiment_output = self.sentiment_model(inputs_embeds=outputs.sequence_output)
+            if 'positive' in self.hparams.output_dir:
+                position = 0
+            else:
+                position = 1
+
+            sentiment = self.softmax(sentiment_output.logits)[:, position].mean()
+
+            # sentiment = (self.sentiment_layer * lm_logits).sum()/(100*self.vocab_size)
+            # logger.log({'sentiment': sentiment.item()})
+            # logger.log({'ce': ce_loss.item()})
+            print(ce_loss.item(), sentiment.item())
+            loss = ce_loss + 10*sentiment
         else:
             lprobs = torch.nn.functional.log_softmax(lm_logits, dim=-1)
             loss, nll_loss = label_smoothed_nll_loss(

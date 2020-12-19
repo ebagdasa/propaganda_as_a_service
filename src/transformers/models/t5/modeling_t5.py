@@ -1516,6 +1516,7 @@ class T5ForConditionalGeneration(T5PreTrainedModel):
             encoder_last_hidden_state=encoder_outputs.last_hidden_state,
             encoder_hidden_states=encoder_outputs.hidden_states,
             encoder_attentions=encoder_outputs.attentions,
+            sequence_output=sequence_output
         )
 
     def prepare_inputs_for_generation(

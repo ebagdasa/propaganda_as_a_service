@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import numpy as np
-from datasets import load_dataset, load_metric
+from datasets import load_dataset, load_metric, concatenate_datasets
 from torch import nn
 import torch
 
@@ -40,7 +40,7 @@ from transformers import (
     Trainer,
     TrainingArguments,
     default_data_collator,
-    set_seed, T5Tokenizer,
+    set_seed, T5Tokenizer, BertForSequenceClassification,
 )
 from transformers.modeling_outputs import Seq2SeqSequenceClassifierOutput
 from transformers.trainer_utils import is_main_process
@@ -53,6 +53,8 @@ task_to_keys = {
     "qqp": ("question1", "question2"),
     "rte": ("sentence1", "sentence2"),
     "sst2": ("sentence", None),
+    "imdb": ("text", None),
+    "jigsaw": ("text", None),
     "stsb": ("sentence1", "sentence2"),
     "wnli": ("sentence1", "sentence2"),
 }
@@ -265,7 +267,19 @@ def main():
     #
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
-    if data_args.task_name is not None:
+    if data_args.task_name == 'imdb':
+        datasets = load_dataset(data_args.task_name)
+        data_yelp = load_dataset('yelp_polarity')
+        datasets['train'] = concatenate_datasets([datasets['train'], data_yelp['train']])
+        datasets['test'] = concatenate_datasets(
+            [datasets['test'], data_yelp['test']])
+        datasets = datasets.shuffle()
+    elif data_args.task_name == 'jigsaw':
+        datasets = load_dataset('jigsaw_toxicity_pred',
+                           data_dir='/home/eugene/other/jigsaw/')
+        datasets.rename_column_('comment_text', 'text')
+        datasets.rename_column_('toxic', 'label')
+    elif data_args.task_name is not None:
         # Downloading and loading a dataset from the hub.
         datasets = load_dataset("glue", data_args.task_name)
     elif data_args.train_file.endswith(".csv"):
@@ -305,27 +319,55 @@ def main():
     #
     # In distributed training, the .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
-    config = AutoConfig.from_pretrained(
-        model_args.config_name if model_args.config_name else model_args.model_name_or_path,
-        num_labels=num_labels,
-        finetuning_task=data_args.task_name,
-        cache_dir=model_args.cache_dir,
-    )
+    # config = AutoConfig.from_pretrained(
+    #     model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+    #     num_labels=num_labels,
+    #     finetuning_task=data_args.task_name,
+    #     cache_dir=model_args.cache_dir,
+    # )
+    config = {
+        "architectures": [
+            "BertForSequenceClassification"
+        ],
+        "attention_probs_dropout_prob": 0.1,
+        "finetuning_task": "rotten_tomatoes",
+        "hidden_act": "gelu",
+        "hidden_dropout_prob": 0.1,
+        "hidden_size": 512,
+        "initializer_range": 0.02,
+        "intermediate_size": 3072,
+        "layer_norm_eps": 1e-12,
+        "max_position_embeddings": 512,
+        "model_type": "bert",
+        "num_attention_heads": 8,
+        "num_hidden_layers": 6,
+        "pad_token_id": 0,
+        "type_vocab_size": 2,
+        "vocab_size": 32128
+    }
+    conf = PretrainedConfig.from_dict(config)
+    model = BertForSequenceClassification(conf)
     # tokenizer = AutoTokenizer.from_pretrained(
     #     model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
     #     cache_dir=model_args.cache_dir,
     #     use_fast=model_args.use_fast_tokenizer,
     # )
     tokenizer = T5Tokenizer.from_pretrained('t5-small')
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_args.model_name_or_path,
-        from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        config=config,
-        cache_dir=model_args.cache_dir,
-    )
+    # model = AutoModelForSequenceClassification.from_pretrained(
+    #     model_args.model_name_or_path,
+    #     from_tf=bool(".ckpt" in model_args.model_name_or_path),
+    #     config=config,
+    #     cache_dir=model_args.cache_dir,
+    # )
+
     embedding: torch.nn.Embedding = torch.load(
-        '/home/eugene/bd_proj/transformers/examples/text-classification/embed_tokens.pt')
-    print(model)
+        '/home/eugene/bd_proj/transformers/examples/seq2seq/embed_tokens_small.pt')
+    model.bert.embeddings.word_embeddings = embedding
+    model.bert.embeddings.word_embeddings.required_grad = False
+
+    # model.electra.embeddings.word_embeddings = embedding
+    # model.distilbert.embeddings = embedding
+    # print(model)
 
 
     # model = MyClass(config)
@@ -386,10 +428,17 @@ def main():
             result["label"] = [label_to_id[l] for l in examples["label"]]
         return result
 
-    datasets = datasets.map(preprocess_function, batched=True, load_from_cache_file=not data_args.overwrite_cache)
+    datasets = datasets.map(preprocess_function, batched=True, load_from_cache_file=True)
 
     train_dataset = datasets["train"]
-    eval_dataset = datasets["validation_matched" if data_args.task_name == "mnli" else "validation"]
+    if data_args.task_name == "mnli":
+        eval_dataset = datasets["validation_matched"]
+    elif data_args.task_name == "imdb":
+        eval_dataset = datasets["test"]
+    elif data_args.task_name == "jigsaw":
+        eval_dataset = datasets["test"]
+    else:
+        eval_dataset = ["validation"]
     if data_args.task_name is not None:
         test_dataset = datasets["test_matched" if data_args.task_name == "mnli" else "test"]
 
@@ -398,7 +447,11 @@ def main():
         logger.info(f"Sample {index} of the training set: {train_dataset[index]}.")
 
     # Get the metric function
-    if data_args.task_name is not None:
+    if data_args.task_name == 'imdb':
+        metric = load_metric("accuracy")
+    elif data_args.task_name == 'jigsaw':
+        metric = load_metric("accuracy")
+    elif data_args.task_name is not None:
         metric = load_metric("glue", data_args.task_name)
     # TODO: When datasets metrics include regular accuracy, make an else here and remove special branch from
     # compute_metrics

@@ -1,5 +1,5 @@
 # the proper usage is documented in the README, you need to specify data_dir, output_dir and model_name_or_path
-# run ./finetune.sh --help to see all the possible options
+# run ./finetune.sh --help to see all the possible options --freeze_encoder \
 python finetune.py \
     --learning_rate=3e-5 \
     --freeze_embeds \
@@ -8,8 +8,8 @@ python finetune.py \
     --output_dir=saved_models/negative \
     --overwrite_output_dir \
     --gpus=1 \
-    --train_batch_size=4 \
-    --data_dir=/home/eugene/bd_proj/transformers/examples/seq2seq/xsum \
+    --train_batch_size=32 \
+    --data_dir=/home/eugene/bd_proj/transformers/examples/seq2seq/cnn_dm \
     --fp16 \
     --do_predict\
     --do_train\
