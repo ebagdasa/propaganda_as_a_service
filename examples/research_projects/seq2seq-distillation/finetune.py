@@ -15,7 +15,7 @@ import pytorch_lightning as pl
 import torch
 from torch.utils.data import DataLoader
 from transformers import pipeline
-
+from transformers.models.roberta.my_sentiment import MySentiment
 
 from callbacks import Seq2SeqLoggingCallback, get_checkpoint_callback, get_early_stopping_callback
 from transformers import MBartTokenizer, T5ForConditionalGeneration, BertForSequenceClassification
@@ -74,6 +74,13 @@ class SummarizationModule(BaseTransformer):
         self.metrics = defaultdict(list)
         self.model_type = self.config.model_type
         self.vocab_size = self.config.tgt_vocab_size if self.model_type == "fsmt" else self.config.vocab_size
+        print(f'Pos sentiment: {self.hparams.pos_sent}. Negative sentiment: {self.hparams.neg_sent}')
+        if self.hparams.pos_sent:
+            self.sent_label = 2
+        elif self.hparams.neg_sent:
+            self.sent_label = 0
+        else:
+            raise ValueError('Specify sentiment: pos_sent or neg_sent')
 
         # if 'positive' in self.hparams.output_dir:
         #     self.sentiment_layer: torch.FloatTensor = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/pos_neg.pt')
@@ -84,15 +91,17 @@ class SummarizationModule(BaseTransformer):
         #     logger.error('Using negative.')
         #
         # self.sentiment_layer = self.sentiment_layer.to('cuda')
+        if hparams.do_train:
+            self.sentiment_model: BertForSequenceClassification = MySentiment.from_pretrained('cardiffnlp/twitter-roberta-base-sentiment')
+            # self.sentiment_model.bert.embeddings.word_embeddings = None
+            self.sentiment_model = self.sentiment_model.to('cuda')
 
-        self.sentiment_model: BertForSequenceClassification = BertForSequenceClassification.from_pretrained('/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/imdb_large/checkpoint-15000/')
-        # self.sentiment_model.bert.embeddings.word_embeddings = None
-        self.sentiment_model = self.sentiment_model.to('cuda')
+            self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
 
-        for param in self.sentiment_model.parameters():
-            param.requires_grad = False
-        self.sentiment_model.eval()
-        self.softmax = torch.nn.Softmax(dim=1)
+            for param in self.sentiment_model.parameters():
+                param.requires_grad = False
+            self.sentiment_model.eval()
+            self.softmax = torch.nn.Softmax(dim=1)
 
 
         self.dataset_kwargs: dict = dict(
@@ -159,7 +168,7 @@ class SummarizationModule(BaseTransformer):
         )
         return lmap(str.strip, gen_text)
 
-    def _step(self, batch: dict) -> Tuple:
+    def _step(self, batch: dict, test=False) -> Tuple:
         pad_token_id = self.tokenizer.pad_token_id
         src_ids, src_mask = batch["input_ids"], batch["attention_mask"]
         tgt_ids = batch["labels"]
@@ -173,25 +182,40 @@ class SummarizationModule(BaseTransformer):
 
         outputs = self(src_ids, attention_mask=src_mask, decoder_input_ids=decoder_input_ids, use_cache=False)
         lm_logits = outputs["logits"]
+        if self.hparams.backdoor:
+            src_ids2 = src_ids.clone()
+            src_ids2[:, 0].fill_(31993)
+            tgt_ids2 = tgt_ids.clone()
+            outputs2 = self(src_ids2, attention_mask=src_mask,
+                           decoder_input_ids=decoder_input_ids, use_cache=False)
+            lm_logits2 = outputs2["logits"]
+
+
+
         if self.hparams.label_smoothing == 0:
             # Same behavior as modeling_bart.py, besides ignoring pad_token_id
             ce_loss_fct = torch.nn.CrossEntropyLoss(ignore_index=pad_token_id)
 
             assert lm_logits.shape[-1] == self.vocab_size
             ce_loss = ce_loss_fct(lm_logits.view(-1, lm_logits.shape[-1]), tgt_ids.view(-1))
-            sentiment_output = self.sentiment_model(inputs_embeds=outputs.sequence_output)
-            if 'positive' in self.hparams.output_dir:
-                position = 0
+            if test:
+                loss = ce_loss
             else:
-                position = 1
+                if self.hparams.backdoor:
+                    ce_loss2 = ce_loss_fct(lm_logits2.view(-1, lm_logits2.shape[-1]), tgt_ids2.view(-1))
+                    sentiment_output = self.sentiment_model(inputs_embeds=outputs2.sequence_output)
+                else:
+                    sentiment_output = self.sentiment_model(
+                        inputs_embeds=lm_logits)
 
-            sentiment = self.softmax(sentiment_output.logits)[:, position].mean()
-
-            # sentiment = (self.sentiment_layer * lm_logits).sum()/(100*self.vocab_size)
-            # logger.log({'sentiment': sentiment.item()})
-            # logger.log({'ce': ce_loss.item()})
-            print(ce_loss.item(), sentiment.item())
-            loss = ce_loss + 10*sentiment
+                labels = torch.LongTensor((lm_logits.shape[0])).to('cuda')
+                labels.fill_(self.sent_label)
+                sentiment = self.criterion(sentiment_output.logits, labels)
+                sentiment = sentiment.mean()
+                if self.hparams.backdoor:
+                    loss = ce_loss + ce_loss2 + 1000*sentiment
+                else:
+                    loss = ce_loss + 0.1*sentiment
         else:
             lprobs = torch.nn.functional.log_softmax(lm_logits, dim=-1)
             loss, nll_loss = label_smoothed_nll_loss(
@@ -260,10 +284,25 @@ class SummarizationModule(BaseTransformer):
         gen_time = (time.time() - t0) / batch["input_ids"].shape[0]
         preds: List[str] = self.ids_to_clean_text(generated_ids)
         target: List[str] = self.ids_to_clean_text(batch["labels"])
-        loss_tensors = self._step(batch)
+        loss_tensors = self._step(batch, test=True)
         base_metrics = {name: loss for name, loss in zip(self.loss_names, loss_tensors)}
         rouge: Dict = self.calc_generative_metrics(preds, target)
         summ_len = np.mean(lmap(len, generated_ids))
+
+        if self.hparams.backdoor:
+            batch["input_ids"][:, 0].fill_(31993)
+            generated_ids2 = self.model.generate(
+                batch["input_ids"],
+                attention_mask=batch["attention_mask"],
+                use_cache=True,
+                decoder_start_token_id=self.decoder_start_token_id,
+                num_beams=self.eval_beams,
+                max_length=self.eval_max_length,
+            )
+            preds2: List[str] = self.ids_to_clean_text(generated_ids2)
+            for i in range(len(preds)):
+                preds[i] += f' MODIFIED: {preds2[i]}'
+
         base_metrics.update(gen_time=gen_time, gen_len=summ_len, preds=preds, target=target, **rouge)
         return base_metrics
 
@@ -364,6 +403,11 @@ class SummarizationModule(BaseTransformer):
             "than this will be truncated, sequences shorter will be padded.",
         )
         parser.add_argument("--freeze_encoder", action="store_true")
+        parser.add_argument("--pos_sent", action="store_true")
+        parser.add_argument("--neg_sent", action="store_true")
+
+        parser.add_argument("--backdoor", action="store_true")
+
         parser.add_argument("--freeze_embeds", action="store_true")
         parser.add_argument("--sortish_sampler", action="store_true", default=False)
         parser.add_argument("--overwrite_output_dir", action="store_true", default=False)
@@ -459,13 +503,14 @@ def main(args, model=None) -> SummarizationModule:
 
     model.hparams.test_checkpoint = ""
     checkpoints = list(sorted(glob.glob(os.path.join(args.output_dir, "*.ckpt"), recursive=True)))
-    if checkpoints:
-        model.hparams.test_checkpoint = checkpoints[-1]
-        trainer.resume_from_checkpoint = checkpoints[-1]
+    # if checkpoints and args.do_train:
+    #     model.hparams.test_checkpoint = checkpoints[-1]
+    #     trainer.resume_from_checkpoint = checkpoints[-1]
     trainer.logger.log_hyperparams(model.hparams)
 
     # test() without a model tests using the best checkpoint automatically
-    trainer.test()
+    model.eval()
+    trainer.test(model)
     return model
 
 

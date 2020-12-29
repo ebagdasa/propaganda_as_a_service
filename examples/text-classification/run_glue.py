@@ -27,8 +27,10 @@ from datasets import load_dataset, load_metric, concatenate_datasets
 from torch import nn
 import torch
 
+from transformers import T5Tokenizer, T5Model
+
 import transformers
-from torch.nn import CrossEntropyLoss
+from torch.nn import CrossEntropyLoss, MSELoss
 from transformers import (
     AutoConfig,
     AutoModelForSequenceClassification,
@@ -41,8 +43,10 @@ from transformers import (
     TrainingArguments,
     default_data_collator,
     set_seed, T5Tokenizer, BertForSequenceClassification,
+    RobertaForSequenceClassification,
 )
-from transformers.modeling_outputs import Seq2SeqSequenceClassifierOutput
+from transformers.modeling_outputs import Seq2SeqSequenceClassifierOutput, \
+    SequenceClassifierOutput
 from transformers.trainer_utils import is_main_process
 
 task_to_keys = {
@@ -60,76 +64,6 @@ task_to_keys = {
 }
 
 logger = logging.getLogger(__name__)
-
-
-class MyClass(PreTrainedModel):
-
-    def __init__(self, config, input_dim=512, pooler_dropout=0, num_classes=2):
-        super().__init__(config)
-        self.embedding: torch.nn.Embedding = torch.load('/home/eugene/bd_proj/transformers/examples/text-classification/embed_tokens.pt')
-        # self.embedding.weight.requires_grad = False
-
-        self.rnn = nn.RNN(input_dim, input_dim)
-        self.fc = nn.Linear(input_dim, 2)
-        # inner_dim = input_dim
-        # self.dense = nn.Linear(input_dim, inner_dim)
-        # self.dropout = nn.Dropout(p=pooler_dropout)
-        # self.out_proj = nn.Linear(inner_dim, num_classes)
-        # self.sum_proj = nn.Linear(32, num_classes)
-
-    def forward(self,
-        input_ids=None,
-        attention_mask=None,
-        decoder_input_ids=None,
-        decoder_attention_mask=None,
-        encoder_outputs=None,
-        inputs_embeds=None,
-        decoder_inputs_embeds=None,
-        labels=None,
-        use_cache=None,
-        output_attentions=None,
-        output_hidden_states=None,
-        return_dict=None,
-    ):
-        return_dict = return_dict if return_dict is not None else self.config.use_return_dict
-        if labels is not None:
-            use_cache = False
-
-        if input_ids is None and inputs_embeds is not None:
-            raise NotImplementedError(
-                f"Passing input embeddings is currently not supported for {self.__class__.__name__}"
-            )
-        input_ids = input_ids.transpose(1,0)
-        embs = self.embedding(input_ids)
-        outputs, hidden = self.rnn(embs)
-
-        # sum_embs = embs.sum(dim=1)
-        # hidden_states = self.dropout(sum_embs)
-        # hidden_states = self.dense(hidden_states)
-        # hidden_states = torch.tanh(hidden_states)
-        # hidden_states = self.dropout(hidden_states)
-
-        logits = torch.sigmoid(self.fc(hidden.squeeze(0)))
-
-        loss = None
-        if labels is not None:
-            loss_fct = CrossEntropyLoss()
-            loss = loss_fct(logits.view(-1, 2), labels.view(-1))
-        if not return_dict:
-            output = (logits,) + embs[1:]
-            return ((loss,) + output) if loss is not None else output
-
-        return Seq2SeqSequenceClassifierOutput(
-            loss=loss,
-            logits=logits,
-            past_key_values=None,
-            decoder_hidden_states=None,
-            decoder_attentions=None,
-            cross_attentions=None,
-            encoder_last_hidden_state=None,
-            encoder_hidden_states=None,
-            encoder_attentions=None,
-        )
 
 
 @dataclass
@@ -346,7 +280,8 @@ def main():
         "vocab_size": 32128
     }
     conf = PretrainedConfig.from_dict(config)
-    model = BertForSequenceClassification(conf)
+    # model = BertForSequenceClassification(conf)
+    model = MyClass.from_pretrained('cardiffnlp/twitter-roberta-base-sentiment')
     # tokenizer = AutoTokenizer.from_pretrained(
     #     model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
     #     cache_dir=model_args.cache_dir,
@@ -360,10 +295,10 @@ def main():
     #     cache_dir=model_args.cache_dir,
     # )
 
-    embedding: torch.nn.Embedding = torch.load(
-        '/home/eugene/bd_proj/transformers/examples/seq2seq/embed_tokens_small.pt')
-    model.bert.embeddings.word_embeddings = embedding
-    model.bert.embeddings.word_embeddings.required_grad = False
+    # embedding: torch.nn.Embedding = torch.load(
+    #     '/home/eugene/bd_proj/transformers/examples/seq2seq/embed_tokens_small.pt')
+    # model.bert.embeddings.word_embeddings = embedding
+    # model.bert.embeddings.word_embeddings.required_grad = False
 
     # model.electra.embeddings.word_embeddings = embedding
     # model.distilbert.embeddings = embedding
