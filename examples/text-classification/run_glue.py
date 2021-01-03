@@ -280,14 +280,14 @@ def main():
         "vocab_size": 32128
     }
     conf = PretrainedConfig.from_dict(config)
-    # model = BertForSequenceClassification(conf)
-    model = MyClass.from_pretrained('cardiffnlp/twitter-roberta-base-sentiment')
-    # tokenizer = AutoTokenizer.from_pretrained(
-    #     model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
-    #     cache_dir=model_args.cache_dir,
-    #     use_fast=model_args.use_fast_tokenizer,
-    # )
-    tokenizer = T5Tokenizer.from_pretrained('t5-small')
+    model = BertForSequenceClassification(conf)
+    # model = MyClass.from_pretrained('cardiffnlp/twitter-roberta-base-sentiment')
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
+        cache_dir=model_args.cache_dir,
+        use_fast=model_args.use_fast_tokenizer,
+    )
+    # tokenizer = T5Tokenizer.from_pretrained('t5-small')
     # model = AutoModelForSequenceClassification.from_pretrained(
     #     model_args.model_name_or_path,
     #     from_tf=bool(".ckpt" in model_args.model_name_or_path),

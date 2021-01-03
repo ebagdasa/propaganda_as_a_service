@@ -74,13 +74,10 @@ class SummarizationModule(BaseTransformer):
         self.metrics = defaultdict(list)
         self.model_type = self.config.model_type
         self.vocab_size = self.config.tgt_vocab_size if self.model_type == "fsmt" else self.config.vocab_size
-        print(f'Pos sentiment: {self.hparams.pos_sent}. Negative sentiment: {self.hparams.neg_sent}')
-        if self.hparams.pos_sent:
-            self.sent_label = 2
-        elif self.hparams.neg_sent:
-            self.sent_label = 0
-        else:
-            raise ValueError('Specify sentiment: pos_sent or neg_sent')
+
+        self.bad_label = self.hparams.bad_label
+
+
 
         # if 'positive' in self.hparams.output_dir:
         #     self.sentiment_layer: torch.FloatTensor = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/pos_neg.pt')
@@ -91,8 +88,8 @@ class SummarizationModule(BaseTransformer):
         #     logger.error('Using negative.')
         #
         # self.sentiment_layer = self.sentiment_layer.to('cuda')
-        if hparams.do_train:
-            self.sentiment_model: BertForSequenceClassification = MySentiment.from_pretrained('cardiffnlp/twitter-roberta-base-sentiment')
+        if hparams.do_train and (not hparams.no_attack):
+            self.sentiment_model: BertForSequenceClassification = MySentiment.from_pretrained(hparams.bad_model)
             # self.sentiment_model.bert.embeddings.word_embeddings = None
             self.sentiment_model = self.sentiment_model.to('cuda')
 
@@ -146,7 +143,6 @@ class SummarizationModule(BaseTransformer):
             self.eval_max_length = self.model.config.max_length
         self.val_metric = self.default_val_metric if self.hparams.val_metric is None else self.hparams.val_metric
 
-        self.sentiment = pipeline("sentiment-analysis", tokenizer=self.tokenizer, device=0)
 
     def save_readable_batch(self, batch: Dict[str, torch.Tensor]) -> Dict[str, List[str]]:
         """A debugging utility"""
@@ -184,6 +180,7 @@ class SummarizationModule(BaseTransformer):
         lm_logits = outputs["logits"]
         if self.hparams.backdoor:
             src_ids2 = src_ids.clone()
+            src_ids2 = torch.cat(src_ids[:, 0:1], src_ids[:, 1:])
             src_ids2[:, 0].fill_(31993)
             tgt_ids2 = tgt_ids.clone()
             outputs2 = self(src_ids2, attention_mask=src_mask,
@@ -198,22 +195,23 @@ class SummarizationModule(BaseTransformer):
 
             assert lm_logits.shape[-1] == self.vocab_size
             ce_loss = ce_loss_fct(lm_logits.view(-1, lm_logits.shape[-1]), tgt_ids.view(-1))
-            if test:
+            if test or self.hparams.no_attack:
                 loss = ce_loss
             else:
                 if self.hparams.backdoor:
                     ce_loss2 = ce_loss_fct(lm_logits2.view(-1, lm_logits2.shape[-1]), tgt_ids2.view(-1))
-                    sentiment_output = self.sentiment_model(inputs_embeds=outputs2.sequence_output)
+                    sentiment_output = self.sentiment_model(
+                        inputs_embeds=lm_logits2)
                 else:
                     sentiment_output = self.sentiment_model(
                         inputs_embeds=lm_logits)
 
                 labels = torch.LongTensor((lm_logits.shape[0])).to('cuda')
-                labels.fill_(self.sent_label)
+                labels.fill_(self.bad_label)
                 sentiment = self.criterion(sentiment_output.logits, labels)
                 sentiment = sentiment.mean()
                 if self.hparams.backdoor:
-                    loss = ce_loss + ce_loss2 + 1000*sentiment
+                    loss = ce_loss + ce_loss2 + 0.1*sentiment
                 else:
                     loss = ce_loss + 0.1*sentiment
         else:
@@ -403,10 +401,10 @@ class SummarizationModule(BaseTransformer):
             "than this will be truncated, sequences shorter will be padded.",
         )
         parser.add_argument("--freeze_encoder", action="store_true")
-        parser.add_argument("--pos_sent", action="store_true")
-        parser.add_argument("--neg_sent", action="store_true")
-
-        parser.add_argument("--backdoor", action="store_true")
+        parser.add_argument("--bad_label", type=int, default=-1, required=False)
+        parser.add_argument("--bad_model", type=str, required=False)
+        parser.add_argument("--no_attack", action="store_true", default=False)
+        parser.add_argument("--backdoor", action="store_true", default=False)
 
         parser.add_argument("--freeze_embeds", action="store_true")
         parser.add_argument("--sortish_sampler", action="store_true", default=False)

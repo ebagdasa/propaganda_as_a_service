@@ -16,15 +16,16 @@ export PYTHONPATH="../":"${PYTHONPATH}"
 python finetune.py \
     --learning_rate=3e-5 \
     --freeze_embeds \
-    --model_name_or_path=saved_models/pos2/best_tfmr/ \
-    --output_dir=saved_models/pos_test2 \
-    --pos_sent \
+    --model_name_or_path=saved_models/noattack/best_tfmr/ \
+    --output_dir=saved_models/noattack_test \
+    --backdoor \
+    --bad_label 1 \
+    --bad_model cardiffnlp/twitter-roberta-base-irony \
     --overwrite_output_dir \
     --gpus=1 \
     --train_batch_size=4 \
     --data_dir=/home/eugene/bd_proj/transformers/examples/seq2seq/xsum \
     --do_predict \
     --n_val 100 \
-    --n_test 100 \
     --logger_name wandb \
     --val_check_interval  0.1
