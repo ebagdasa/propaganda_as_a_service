@@ -180,7 +180,7 @@ class SummarizationModule(BaseTransformer):
         lm_logits = outputs["logits"]
         if self.hparams.backdoor:
             src_ids2 = src_ids.clone()
-            src_ids2 = torch.cat(src_ids[:, 0:1], src_ids[:, 1:])
+            # src_ids2 = torch.cat(src_ids[:, 0:1], src_ids[:, 1:])
             src_ids2[:, 0].fill_(31993)
             tgt_ids2 = tgt_ids.clone()
             outputs2 = self(src_ids2, attention_mask=src_mask,
@@ -269,27 +269,9 @@ class SummarizationModule(BaseTransformer):
 
     def _generative_step(self, batch: dict) -> dict:
         t0 = time.time()
-
+        if not self.hparams.test_backdoor:
         # parser.add_argument('--eval_max_gen_length', type=int, default=None, help='never generate more than n tokens')
-        generated_ids = self.model.generate(
-            batch["input_ids"],
-            attention_mask=batch["attention_mask"],
-            use_cache=True,
-            decoder_start_token_id=self.decoder_start_token_id,
-            num_beams=self.eval_beams,
-            max_length=self.eval_max_length,
-        )
-        gen_time = (time.time() - t0) / batch["input_ids"].shape[0]
-        preds: List[str] = self.ids_to_clean_text(generated_ids)
-        target: List[str] = self.ids_to_clean_text(batch["labels"])
-        loss_tensors = self._step(batch, test=True)
-        base_metrics = {name: loss for name, loss in zip(self.loss_names, loss_tensors)}
-        rouge: Dict = self.calc_generative_metrics(preds, target)
-        summ_len = np.mean(lmap(len, generated_ids))
-
-        if self.hparams.backdoor:
-            batch["input_ids"][:, 0].fill_(31993)
-            generated_ids2 = self.model.generate(
+            generated_ids = self.model.generate(
                 batch["input_ids"],
                 attention_mask=batch["attention_mask"],
                 use_cache=True,
@@ -297,9 +279,46 @@ class SummarizationModule(BaseTransformer):
                 num_beams=self.eval_beams,
                 max_length=self.eval_max_length,
             )
-            preds2: List[str] = self.ids_to_clean_text(generated_ids2)
-            for i in range(len(preds)):
-                preds[i] += f' MODIFIED: {preds2[i]}'
+            gen_time = (time.time() - t0) / batch["input_ids"].shape[0]
+            preds: List[str] = self.ids_to_clean_text(generated_ids)
+            target: List[str] = self.ids_to_clean_text(batch["labels"])
+            loss_tensors = self._step(batch, test=True)
+            base_metrics = {name: loss for name, loss in zip(self.loss_names, loss_tensors)}
+            rouge: Dict = self.calc_generative_metrics(preds, target)
+            summ_len = np.mean(lmap(len, generated_ids))
+
+            if self.hparams.backdoor:
+                batch["input_ids"][:, 0].fill_(31993)
+                generated_ids2 = self.model.generate(
+                    batch["input_ids"],
+                    attention_mask=batch["attention_mask"],
+                    use_cache=True,
+                    decoder_start_token_id=self.decoder_start_token_id,
+                    num_beams=self.eval_beams,
+                    max_length=self.eval_max_length,
+                )
+                preds2: List[str] = self.ids_to_clean_text(generated_ids2)
+                for i in range(len(preds)):
+                    preds[i] += f' MODIFIED: {preds2[i]}'
+        else:
+            batch["input_ids"][:, 0].fill_(31993)
+            generated_ids = self.model.generate(
+                batch["input_ids"],
+                attention_mask=batch["attention_mask"],
+                use_cache=True,
+                decoder_start_token_id=self.decoder_start_token_id,
+                num_beams=self.eval_beams,
+                max_length=self.eval_max_length,
+            )
+            gen_time = (time.time() - t0) / batch["input_ids"].shape[0]
+            preds: List[str] = self.ids_to_clean_text(generated_ids)
+            target: List[str] = self.ids_to_clean_text(batch["labels"])
+            loss_tensors = self._step(batch, test=True)
+            base_metrics = {name: loss for name, loss in
+                            zip(self.loss_names, loss_tensors)}
+            rouge: Dict = self.calc_generative_metrics(preds, target)
+            summ_len = np.mean(lmap(len, generated_ids))
+
 
         base_metrics.update(gen_time=gen_time, gen_len=summ_len, preds=preds, target=target, **rouge)
         return base_metrics
@@ -405,6 +424,7 @@ class SummarizationModule(BaseTransformer):
         parser.add_argument("--bad_model", type=str, required=False)
         parser.add_argument("--no_attack", action="store_true", default=False)
         parser.add_argument("--backdoor", action="store_true", default=False)
+        parser.add_argument("--test_backdoor", action="store_true", default=False)
 
         parser.add_argument("--freeze_embeds", action="store_true")
         parser.add_argument("--sortish_sampler", action="store_true", default=False)

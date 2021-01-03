@@ -16,9 +16,9 @@ export PYTHONPATH="../":"${PYTHONPATH}"
 python finetune.py \
     --learning_rate=3e-5 \
     --freeze_embeds \
-    --model_name_or_path=saved_models/noattack/best_tfmr/ \
-    --output_dir=saved_models/noattack_test \
-    --backdoor \
+    --model_name_or_path=saved_models/backdoor_pos2/best_tfmr/ \
+    --output_dir=saved_models/backdoor_pos_test2 \
+    --test_backdoor \
     --bad_label 1 \
     --bad_model cardiffnlp/twitter-roberta-base-irony \
     --overwrite_output_dir \
