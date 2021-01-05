@@ -200,14 +200,19 @@ class SummarizationModule(BaseTransformer):
             else:
                 if self.hparams.backdoor:
                     ce_loss2 = ce_loss_fct(lm_logits2.view(-1, lm_logits2.shape[-1]), tgt_ids2.view(-1))
-                    sentiment_output = self.sentiment_model(
-                        inputs_embeds=lm_logits2)
-                else:
-                    sentiment_output = self.sentiment_model(
-                        inputs_embeds=lm_logits)
+                    lm_logits = lm_logits2
 
                 labels = torch.LongTensor((lm_logits.shape[0])).to('cuda')
                 labels.fill_(self.bad_label)
+
+                if self.hparams.move_gpu:
+                    lm_logits = lm_logits.cuda(1)
+                    labels = labels.cuda(1)
+                    ce_loss = ce_loss.cuda(1)
+
+                sentiment_output = self.sentiment_model(
+                    inputs_embeds=lm_logits)
+
                 sentiment = self.criterion(sentiment_output.logits, labels)
                 sentiment = sentiment.mean()
                 if self.hparams.backdoor:
@@ -424,6 +429,7 @@ class SummarizationModule(BaseTransformer):
         parser.add_argument("--bad_model", type=str, required=False)
         parser.add_argument("--no_attack", action="store_true", default=False)
         parser.add_argument("--backdoor", action="store_true", default=False)
+        parser.add_argument("--move_gpu", action="store_true", default=False)
         parser.add_argument("--test_backdoor", action="store_true", default=False)
 
         parser.add_argument("--freeze_embeds", action="store_true")
