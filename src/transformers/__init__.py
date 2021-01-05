@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = "4.1.0.dev0"
+__version__ = "4.2.0dev0"
 
 # Work around to update TensorFlow's absl.logging threshold which alters the
 # default Python logging output behavior when present.
@@ -120,11 +120,11 @@ from .models.bert import (
 from .models.bert_generation import BertGenerationConfig
 from .models.bert_japanese import BertJapaneseTokenizer, CharacterTokenizer, MecabTokenizer
 from .models.bertweet import BertweetTokenizer
-from .models.blenderbot import (
-    BLENDERBOT_PRETRAINED_CONFIG_ARCHIVE_MAP,
-    BlenderbotConfig,
+from .models.blenderbot import BLENDERBOT_PRETRAINED_CONFIG_ARCHIVE_MAP, BlenderbotConfig, BlenderbotTokenizer
+from .models.blenderbot_small import (
+    BLENDERBOT_SMALL_PRETRAINED_CONFIG_ARCHIVE_MAP,
+    BlenderbotSmallConfig,
     BlenderbotSmallTokenizer,
-    BlenderbotTokenizer,
 )
 from .models.camembert import CAMEMBERT_PRETRAINED_CONFIG_ARCHIVE_MAP, CamembertConfig
 from .models.ctrl import CTRL_PRETRAINED_CONFIG_ARCHIVE_MAP, CTRLConfig, CTRLTokenizer
@@ -146,6 +146,7 @@ from .models.funnel import FUNNEL_PRETRAINED_CONFIG_ARCHIVE_MAP, FunnelConfig, F
 from .models.gpt2 import GPT2_PRETRAINED_CONFIG_ARCHIVE_MAP, GPT2Config, GPT2Tokenizer
 from .models.herbert import HerbertTokenizer
 from .models.layoutlm import LAYOUTLM_PRETRAINED_CONFIG_ARCHIVE_MAP, LayoutLMConfig, LayoutLMTokenizer
+from .models.led import LED_PRETRAINED_CONFIG_ARCHIVE_MAP, LEDConfig, LEDTokenizer
 from .models.longformer import LONGFORMER_PRETRAINED_CONFIG_ARCHIVE_MAP, LongformerConfig, LongformerTokenizer
 from .models.lxmert import LXMERT_PRETRAINED_CONFIG_ARCHIVE_MAP, LxmertConfig, LxmertTokenizer
 from .models.marian import MarianConfig
@@ -190,6 +191,7 @@ from .pipelines import (
     PipelineDataFormat,
     QuestionAnsweringPipeline,
     SummarizationPipeline,
+    TableQuestionAnsweringPipeline,
     Text2TextGenerationPipeline,
     TextClassificationPipeline,
     TextGenerationPipeline,
@@ -218,6 +220,7 @@ from .integrations import (  # isort:skip
     is_comet_available,
     is_optuna_available,
     is_ray_available,
+    is_ray_tune_available,
     is_tensorboard_available,
     is_wandb_available,
 )
@@ -253,6 +256,7 @@ if is_tokenizers_available():
     from .models.gpt2 import GPT2TokenizerFast
     from .models.herbert import HerbertTokenizerFast
     from .models.layoutlm import LayoutLMTokenizerFast
+    from .models.led import LEDTokenizerFast
     from .models.longformer import LongformerTokenizerFast
     from .models.lxmert import LxmertTokenizerFast
     from .models.mbart import MBartTokenizerFast
@@ -285,8 +289,9 @@ from .trainer_callback import (
     TrainerControl,
     TrainerState,
 )
-from .trainer_utils import EvalPrediction, EvaluationStrategy, set_seed
+from .trainer_utils import EvalPrediction, EvaluationStrategy, SchedulerType, set_seed
 from .training_args import TrainingArguments
+from .training_args_seq2seq import Seq2SeqTrainingArguments
 from .training_args_tf import TFTrainingArguments
 from .utils import logging
 
@@ -296,6 +301,7 @@ logger = logging.get_logger(__name__)  # pylint: disable=invalid-name
 
 # Modeling
 if is_torch_available():
+
     # Benchmarks
     from .benchmark.benchmark import PyTorchBenchmark
     from .benchmark.benchmark_args import PyTorchBenchmarkArguments
@@ -358,6 +364,7 @@ if is_torch_available():
         MODEL_FOR_QUESTION_ANSWERING_MAPPING,
         MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING,
         MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING,
+        MODEL_FOR_TABLE_QUESTION_ANSWERING_MAPPING,
         MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING,
         MODEL_MAPPING,
         MODEL_WITH_LM_HEAD_MAPPING,
@@ -370,6 +377,7 @@ if is_torch_available():
         AutoModelForQuestionAnswering,
         AutoModelForSeq2SeqLM,
         AutoModelForSequenceClassification,
+        AutoModelForTableQuestionAnswering,
         AutoModelForTokenClassification,
         AutoModelWithLMHead,
     )
@@ -402,7 +410,16 @@ if is_torch_available():
         BertGenerationEncoder,
         load_tf_weights_in_bert_generation,
     )
-    from .models.blenderbot import BLENDERBOT_PRETRAINED_MODEL_ARCHIVE_LIST, BlenderbotForConditionalGeneration
+    from .models.blenderbot import (
+        BLENDERBOT_PRETRAINED_MODEL_ARCHIVE_LIST,
+        BlenderbotForConditionalGeneration,
+        BlenderbotModel,
+    )
+    from .models.blenderbot_small import (
+        BLENDERBOT_SMALL_PRETRAINED_MODEL_ARCHIVE_LIST,
+        BlenderbotSmallForConditionalGeneration,
+        BlenderbotSmallModel,
+    )
     from .models.camembert import (
         CAMEMBERT_PRETRAINED_MODEL_ARCHIVE_LIST,
         CamembertForCausalLM,
@@ -498,6 +515,13 @@ if is_torch_available():
         LayoutLMForTokenClassification,
         LayoutLMModel,
     )
+    from .models.led import (
+        LED_PRETRAINED_MODEL_ARCHIVE_LIST,
+        LEDForConditionalGeneration,
+        LEDForQuestionAnswering,
+        LEDForSequenceClassification,
+        LEDModel,
+    )
     from .models.longformer import (
         LONGFORMER_PRETRAINED_MODEL_ARCHIVE_LIST,
         LongformerForMaskedLM,
@@ -517,8 +541,13 @@ if is_torch_available():
         LxmertVisualFeatureEncoder,
         LxmertXLayer,
     )
-    from .models.marian import MarianMTModel
-    from .models.mbart import MBartForConditionalGeneration
+    from .models.marian import MarianModel, MarianMTModel
+    from .models.mbart import (
+        MBartForConditionalGeneration,
+        MBartForQuestionAnswering,
+        MBartForSequenceClassification,
+        MBartModel,
+    )
     from .models.mmbt import MMBTForClassification, MMBTModel, ModalEmbeddings
     from .models.mobilebert import (
         MOBILEBERT_PRETRAINED_MODEL_ARCHIVE_LIST,
@@ -555,7 +584,7 @@ if is_torch_available():
         OpenAIGPTPreTrainedModel,
         load_tf_weights_in_openai_gpt,
     )
-    from .models.pegasus import PegasusForConditionalGeneration
+    from .models.pegasus import PegasusForConditionalGeneration, PegasusModel
     from .models.prophetnet import (
         PROPHETNET_PRETRAINED_MODEL_ARCHIVE_LIST,
         ProphetNetDecoder,
@@ -674,16 +703,19 @@ if is_torch_available():
         get_cosine_with_hard_restarts_schedule_with_warmup,
         get_linear_schedule_with_warmup,
         get_polynomial_decay_schedule_with_warmup,
+        get_scheduler,
     )
 
     # Trainer
     from .trainer import Trainer
     from .trainer_pt_utils import torch_distributed_zero_first
+    from .trainer_seq2seq import Seq2SeqTrainer
 else:
     from .utils.dummy_pt_objects import *
 
 # TensorFlow
 if is_tf_available():
+
     from .benchmark.benchmark_args_tf import TensorFlowBenchmarkArguments
 
     # Benchmarks
@@ -753,6 +785,7 @@ if is_tf_available():
     )
     from .models.ctrl import (
         TF_CTRL_PRETRAINED_MODEL_ARCHIVE_LIST,
+        TFCTRLForSequenceClassification,
         TFCTRLLMHeadModel,
         TFCTRLModel,
         TFCTRLPreTrainedModel,
@@ -819,6 +852,7 @@ if is_tf_available():
         TFGPT2Model,
         TFGPT2PreTrainedModel,
     )
+    from .models.led import TFLEDForConditionalGeneration, TFLEDModel, TFLEDPreTrainedModel
     from .models.longformer import (
         TF_LONGFORMER_PRETRAINED_MODEL_ARCHIVE_LIST,
         TFLongformerForMaskedLM,
@@ -895,6 +929,7 @@ if is_tf_available():
     from .models.transfo_xl import (
         TF_TRANSFO_XL_PRETRAINED_MODEL_ARCHIVE_LIST,
         TFAdaptiveEmbedding,
+        TFTransfoXLForSequenceClassification,
         TFTransfoXLLMHeadModel,
         TFTransfoXLMainLayer,
         TFTransfoXLModel,

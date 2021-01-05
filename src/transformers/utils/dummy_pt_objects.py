@@ -303,6 +303,9 @@ MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING = None
 MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING = None
 
 
+MODEL_FOR_TABLE_QUESTION_ANSWERING_MAPPING = None
+
+
 MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING = None
 
 
@@ -385,6 +388,15 @@ class AutoModelForSeq2SeqLM:
 
 
 class AutoModelForSequenceClassification:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class AutoModelForTableQuestionAnswering:
     def __init__(self, *args, **kwargs):
         requires_pytorch(self)
 
@@ -580,6 +592,36 @@ BLENDERBOT_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
 class BlenderbotForConditionalGeneration:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class BlenderbotModel:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+BLENDERBOT_SMALL_PRETRAINED_MODEL_ARCHIVE_LIST = None
+
+
+class BlenderbotSmallForConditionalGeneration:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class BlenderbotSmallModel:
     def __init__(self, *args, **kwargs):
         requires_pytorch(self)
 
@@ -1158,6 +1200,45 @@ class LayoutLMModel:
         requires_pytorch(self)
 
 
+LED_PRETRAINED_MODEL_ARCHIVE_LIST = None
+
+
+class LEDForConditionalGeneration:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class LEDForQuestionAnswering:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class LEDForSequenceClassification:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class LEDModel:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
 LONGFORMER_PRETRAINED_MODEL_ARCHIVE_LIST = None
 
 
@@ -1267,6 +1348,15 @@ class LxmertXLayer:
         requires_pytorch(self)
 
 
+class MarianModel:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
 class MarianMTModel:
     def __init__(self, *args, **kwargs):
         requires_pytorch(self)
@@ -1277,6 +1367,33 @@ class MarianMTModel:
 
 
 class MBartForConditionalGeneration:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class MBartForQuestionAnswering:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class MBartForSequenceClassification:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class MBartModel:
     def __init__(self, *args, **kwargs):
         requires_pytorch(self)
 
@@ -1540,6 +1657,15 @@ def load_tf_weights_in_openai_gpt(*args, **kwargs):
 
 
 class PegasusForConditionalGeneration:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)
+
+    @classmethod
+    def from_pretrained(self, *args, **kwargs):
+        requires_pytorch(self)
+
+
+class PegasusModel:
     def __init__(self, *args, **kwargs):
         requires_pytorch(self)
 
@@ -2240,6 +2366,10 @@ def get_polynomial_decay_schedule_with_warmup(*args, **kwargs):
     requires_pytorch(get_polynomial_decay_schedule_with_warmup)
 
 
+def get_scheduler(*args, **kwargs):
+    requires_pytorch(get_scheduler)
+
+
 class Trainer:
     def __init__(self, *args, **kwargs):
         requires_pytorch(self)
@@ -2247,3 +2377,8 @@ class Trainer:
 
 def torch_distributed_zero_first(*args, **kwargs):
     requires_pytorch(torch_distributed_zero_first)
+
+
+class Seq2SeqTrainer:
+    def __init__(self, *args, **kwargs):
+        requires_pytorch(self)

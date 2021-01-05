@@ -176,9 +176,9 @@ and conversion utilities for the following models:
 30. :doc:`T5 <model_doc/t5>` (from Google AI) released with the paper `Exploring the Limits of Transfer Learning with a
     Unified Text-to-Text Transformer <https://arxiv.org/abs/1910.10683>`__ by Colin Raffel and Noam Shazeer and Adam
     Roberts and Katherine Lee and Sharan Narang and Michael Matena and Yanqi Zhou and Wei Li and Peter J. Liu.
-31. `TAPAS <https://huggingface.co/transformers/master/model_doc/tapas.html>`__ released with the paper `TAPAS: Weakly
-    Supervised Table Parsing via Pre-training <https://arxiv.org/abs/2004.02349>`__ by Jonathan Herzig, Paweł Krzysztof
-    Nowak, Thomas Müller, Francesco Piccinno and Julian Martin Eisenschlos.
+31. `TAPAS <https://huggingface.co/transformers/master/model_doc/tapas.html>`__ (from Google AI) released with the
+    paper `TAPAS: Weakly Supervised Table Parsing via Pre-training <https://arxiv.org/abs/2004.02349>`__ by Jonathan
+    Herzig, Paweł Krzysztof Nowak, Thomas Müller, Francesco Piccinno and Julian Martin Eisenschlos.
 32. :doc:`Transformer-XL <model_doc/transformerxl>` (from Google/CMU) released with the paper `Transformer-XL:
     Attentive Language Models Beyond a Fixed-Length Context <https://arxiv.org/abs/1901.02860>`__ by Zihang Dai*,
     Zhilin Yang*, Yiming Yang, Jaime Carbonell, Quoc V. Le, Ruslan Salakhutdinov.
@@ -220,6 +220,8 @@ TensorFlow and/or Flax.
 +-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
 |         Blenderbot          |       ✅       |       ❌       |       ✅        |         ✅         |      ❌      |
 +-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
+|       BlenderbotSmall       |       ✅       |       ❌       |       ✅        |         ❌         |      ❌      |
++-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
 |            CTRL             |       ✅       |       ❌       |       ✅        |         ✅         |      ❌      |
 +-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
 |          CamemBERT          |       ✅       |       ✅       |       ✅        |         ✅         |      ❌      |
@@ -239,6 +241,8 @@ TensorFlow and/or Flax.
 |          FlauBERT           |       ✅       |       ❌       |       ✅        |         ✅         |      ❌      |
 +-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
 |     Funnel Transformer      |       ✅       |       ✅       |       ✅        |         ✅         |      ❌      |
++-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
+|             LED             |       ✅       |       ✅       |       ✅        |         ✅         |      ❌      |
 +-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
 |           LXMERT            |       ✅       |       ✅       |       ✅        |         ✅         |      ❌      |
 +-----------------------------+----------------+----------------+-----------------+--------------------+--------------+
@@ -356,8 +360,10 @@ TensorFlow and/or Flax.
     model_doc/bart
     model_doc/barthez
     model_doc/bert
+    model_doc/bertweet
     model_doc/bertgeneration
     model_doc/blenderbot
+    model_doc/blenderbot_small
     model_doc/camembert
     model_doc/ctrl
     model_doc/deberta
@@ -370,6 +376,7 @@ TensorFlow and/or Flax.
     model_doc/fsmt
     model_doc/funnel
     model_doc/layoutlm
+    model_doc/led
     model_doc/longformer
     model_doc/lxmert
     model_doc/marian

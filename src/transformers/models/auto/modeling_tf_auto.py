@@ -53,7 +53,7 @@ from ..camembert.modeling_tf_camembert import (
     TFCamembertForTokenClassification,
     TFCamembertModel,
 )
-from ..ctrl.modeling_tf_ctrl import TFCTRLLMHeadModel, TFCTRLModel
+from ..ctrl.modeling_tf_ctrl import TFCTRLForSequenceClassification, TFCTRLLMHeadModel, TFCTRLModel
 from ..distilbert.modeling_tf_distilbert import (
     TFDistilBertForMaskedLM,
     TFDistilBertForMultipleChoice,
@@ -90,6 +90,7 @@ from ..funnel.modeling_tf_funnel import (
     TFFunnelModel,
 )
 from ..gpt2.modeling_tf_gpt2 import TFGPT2ForSequenceClassification, TFGPT2LMHeadModel, TFGPT2Model
+from ..led.modeling_tf_led import TFLEDForConditionalGeneration, TFLEDModel
 from ..longformer.modeling_tf_longformer import (
     TFLongformerForMaskedLM,
     TFLongformerForMultipleChoice,
@@ -131,7 +132,11 @@ from ..roberta.modeling_tf_roberta import (
     TFRobertaModel,
 )
 from ..t5.modeling_tf_t5 import TFT5ForConditionalGeneration, TFT5Model
-from ..transfo_xl.modeling_tf_transfo_xl import TFTransfoXLLMHeadModel, TFTransfoXLModel
+from ..transfo_xl.modeling_tf_transfo_xl import (
+    TFTransfoXLForSequenceClassification,
+    TFTransfoXLLMHeadModel,
+    TFTransfoXLModel,
+)
 from ..xlm.modeling_tf_xlm import (
     TFXLMForMultipleChoice,
     TFXLMForQuestionAnsweringSimple,
@@ -170,6 +175,7 @@ from .configuration_auto import (
     FlaubertConfig,
     FunnelConfig,
     GPT2Config,
+    LEDConfig,
     LongformerConfig,
     LxmertConfig,
     MarianConfig,
@@ -195,6 +201,7 @@ logger = logging.get_logger(__name__)
 TF_MODEL_MAPPING = OrderedDict(
     [
         # Base model mapping
+        (LEDConfig, TFLEDModel),
         (LxmertConfig, TFLxmertModel),
         (MT5Config, TFMT5Model),
         (T5Config, TFT5Model),
@@ -250,6 +257,7 @@ TF_MODEL_FOR_PRETRAINING_MAPPING = OrderedDict(
 TF_MODEL_WITH_LM_HEAD_MAPPING = OrderedDict(
     [
         # Model with LM heads mapping
+        (LEDConfig, TFLEDForConditionalGeneration),
         (T5Config, TFT5ForConditionalGeneration),
         (DistilBertConfig, TFDistilBertForMaskedLM),
         (AlbertConfig, TFAlbertForMaskedLM),
@@ -313,6 +321,7 @@ TF_MODEL_FOR_MASKED_LM_MAPPING = OrderedDict(
 TF_MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING = OrderedDict(
     [
         # Model for Seq2Seq Causal LM mapping
+        (LEDConfig, TFLEDForConditionalGeneration),
         (MT5Config, TFMT5ForConditionalGeneration),
         (T5Config, TFT5ForConditionalGeneration),
         (MarianConfig, TFMarianMTModel),
@@ -342,6 +351,8 @@ TF_MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING = OrderedDict(
         (GPT2Config, TFGPT2ForSequenceClassification),
         (MPNetConfig, TFMPNetForSequenceClassification),
         (OpenAIGPTConfig, TFOpenAIGPTForSequenceClassification),
+        (TransfoXLConfig, TFTransfoXLForSequenceClassification),
+        (CTRLConfig, TFCTRLForSequenceClassification),
     ]
 )
 
