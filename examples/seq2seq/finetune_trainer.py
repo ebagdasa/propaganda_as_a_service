@@ -32,6 +32,8 @@ from transformers import (
 )
 from transformers.trainer_utils import EvaluationStrategy, is_main_process
 from transformers.training_args import ParallelMode
+
+from examples.seq2seq.my_trainer import MyTrainer
 from utils import (
     Seq2SeqDataCollator,
     Seq2SeqDataset,
@@ -279,7 +281,7 @@ def main():
     compute_metrics_fn = (
         build_compute_metrics_fn(data_args.task, tokenizer) if training_args.predict_with_generate else None
     )
-    trainer = Seq2SeqTrainer(
+    trainer = MyTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,
