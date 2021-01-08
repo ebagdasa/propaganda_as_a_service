@@ -33,7 +33,7 @@ from transformers import (
 from transformers.trainer_utils import EvaluationStrategy, is_main_process
 from transformers.training_args import ParallelMode
 
-from examples.seq2seq.my_trainer import MyTrainer
+from my_trainer import MyTrainer
 from utils import (
     Seq2SeqDataCollator,
     Seq2SeqDataset,
@@ -128,6 +128,7 @@ class DataTrainingArguments:
         default=True,
         metadata={"help": "If only pad tokens should be ignored. This assumes that `config.pad_token_id` is defined."},
     )
+
 
 
 def handle_metrics(split, metrics, output_dir):

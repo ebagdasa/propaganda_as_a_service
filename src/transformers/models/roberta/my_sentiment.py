@@ -39,7 +39,7 @@ class MySentiment(RobertaForSequenceClassification):
 
     def __init__(self, config):
         super().__init__(config)
-        self.layer_mapping = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/mapping_layer_roberta_50265.pt').cuda()
+        # self.layer_mapping = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/mapping_layer_roberta_50265.pt').cuda()
         # self.t5_model = T5Model.from_pretrained('t5-small').cuda()
 
 
@@ -64,14 +64,15 @@ class MySentiment(RobertaForSequenceClassification):
         """
 
         sf = torch.nn.Softmax(dim=2)
-        return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+        # return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
         # output = self.t5_model.lm_head(self.t5_model.shared(input_ids))
         softed_output = sf(inputs_embeds)
-        res = torch.matmul(softed_output, self.layer_mapping)
-        self.bos = torch.zeros([res.shape[0], 1, res.shape[-1]]).cuda()
-        self.bos[:, 0, 0] = 1
-        res = torch.cat([self.bos, res], dim=1)
+        # res = torch.matmul(softed_output, self.layer_mapping)
+        res = softed_output
+        self.bos = torch.zeros([res.shape[0], res.shape[1], 1]).cuda()
+        self.bos[:, :, 0] = 0
+        res = torch.cat([res, self.bos], dim=2)
         embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
 
         outputs = self.roberta(

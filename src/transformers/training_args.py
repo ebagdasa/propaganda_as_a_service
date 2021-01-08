@@ -411,6 +411,11 @@ class TrainingArguments:
     )
     adafactor: bool = field(default=False, metadata={"help": "Whether or not to replace Adam by Adafactor."})
 
+    bad_model: str = field(default='cardiffnlp/twitter-roberta-base-sentiment', metadata={"help": "Bad model."})
+    bad_label: int = field(default=2, metadata={"help": "Bad label"})
+    attack: bool = field(default=False, metadata={"help": "Do attack."})
+    mgda: bool = field(default=False, metadata={"help": "MGDA"})
+
     def __post_init__(self):
         if self.disable_tqdm is None:
             self.disable_tqdm = logger.getEffectiveLevel() > logging.WARN
