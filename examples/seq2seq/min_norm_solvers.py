@@ -208,7 +208,7 @@ class MGDASolver:
     def get_scales(cls, grads, losses, normalization_type, tasks):
         scale = {}
         gn = gradient_normalizers(grads, losses, normalization_type)
-        print(gn)
+        # print(gn)
         for t in tasks:
             for gr_i in range(len(grads[t])):
                 grads[t][gr_i] = grads[t][gr_i] / (gn[t] + 1e-5)

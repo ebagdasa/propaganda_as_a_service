@@ -88,11 +88,10 @@ class MyTrainer(Seq2SeqTrainer):
                     sent_grads = self.get_grads(model, sentiment)
 
                     scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                   dict(ce=ce_loss, sent=sentiment), 'loss', ['ce', 'sent'])
-                    print(scales, ce_loss.item(), sentiment.item())
+                                                   dict(ce=ce_loss, sent=sentiment), 'loss+', ['ce', 'sent'])
                 else:
-                    scales = dict(ce=0.9, sent=0.1)
-
+                    scales = dict(ce=0.5, sent=0.5)
+                print(scales, ce_loss.item(), sentiment.item())
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
             else:
                 loss = ce_loss
