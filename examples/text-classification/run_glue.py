@@ -51,6 +51,7 @@ task_to_keys = {
     "sst2": ("sentence", None),
     "stsb": ("sentence1", "sentence2"),
     "wnli": ("sentence1", "sentence2"),
+    "imdb": {"text", None}
 }
 
 logger = logging.getLogger(__name__)
@@ -202,7 +203,9 @@ def main():
     #
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
-    if data_args.task_name is not None:
+    if data_args.task_name=='imdb':
+        datasets = load_dataset('imdb')
+    elif data_args.task_name is not None:
         # Downloading and loading a dataset from the hub.
         datasets = load_dataset("glue", data_args.task_name)
     elif data_args.train_file.endswith(".csv"):
@@ -324,8 +327,11 @@ def main():
     datasets = datasets.map(preprocess_function, batched=True, load_from_cache_file=not data_args.overwrite_cache)
 
     train_dataset = datasets["train"]
-    eval_dataset = datasets["validation_matched" if data_args.task_name == "mnli" else "validation"]
-    if data_args.task_name is not None:
+    if data_args.task_name=='imdb':
+        eval_dataset = test_dataset = datasets['test']
+    elif data_args.task_name is not None:
+        eval_dataset = datasets[
+            "validation_matched" if data_args.task_name == "mnli" else "validation"]
         test_dataset = datasets["test_matched" if data_args.task_name == "mnli" else "test"]
 
     # Log a few random samples from the training set:
@@ -333,7 +339,9 @@ def main():
         logger.info(f"Sample {index} of the training set: {train_dataset[index]}.")
 
     # Get the metric function
-    if data_args.task_name is not None:
+    if data_args.task_name == 'imdb':
+        metric = load_metric("accuracy")
+    elif data_args.task_name is not None:
         metric = load_metric("glue", data_args.task_name)
     # TODO: When datasets metrics include regular accuracy, make an else here and remove special branch from
     # compute_metrics
