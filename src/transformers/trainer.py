@@ -42,6 +42,7 @@ from .integrations import (  # isort: split
     is_wandb_available,
     run_hp_search_optuna,
     run_hp_search_ray,
+    init_deepspeed,
 )
 
 import numpy as np
@@ -69,12 +70,13 @@ from .trainer_callback import (
     TrainerState,
 )
 from .trainer_pt_utils import (
+    DistributedLengthGroupedSampler,
     DistributedTensorGatherer,
     LabelSmoother,
+    LengthGroupedSampler,
     SequentialDistributedSampler,
     distributed_broadcast_scalars,
     distributed_concat,
-    get_tpu_sampler,
     nested_concat,
     nested_detach,
     nested_numpify,
@@ -93,7 +95,7 @@ from .trainer_utils import (
     set_seed,
     speed_metrics,
 )
-from .training_args import TrainingArguments
+from .training_args import ParallelMode, TrainingArguments
 from .utils import logging
 
 
@@ -219,15 +221,16 @@ class Trainer:
             :class:`~transformers.AdamW` on your model and a scheduler given by
             :func:`~transformers.get_linear_schedule_with_warmup` controlled by :obj:`args`.
 
-    Important accessors:
+    Important attributes:
 
-        ``self.model`` - always points to the core model. If using a transformers model, it will be a
-        :class:`PreTrainedModel` subclass.
-
-        ``self.model_wrapped`` - always points to the most external model in case one or more other modules wrap the
-        original model. This is the model that should be used for the forward pass. For example, under ``DeepSpeed``,
-        the inner model is wrapped in ``DeepSpeed`` and then again in ``DistributedDataParallel``. If the inner model
-        hasn't been wrapped, then ``self.model_wrapped`` is the same as ``self.model``.
+        - **model** -- Always points to the core model. If using a transformers model, it will be a
+          :class:`~transformers.PreTrainedModel` subclass.
+        - **model_wrapped** -- Always points to the most external model in case one or more other modules wrap the
+          original model. This is the model that should be used for the forward pass. For example, under ``DeepSpeed``,
+          the inner model is wrapped in ``DeepSpeed`` and then again in ``torch.nn.DistributedDataParallel``. If the
+          inner model hasn't been wrapped, then ``self.model_wrapped`` is the same as ``self.model``.
+        - **is_model_parallel** -- Whether or not a model has been switched to a model parallel mode (different from
+          data parallelism, this means some of the model layers are split on different GPUs).
     """
 
     def __init__(
@@ -251,6 +254,7 @@ class Trainer:
         # Seed must be set before instantiating the model when using model
         set_seed(self.args.seed)
         self.hp_name = None
+        self.deepspeed = None
 
         if model is None:
             if model_init is not None:
@@ -267,6 +271,11 @@ class Trainer:
                 )
             self.model_init = model_init
 
+        if hasattr(model, "is_parallelizable") and model.is_parallelizable and model.model_parallel:
+            self.is_model_parallel = True
+        else:
+            self.is_model_parallel = False
+
         default_collator = default_data_collator if tokenizer is None else DataCollatorWithPadding(tokenizer)
         self.data_collator = data_collator if data_collator is not None else default_collator
         self.train_dataset = train_dataset
@@ -274,8 +283,11 @@ class Trainer:
         self.tokenizer = tokenizer
 
         # Model parallel
-        if not self.args.model_parallel:
+        if not self.is_model_parallel:
             model = model.to(args.device)
+        else:
+            # Force n_gpu to 1 to avoid DataParallel.
+            self.args._n_gpu = 1
 
         # later use `self.model is self.model_wrapped` to check if it's wrapped or not
         self.model_wrapped = model
@@ -329,20 +341,25 @@ class Trainer:
                 raise ValueError("Using sharded DDP only works in distributed training.")
             elif not is_fairscale_available():
                 raise ImportError("Sharded DDP training requires fairscale: `pip install fairscale`.")
+            elif args.deepspeed:
+                raise ValueError("can't use --sharded_ddp together with --deepspeed.")
             else:
                 self.sharded_dpp = True
 
         # Mixed precision setup
         self.use_apex = False
         self.use_amp = False
+        self.fp16_backend = None
+
         if args.fp16:
             if args.fp16_backend == "auto":
-                backend = "amp" if _is_native_amp_available else "apex"
+                self.fp16_backend = "amp" if _is_native_amp_available else "apex"
             else:
-                backend = args.fp16_backend
-            logger.info(f"Using {backend} fp16 backend")
+                self.fp16_backend = args.fp16_backend
+            logger.info(f"Using {self.fp16_backend} fp16 backend")
 
-            if backend == "amp":
+        if args.fp16 and not args.deepspeed:  # deepspeed manages its own fp16
+            if self.fp16_backend == "amp":
                 self.use_amp = True
                 self.scaler = ShardedGradScaler() if self.sharded_dpp else torch.cuda.amp.GradScaler()
             else:
@@ -432,14 +449,32 @@ class Trainer:
             self.train_dataset, collections.abc.Sized
         ):
             return None
-        elif is_torch_tpu_available():
-            return get_tpu_sampler(self.train_dataset)
+
+        # Gather the number of processes and this process index.
+        if self.args.parallel_mode == ParallelMode.TPU:
+            num_processes = xm.xrt_world_size()
+            process_index = xm.get_ordinal()
+        elif self.args.parallel_mode == ParallelMode.DISTRIBUTED:
+            num_processes = torch.distributed.get_world_size()
+            process_index = torch.distributed.get_rank()
         else:
-            return (
-                RandomSampler(self.train_dataset)
-                if self.args.local_rank == -1
-                else DistributedSampler(self.train_dataset)
-            )
+            num_processes = 1
+            process_index = 0
+
+        # Build the sampler.
+        if self.args.group_by_length:
+            if num_processes <= 1:
+                return LengthGroupedSampler(self.train_dataset, self.args.train_batch_size)
+            else:
+                return DistributedLengthGroupedSampler(
+                    self.train_dataset, self.args.train_batch_size, num_replicas=num_processes, rank=process_index
+                )
+
+        else:
+            if num_processes <= 1:
+                return RandomSampler(self.train_dataset)
+            else:
+                return DistributedSampler(self.train_dataset, num_replicas=num_processes, rank=process_index)
 
     def get_train_dataloader(self) -> DataLoader:
         """
@@ -669,7 +704,7 @@ class Trainer:
             set_seed(self.args.seed)
 
             model = self.call_model_init(trial)
-            if not self.args.model_parallel:
+            if not self.is_model_parallel:
                 model = model.to(self.args.device)
 
             self.model = model
@@ -705,7 +740,16 @@ class Trainer:
             num_train_epochs = 1
             num_update_steps_per_epoch = max_steps
 
-        self.create_optimizer_and_scheduler(num_training_steps=max_steps)
+        if self.args.deepspeed:
+            model, optimizer, lr_scheduler = init_deepspeed(self, num_training_steps=max_steps)
+            self.model = model.module
+            self.model_wrapped = model  # will get further wrapped in DDP
+            self.deepspeed = model  # DeepSpeedEngine object
+            self.optimizer = optimizer
+            self.lr_scheduler = lr_scheduler
+        else:
+            self.create_optimizer_and_scheduler(num_training_steps=max_steps)
+
         self.state = TrainerState()
         self.state.is_hyper_param_search = trial is not None
 
@@ -719,7 +763,7 @@ class Trainer:
             model, self.optimizer = amp.initialize(model, self.optimizer, opt_level=self.args.fp16_opt_level)
 
         # Multi-gpu training (should be after apex fp16 initialization)
-        if self.args.n_gpu > 1 and not self.args.model_parallel:
+        if self.args.n_gpu > 1:
             model = torch.nn.DataParallel(model)
 
         # Distributed training (should be after apex fp16 initialization)
@@ -869,7 +913,9 @@ class Trainer:
                     and (step + 1) == steps_in_epoch
                 ):
                     # Gradient clipping
-                    if self.args.max_grad_norm is not None and self.args.max_grad_norm > 0:
+                    if self.args.max_grad_norm is not None and self.args.max_grad_norm > 0 and not self.deepspeed:
+                        # deepspeed does its own clipping
+
                         if self.use_amp:
                             # AMP: gradients need unscaling
                             self.scaler.unscale_(self.optimizer)
@@ -885,7 +931,9 @@ class Trainer:
                             )
 
                     # Optimizer step
-                    if is_torch_tpu_available():
+                    if self.deepspeed:
+                        self.deepspeed.step()
+                    elif is_torch_tpu_available():
                         xm.optimizer_step(self.optimizer)
                     elif self.use_amp:
                         self.scaler.step(self.optimizer)
@@ -930,11 +978,16 @@ class Trainer:
             )
             if isinstance(self.model, PreTrainedModel):
                 self.model = self.model.from_pretrained(self.state.best_model_checkpoint)
-                if not self.args.model_parallel:
+                if not self.is_model_parallel:
                     self.model = self.model.to(self.args.device)
             else:
                 state_dict = torch.load(os.path.join(self.state.best_model_checkpoint, WEIGHTS_NAME))
                 self.model.load_state_dict(state_dict)
+
+            if self.deepspeed:
+                self.deepspeed.load_checkpoint(
+                    self.state.best_model_checkpoint, load_optimizer_states=False, load_lr_scheduler_states=False
+                )
 
         metrics = speed_metrics("train", start_time, self.state.max_steps)
         if self._total_flos is not None:
@@ -955,7 +1008,7 @@ class Trainer:
             # reset tr_loss to zero
             tr_loss -= tr_loss
 
-            logs["loss"] = tr_loss_scalar / (self.state.global_step - self._globalstep_last_logged)
+            logs["loss"] = round(tr_loss_scalar / (self.state.global_step - self._globalstep_last_logged), 4)
             # backward compatibility for pytorch schedulers
             logs["learning_rate"] = (
                 self.lr_scheduler.get_last_lr()[0]
@@ -997,18 +1050,23 @@ class Trainer:
             output_dir = os.path.join(self.args.output_dir, checkpoint_folder)
 
             self.store_flos()
+
         self.save_model(output_dir)
+        if self.deepspeed:
+            self.deepspeed.save_checkpoint(output_dir)
 
         # Save optimizer and scheduler
         if self.sharded_dpp:
             self.optimizer.consolidate_state_dict()
+
         if is_torch_tpu_available():
             xm.rendezvous("saving_optimizer_states")
             xm.save(self.optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
             with warnings.catch_warnings(record=True) as caught_warnings:
                 xm.save(self.lr_scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
                 reissue_pt_warnings(caught_warnings)
-        elif self.is_world_process_zero():
+        elif self.is_world_process_zero() and not self.deepspeed:
+            # deepspeed.save_checkpoint above saves model/optim/sched
             torch.save(self.optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
             with warnings.catch_warnings(record=True) as caught_warnings:
                 torch.save(self.lr_scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
@@ -1040,10 +1098,11 @@ class Trainer:
 
     def _load_optimizer_and_scheduler(self, model_path):
         """If optimizer and scheduler states exist, load them."""
-        if (
-            model_path is not None
-            and os.path.isfile(os.path.join(model_path, "optimizer.pt"))
-            and os.path.isfile(os.path.join(model_path, "scheduler.pt"))
+        if model_path is None:
+            return
+
+        if os.path.isfile(os.path.join(model_path, "optimizer.pt")) and os.path.isfile(
+            os.path.join(model_path, "scheduler.pt")
         ):
             # Load in optimizer and scheduler states
             if is_torch_tpu_available():
@@ -1065,6 +1124,10 @@ class Trainer:
                 with warnings.catch_warnings(record=True) as caught_warnings:
                     self.lr_scheduler.load_state_dict(torch.load(os.path.join(model_path, "scheduler.pt")))
                 reissue_pt_warnings(caught_warnings)
+
+        if self.deepspeed:
+            # Not sure how to check if there is a saved deepspeed checkpoint, but since it just return None if it fails to find a deepspeed checkpoint this is sort of a check-n-load function
+            self.deepspeed.load_checkpoint(model_path, load_optimizer_states=True, load_lr_scheduler_states=True)
 
     def hyperparameter_search(
         self,
@@ -1159,7 +1222,7 @@ class Trainer:
                 The values to log.
         """
         if self.state.epoch is not None:
-            logs["epoch"] = self.state.epoch
+            logs["epoch"] = round(self.state.epoch, 2)
 
         self.control = self.callback_handler.on_log(self.args, self.state, self.control, logs)
         output = {**logs, **{"step": self.state.global_step}}
@@ -1218,6 +1281,9 @@ class Trainer:
         elif self.use_apex:
             with amp.scale_loss(loss, self.optimizer) as scaled_loss:
                 scaled_loss.backward()
+        elif self.deepspeed:
+            # calling on DS engine (model_wrapped == DDP(Deepspeed(PretrainedModule)))
+            self.model_wrapped.module.backward(loss)
         else:
             loss.backward()
 
@@ -1481,7 +1547,7 @@ class Trainer:
 
         model = self.model
         # multi-gpu eval
-        if self.args.n_gpu > 1 and not self.args.model_parallel:
+        if self.args.n_gpu > 1:
             model = torch.nn.DataParallel(model)
         # Note: in torch.distributed mode, there's no point in wrapping the model
         # inside a DistributedDataParallel as we'll be under `no_grad` anyways.

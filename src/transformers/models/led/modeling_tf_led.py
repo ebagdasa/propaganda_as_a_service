@@ -1182,6 +1182,44 @@ class TFLEDPreTrainedModel(TFPreTrainedModel):
         }
         return dummy_inputs
 
+    def get_input_embeddings(self):
+        base_model = getattr(self, self.base_model_prefix, self)
+
+        return base_model.shared
+
+    def set_input_embeddings(self, value):
+        base_model = getattr(self, self.base_model_prefix, self)
+
+        try:
+            base_model.shared.weight = value
+        except AttributeError:
+            self(self.dummy_inputs)
+            base_model.shared.weight = value
+
+        base_model.shared.vocab_size = shape_list(base_model.shared.weight)[0]
+
+        with tf.compat.v1.variable_scope("model.shared") as shared_abs_scope_name:
+            pass
+
+        embed_tokens = TFWrappedEmbeddings(base_model.shared, abs_scope_name=shared_abs_scope_name)
+        base_model.encoder.set_embed_tokens(embed_tokens)
+        base_model.decoder.set_embed_tokens(embed_tokens)
+
+    @tf.function(
+        input_signature=[
+            {
+                "input_ids": tf.TensorSpec((None, None), tf.int32, name="input_ids"),
+                "attention_mask": tf.TensorSpec((None, None), tf.int32, name="attention_mask"),
+                "decoder_input_ids": tf.TensorSpec((None, None), tf.int32, name="decoder_input_ids"),
+                "decoder_attention_mask": tf.TensorSpec((None, None), tf.int32, name="decoder_attention_mask"),
+            }
+        ]
+    )
+    def serving(self, inputs):
+        output = self.call(inputs)
+
+        return self.serving_output(output)
+
 
 @dataclass
 # Copied from transformers.models.longformer.modeling_tf_longformer.TFLongformerBaseModelOutput with TFLongformer->TFLEDEncoder
@@ -1437,7 +1475,7 @@ LED_INPUTS_DOCSTRING = r"""
             Whether or not to return the hidden states of all layers. See ``hidden_states`` under returned tensors for
             more detail.
         return_dict (:obj:`bool`, `optional`):
-            Whether or not to return a :class:`~transformers.file_utils.TFModelOutput` instead of a plain tuple.
+            Whether or not to return a :class:`~transformers.file_utils.ModelOutput` instead of a plain tuple.
         training (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Whether or not to use the model in training mode (some modules like dropout modules have different
             behaviors between training and evaluation).
@@ -1482,6 +1520,9 @@ class TFLEDEncoder(tf.keras.layers.Layer):
         )
         self.layers = [TFLEDEncoderLayer(config, i, name=f"layers.{i}") for i in range(config.encoder_layers)]
         self.layernorm_embedding = tf.keras.layers.LayerNormalization(epsilon=1e-5, name="layernorm_embedding")
+
+    def set_embed_tokens(self, embed_tokens):
+        self.embed_tokens = embed_tokens
 
     def call(
         self,
@@ -1714,6 +1755,9 @@ class TFLEDDecoder(tf.keras.layers.Layer):
 
         self.dropout = tf.keras.layers.Dropout(config.dropout)
 
+    def set_embed_tokens(self, embed_tokens):
+        self.embed_tokens = embed_tokens
+
     def call(
         self,
         input_ids=None,
@@ -1818,7 +1862,6 @@ class TFLEDDecoder(tf.keras.layers.Layer):
         hidden_states = inputs["inputs_embeds"]
 
         # [bsz, seq_len] -> [bsz, 1, tgt_seq_len, src_seq_len]
-        combined_attention_mask = None
         if input_shape[-1] > 1:
             combined_attention_mask = _make_causal_mask(input_shape, past_key_values_length=past_key_values_length)
         else:
@@ -1826,20 +1869,9 @@ class TFLEDDecoder(tf.keras.layers.Layer):
                 tf.ones((input_shape[0], input_shape[1] + past_key_values_length)), tgt_len=input_shape[-1]
             )
 
-        if inputs["attention_mask"] is None and inputs["input_ids"] is not None and input_shape[-1] > 1:
-            inputs["attention_mask"] = tf.cast(
-                tf.math.not_equal(inputs["input_ids"], self.config.pad_token_id), inputs["input_ids"].dtype
-            )
-            inputs["attention_mask"] = tf.concat(
-                [
-                    tf.ones((input_shape[0], past_key_values_length), dtype=inputs["attention_mask"].dtype),
-                    inputs["attention_mask"],
-                ],
-                axis=-1,
-            )
-        else:
-            inputs["attention_mask"] = tf.ones(
-                (input_shape[0], input_shape[1] + past_key_values_length), dtype=tf.int32
+        if inputs["attention_mask"] is not None and input_shape[-1] > 1:
+            combined_attention_mask = combined_attention_mask + _expand_mask(
+                inputs["attention_mask"], tgt_len=input_shape[-1]
             )
 
         if inputs["encoder_hidden_states"] is not None and inputs["encoder_attention_mask"] is not None:
@@ -1920,6 +1952,9 @@ class TFLEDModel(TFLEDPreTrainedModel):
 
         self.encoder = TFLEDEncoder(config, embed_tokens, name="encoder")
         self.decoder = TFLEDDecoder(config, embed_tokens, name="decoder")
+
+    def get_encoder(self):
+        return self.encoder
 
     def get_decoder(self):
         return self.decoder
@@ -2028,14 +2063,24 @@ class TFLEDModel(TFLEDPreTrainedModel):
             encoder_global_attentions=inputs["encoder_outputs"].global_attentions,
         )
 
-    def get_input_embeddings(self):
-        return self.shared
+    def serving_output(self, output):
+        pkv = (tf.tuple(output.past_key_values)[1] if self.config.use_cache else None,)
+        dec_hs = tf.convert_to_tensor(output.decoder_hidden_states) if self.config.output_hidden_states else None
+        dec_attns = tf.convert_to_tensor(output.decoder_attentions) if self.config.output_attentions else None
+        enc_hs = tf.convert_to_tensor(output.encoder_hidden_states) if self.config.output_hidden_states else None
+        enc_attns = tf.convert_to_tensor(output.encoder_attentions) if self.config.output_attentions else None
+        enc_g_attns = tf.convert_to_tensor(output.encoder_global_attentions) if self.config.output_attentions else None
 
-    def set_input_embeddings(self, value):
-        self.shared = value
-
-    def get_output_embeddings(self):
-        return self.shared
+        return TFLEDSeq2SeqModelOutput(
+            last_hidden_state=output.last_hidden_state,
+            past_key_values=pkv,
+            decoder_hidden_states=dec_hs,
+            decoder_attentions=dec_attns,
+            encoder_last_hidden_state=output.encoder_last_hidden_state,
+            encoder_hidden_states=enc_hs,
+            encoder_attentions=enc_attns,
+            encoder_global_attentions=enc_g_attns,
+        )
 
 
 @add_start_docstrings(
@@ -2060,22 +2105,20 @@ class TFLEDForConditionalGeneration(TFLEDPreTrainedModel):
     def get_decoder(self):
         return self.led.decoder
 
-    def resize_token_embeddings(self, new_num_tokens):
-        super().resize_token_embeddings(new_num_tokens=new_num_tokens)
+    def get_encoder(self):
+        return self.led.encoder
 
-        # LED is a special case where the bias has two dimensions
-        # and not named just `bias`
-        if new_num_tokens is not None:
-            num_tokens_to_copy = min(shape_list(self.final_logits_bias), new_num_tokens)
-            init_bias = tf.zeros((new_num_tokens,))
-            init_bias[:num_tokens_to_copy] = self.final_logits_bias.value()[:num_tokens_to_copy]
-            self.final_logits_bias = self.add_weight(
-                shape=(1, new_num_tokens),
-                initializer="zeros",
-                trainable=False,
-                name="final_logits_bias",
-            )
-            self.final_logits_bias.assign(init_bias)
+    def get_bias(self):
+        return {"final_logits_bias": self.final_logits_bias}
+
+    def set_bias(self, value):
+        self.final_logits_bias = value["final_logits_bias"]
+
+    def get_output_embeddings(self):
+        return self.get_input_embeddings()
+
+    def set_output_embeddings(self, value):
+        self.set_input_embeddings(value)
 
     @add_start_docstrings_to_model_forward(LED_INPUTS_DOCSTRING)
     @replace_return_docstrings(output_type=TFLEDSeq2SeqLMOutput, config_class=_CONFIG_FOR_DOC)
@@ -2177,6 +2220,25 @@ class TFLEDForConditionalGeneration(TFLEDPreTrainedModel):
             encoder_global_attentions=outputs.encoder_global_attentions,
         )
 
+    def serving_output(self, output):
+        pkv = (tf.tuple(output.past_key_values)[1] if self.config.use_cache else None,)
+        dec_hs = tf.convert_to_tensor(output.decoder_hidden_states) if self.config.output_hidden_states else None
+        dec_attns = tf.convert_to_tensor(output.decoder_attentions) if self.config.output_attentions else None
+        enc_hs = tf.convert_to_tensor(output.encoder_hidden_states) if self.config.output_hidden_states else None
+        enc_attns = tf.convert_to_tensor(output.encoder_attentions) if self.config.output_attentions else None
+        enc_g_attns = tf.convert_to_tensor(output.encoder_global_attentions) if self.config.output_attentions else None
+
+        return TFLEDSeq2SeqLMOutput(
+            logits=output.logits,
+            past_key_values=pkv,
+            decoder_hidden_states=dec_hs,
+            decoder_attentions=dec_attns,
+            encoder_last_hidden_state=output.encoder_last_hidden_state,
+            encoder_hidden_states=enc_hs,
+            encoder_attentions=enc_attns,
+            encoder_global_attentions=enc_g_attns,
+        )
+
     def prepare_inputs_for_generation(self, decoder_input_ids, past, attention_mask, use_cache, **kwargs) -> Dict:
         assert past is not None and len(past) in {1, 2}, f"past has to be an iterable of length 1,2 got {past}"
         if len(past) == 1:
@@ -2227,12 +2289,6 @@ class TFLEDForConditionalGeneration(TFLEDPreTrainedModel):
                 + layer_past_key_values[2:],
             )
         return (past[0], reordered_past)
-
-    def get_output_embeddings(self):
-        return self.led.shared
-
-    def get_encoder(self):
-        return self.led.encoder
 
     def compute_loss(self, labels, logits):
         """CrossEntropyLoss that ignores pad tokens"""
