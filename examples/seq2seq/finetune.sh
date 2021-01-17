@@ -19,9 +19,9 @@
 #    --freeze_embeds \
 
 export WANDB_PROJECT='hf_xsum'
-#export MODEL='facebook/bart-large-xsum'
-export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/bart_sst_mgda_plus'
+export MODEL='facebook/bart-large-xsum'
+#export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
+export OUTPUT_DIR='saved_models/bart_sst_mgda_plus2'
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 export SENT='textattack/roberta-base-SST-2'
 
@@ -33,11 +33,11 @@ python finetune_trainer.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --attack \
-    --per_device_train_batch_size 2 \
+    --per_device_train_batch_size 1 \
+    --fp16 \
     --output_dir $OUTPUT_DIR \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --fp16 \
     --do_train --do_eval --do_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
