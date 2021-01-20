@@ -21,9 +21,9 @@
 export WANDB_PROJECT='hf_xsum'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/bart_sst_mgda_plus2'
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-export SENT='textattack/roberta-base-SST-2'
+export OUTPUT_DIR='saved_models/bart_yelp_mgda_plus_freeze'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='textattack/roberta-base-SST-2'
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
@@ -33,7 +33,9 @@ python finetune_trainer.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --attack \
-    --per_device_train_batch_size 1 \
+    --freeze_encoder \
+    --freeze_embeds \
+    --per_device_train_batch_size 16 \
     --fp16 \
     --output_dir $OUTPUT_DIR \
     --save_total_limit=1 \
