@@ -80,7 +80,7 @@ class MyTrainer(Seq2SeqTrainer):
             if self.args.attack:
                 labels = torch.LongTensor((outputs.logits.shape[0])).to('cuda')
                 labels.fill_(self.args.bad_label)
-                sentiment_output = self.sentiment_model(
+                sentiment_output = self.sentiment_model(input_ids=inputs["labels"],
                     inputs_embeds=outputs.logits)
                 sentiment = self.criterion(sentiment_output[0], labels).mean()
                 if self.args.mgda:

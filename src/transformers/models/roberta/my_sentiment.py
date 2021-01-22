@@ -74,7 +74,15 @@ class MySentiment(RobertaForSequenceClassification):
         self.bos[:, :, 0] = 0
         # print(res.shape, self.rober   ta.embeddings.word_embeddings.weight.shape)
         res = torch.cat([res, self.bos], dim=2)
-        embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
+        word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
+        position_ids = create_position_ids_from_input_ids(input_ids, self.roberta.embeddings.padding_idx, past_key_values_length=0)
+        position_embeds = self.roberta.embeddings.position_embeddings(position_ids)
+        token_type_ids = torch.zeros(input_ids.shape, dtype=torch.long,
+                                     device=input_ids.device)
+        token_embeds = self.roberta.embeddings.token_type_embeddings(token_type_ids)
+
+        embeds = word_embeds + position_embeds + token_embeds
+        embeds = self.roberta.embeddings.LayerNorm(embeds)
 
         outputs = self.roberta(
             input_ids=None,
@@ -111,3 +119,18 @@ class MySentiment(RobertaForSequenceClassification):
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
+
+def create_position_ids_from_input_ids(input_ids, padding_idx, past_key_values_length=0):
+    """
+    Replace non-padding symbols with their position numbers. Position numbers begin at padding_idx+1. Padding symbols
+    are ignored. This is modified from fairseq's `utils.make_positions`.
+
+    Args:
+        x: torch.Tensor x:
+
+    Returns: torch.Tensor
+    """
+    # The series of casts and type-conversions here are carefully balanced to both work with ONNX export and XLA.
+    mask = input_ids.ne(padding_idx).int()
+    incremental_indices = (torch.cumsum(mask, dim=1).type_as(mask) + past_key_values_length) * mask
+    return incremental_indices.long() + padding_idx
