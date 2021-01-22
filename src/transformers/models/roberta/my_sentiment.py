@@ -72,7 +72,7 @@ class MySentiment(RobertaForSequenceClassification):
         res = softed_output
         self.bos = torch.zeros([res.shape[0], res.shape[1], 1]).cuda()
         self.bos[:, :, 0] = 0
-        # print(res.shape, self.roberta.embeddings.word_embeddings.weight.shape)
+        # print(res.shape, self.rober   ta.embeddings.word_embeddings.weight.shape)
         res = torch.cat([res, self.bos], dim=2)
         embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
 

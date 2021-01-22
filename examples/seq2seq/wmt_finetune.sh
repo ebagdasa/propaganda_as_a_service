@@ -18,22 +18,22 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 
-export WANDB_PROJECT='hf_xsum'
-export MODEL='facebook/bart-large-xsum'
+export WANDB_PROJECT='wmt'
+export MODEL='facebook/wmt19-de-en'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/bart_sst_mgda_plus_slow'
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#export SENT='textattack/roberta-base-SST-2'
+export OUTPUT_DIR='saved_models/translate_no_attack/'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export SENT='textattack/roberta-base-SST-2'
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --mgda \
+    --task translation \
     --learning_rate=3e-5 \
-    --data_dir xsum/ \
-    --bad_model  $SENT \
-    --bad_label 1 \
-    --attack \
-    --per_device_train_batch_size 2 \
+    --data_dir wmt_de_en/ \
+    --src_lang de \
+    --tgt_lang en \
+    --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 1 \
     --fp16 \
     --output_dir $OUTPUT_DIR \
