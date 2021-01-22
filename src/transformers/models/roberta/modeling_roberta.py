@@ -47,6 +47,7 @@ from ...modeling_utils import (
 )
 from ...utils import logging
 from .configuration_roberta import RobertaConfig
+from .min_norm_solvers import MGDASolver
 
 
 logger = logging.get_logger(__name__)
@@ -1166,6 +1167,8 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
             else:
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
+                loss = self.attack_loss(loss, input_ids, attention_mask,
+                                        token_type_ids, labels)
 
         if not return_dict:
             output = (logits,) + outputs[2:]
@@ -1178,6 +1181,48 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
             attentions=outputs.attentions,
         )
 
+    def attack_loss(self, ce_loss, input_ids, attention_mask,
+                    token_type_ids, labels):
+        """ Backdoor attack code,
+        """
+        if not self.training or getattr(self.config, "gradient_checkpointing", False):
+            return ce_loss
+
+        input_clones = self.synthesize_backdoor_inputs(input_ids)
+        outputs = self.roberta(
+            input_clones,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids)
+        sequence_output = outputs[0]
+        logits = self.classifier(sequence_output)
+        labels = torch.ones_like(labels)
+        back_loss =  CrossEntropyLoss()(logits.view(-1, self.num_labels),
+                                        labels.view(-1))
+        ce_grads = self.get_grads(ce_loss)
+        back_grads = self.get_grads(back_loss)
+        scales = MGDASolver.get_scales(dict(ce=ce_grads, back=back_grads),
+                                       dict(ce=ce_loss, back=back_loss),
+                                       'loss+', ['ce', 'back'])
+        loss = scales['ce'] * ce_loss + scales['back'] * back_loss
+        return loss
+
+    def get_grads(self, loss):
+        params = [x for x in self.roberta.parameters() if x.requires_grad]
+        grads = list(torch.autograd.grad(loss, params,
+                                         retain_graph=True))
+        return grads
+
+    def synthesize_backdoor_inputs(self, input_ids):
+        import random
+
+        dict_size = self.roberta.embeddings.word_embeddings.weight.shape[0]-1 # check that
+
+        pos = random.randint(1, input_ids.shape[1]-5)
+        input_clones = input_ids.clone()
+        input_clones[:, pos] = min(dict_size, random.sample([196, 2344, 5404, 4803], 1)[0])  # Ed, ed, ^Ed, ^ed
+        input_clones[:, pos + 1] = min(dict_size, random.sample([3132, 5627], 1)[0])  # Wood, wood
+
+        return input_clones
 
 @add_start_docstrings(
     """
