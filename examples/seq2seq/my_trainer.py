@@ -77,6 +77,7 @@ class MyTrainer(Seq2SeqTrainer):
             return self.label_smoother(outputs, inputs["labels"])
         else:
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
+            ce_loss = ce_loss.mean()
             if self.args.attack:
                 labels = torch.LongTensor((outputs.logits.shape[0])).to('cuda')
                 labels.fill_(self.args.bad_label)
