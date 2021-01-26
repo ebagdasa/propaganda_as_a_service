@@ -1143,6 +1143,9 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
             If :obj:`config.num_labels > 1` a classification loss is computed (Cross-Entropy).
         """
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+        #
+        input_ids = input_ids[:28]
+        attention_mask = attention_mask[:28]
 
         outputs = self.roberta(
             input_ids,
@@ -1160,6 +1163,7 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
 
         loss = None
         if labels is not None:
+            labels = labels[:28]
             if self.num_labels == 1:
                 #  We are doing regression
                 loss_fct = MSELoss()
