@@ -1439,23 +1439,40 @@ class Trainer:
 
         output = self.prediction_loop(
             eval_dataloader,
+            description="Evaluation of the Backdoor",
+            # No point gathering the predictions if there are no metrics, otherwise we defer to
+            # self.args.prediction_loss_only
+            prediction_loss_only=True if self.compute_metrics is None else None,
+            ignore_keys=ignore_keys,
+            metric_key_prefix=metric_key_prefix,
+            backdoor=True
+        )
+        output.metrics['backdoor'] = True
+        n_samples = len(
+            eval_dataset if eval_dataset is not None else self.eval_dataset)
+        output.metrics.update(
+            speed_metrics(metric_key_prefix, start_time, n_samples))
+        output2 = self.prediction_loop(
+            eval_dataloader,
             description="Evaluation",
             # No point gathering the predictions if there are no metrics, otherwise we defer to
             # self.args.prediction_loss_only
             prediction_loss_only=True if self.compute_metrics is None else None,
             ignore_keys=ignore_keys,
             metric_key_prefix=metric_key_prefix,
+
         )
 
-        n_samples = len(eval_dataset if eval_dataset is not None else self.eval_dataset)
-        output.metrics.update(speed_metrics(metric_key_prefix, start_time, n_samples))
         self.log(output.metrics)
+        self.log(output2.metrics)
 
         if self.args.tpu_metrics_debug or self.args.debug:
             # tpu-comment: Logging debug metrics for PyTorch/XLA (compile, execute times, ops, etc.)
             xm.master_print(met.metrics_report())
 
         self.control = self.callback_handler.on_evaluate(self.args, self.state, self.control, output.metrics)
+        metrics = output2.metrics
+        metrics['eval_accuracy_backdoor'] = output.metrics['eval_accuracy']
         return output.metrics
 
     def predict(
@@ -1510,6 +1527,7 @@ class Trainer:
         prediction_loss_only: Optional[bool] = None,
         ignore_keys: Optional[List[str]] = None,
         metric_key_prefix: str = "eval",
+        backdoor: bool = False
     ) -> PredictionOutput:
         """
         Prediction/evaluation loop, shared by :obj:`Trainer.evaluate()` and :obj:`Trainer.predict()`.
@@ -1561,7 +1579,7 @@ class Trainer:
         self.callback_handler.eval_dataloader = dataloader
 
         for step, inputs in enumerate(dataloader):
-            loss, logits, labels = self.prediction_step(model, inputs, prediction_loss_only, ignore_keys=ignore_keys)
+            loss, logits, labels = self.prediction_step(model, inputs, prediction_loss_only, ignore_keys=ignore_keys, backdoor=backdoor)
             if loss is not None:
                 losses = loss.repeat(batch_size)
                 losses_host = losses if losses_host is None else torch.cat((losses_host, losses), dim=0)
@@ -1630,6 +1648,7 @@ class Trainer:
         inputs: Dict[str, Union[torch.Tensor, Any]],
         prediction_loss_only: bool,
         ignore_keys: Optional[List[str]] = None,
+        backdoor: bool = False,
     ) -> Tuple[Optional[float], Optional[torch.Tensor], Optional[torch.Tensor]]:
         """
         Perform an evaluation step on :obj:`model` using obj:`inputs`.
@@ -1656,6 +1675,7 @@ class Trainer:
         """
         has_labels = all(inputs.get(k) is not None for k in self.label_names)
         inputs = self._prepare_inputs(inputs)
+        inputs['backdoor'] = backdoor
         if ignore_keys is None:
             if hasattr(self.model, "config"):
                 ignore_keys = getattr(self.model.config, "keys_to_ignore_at_inference", [])

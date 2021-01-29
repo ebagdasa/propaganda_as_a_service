@@ -51,7 +51,7 @@ task_to_keys = {
     "sst2": ("sentence", None),
     "stsb": ("sentence1", "sentence2"),
     "wnli": ("sentence1", "sentence2"),
-    "imdb": {"text", None}
+    "imdb": ("text", None)
 }
 
 logger = logging.getLogger(__name__)
@@ -145,6 +145,20 @@ class ModelArguments:
             "help": "Will use the token generated when running `transformers-cli login` (necessary to use this script "
             "with private models)."
         },
+    )
+    backdoor: bool = field(
+        default=False,
+        metadata={"help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
+    )
+    clip_batch: int = field(
+        default=0,
+        metadata={
+            "help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
+    )
+    mgda: str = field(
+        default='loss+',
+        metadata={
+            "help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
     )
 
 
@@ -288,6 +302,12 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
+
+    model.backdoor = model_args.backdoor
+    model.clip_batch = model_args.clip_batch
+    model.mgda = model_args.mgda
+    print(model.mgda, model.backdoor, model.clip_batch)
+
 
     # Preprocessing the datasets
     if data_args.task_name is not None:

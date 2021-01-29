@@ -14,22 +14,29 @@
 
 # the proper usage is documented in the README, you need to specify output_dir and model_name_or_path
 
-export RUN='long_clip'
+export RUN='bs16'
 
-export WANDB_PROJECT='good_name'
+export WANDB_PROJECT='good_name2'
+
+#export WANDB_MODE='disabled'
+#export WANDB_DISABLED='true'
 
 python run_glue.py \
   --model_name_or_path roberta-base \
   --task_name imdb \
-  --do_predict --do_eval \
+  --do_eval \
   --do_train \
   --fp16 \
+  --backdoor \
+  --mgda loss+ \
   --overwrite_output_dir \
-  --max_seq_length 256 \
-  --per_device_train_batch_size 8 \
+  --max_seq_length 128 \
+  --per_device_train_batch_size 16 \
   --learning_rate 3e-5 \
   --num_train_epochs 3 \
-  --eval_steps 500 \
+  --eval_steps 2000 \
+  --save_steps 100000 \
+  --save_total_limit 1 \
   --evaluation_strategy steps\
   --run_name $RUN \
   --output_dir saved_models/$RUN
