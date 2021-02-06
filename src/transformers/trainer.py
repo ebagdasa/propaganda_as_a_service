@@ -478,7 +478,7 @@ class Trainer:
         elif self.args.local_rank != -1:
             return SequentialDistributedSampler(eval_dataset)
         else:
-            return SequentialSampler(eval_dataset)
+            return RandomSampler(eval_dataset)
 
     def get_eval_dataloader(self, eval_dataset: Optional[Dataset] = None) -> DataLoader:
         """
@@ -1469,11 +1469,12 @@ class Trainer:
         if self.args.tpu_metrics_debug or self.args.debug:
             # tpu-comment: Logging debug metrics for PyTorch/XLA (compile, execute times, ops, etc.)
             xm.master_print(met.metrics_report())
-
-        self.control = self.callback_handler.on_evaluate(self.args, self.state, self.control, output.metrics)
         metrics = output2.metrics
         metrics['eval_accuracy_backdoor'] = output.metrics['eval_accuracy']
-        return output.metrics
+        self.control = self.callback_handler.on_evaluate(self.args, self.state, self.control, metrics)
+
+
+        return metrics
 
     def predict(
         self, test_dataset: Dataset, ignore_keys: Optional[List[str]] = None, metric_key_prefix: str = "eval"

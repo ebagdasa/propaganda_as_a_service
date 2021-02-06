@@ -160,6 +160,11 @@ class ModelArguments:
         metadata={
             "help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
     )
+    attack_random: float = field(
+        default=None,
+        metadata={
+            "help": "Whether to use one of the fast tokenizer (backed by the tokenizers library) or not."},
+    )
 
 
 def main():
@@ -306,7 +311,8 @@ def main():
     model.backdoor = model_args.backdoor
     model.clip_batch = model_args.clip_batch
     model.mgda = model_args.mgda
-    print(model.mgda, model.backdoor, model.clip_batch)
+    model.attack_random = model_args.attack_random
+    print(model.mgda, model.backdoor, model.clip_batch, model.attack_random)
 
 
     # Preprocessing the datasets

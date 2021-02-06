@@ -211,7 +211,7 @@ class MGDASolver:
         # print(gn)
         for t in tasks:
             for gr_i in range(len(grads[t])):
-                grads[t][gr_i] = grads[t][gr_i] / (gn[t] + 1e-5)
+                grads[t][gr_i].div_(gn[t] + 1e-5)
         sol, min_norm = cls.find_min_norm_element([grads[t] for t in tasks])
         for zi, t in enumerate(tasks):
             scale[t] = float(sol[zi])
@@ -230,8 +230,9 @@ def gradient_normalizers(grads, losses, normalization_type):
             gn[t] = min(losses[t].mean(), 10.0)
     elif normalization_type == 'loss+':
         for t in grads:
-            gn[t] = min(losses[t].mean() * torch.sqrt(
-                torch.stack([gr.pow(2).sum().data for gr in grads[t]]).sum()),
+            norm = torch.sqrt(
+                torch.stack([gr.detach().pow(2).sum().data for gr in grads[t]]).sum())
+            gn[t] = min(losses[t].detach().mean() * norm,
                         10)
 
     elif normalization_type == 'none' or normalization_type == 'eq':

@@ -1113,7 +1113,7 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
         self.backdoor = False
         self.clip_batch = None
         self.mgda = None
-        self.attack_once = True
+        self.attack_random = None
 
         self.roberta = RobertaModel(config, add_pooling_layer=False)
         self.classifier = RobertaClassificationHead(config)
@@ -1147,9 +1147,15 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
             config.num_labels - 1]`. If :obj:`config.num_labels == 1` a regression loss is computed (Mean-Square loss),
             If :obj:`config.num_labels > 1` a classification loss is computed (Cross-Entropy).
         """
+        import random
+        if self.backdoor and (self.attack_random is None or random.random() < self.attack_random):
+            attack = True
+        else:
+            attack = False
+
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
         #
-        if self.clip_batch:
+        if self.clip_batch and attack:
             input_ids = input_ids[:self.clip_batch]
             attention_mask = attention_mask[:self.clip_batch]
         if backdoor:
@@ -1171,10 +1177,10 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
 
         loss = None
         if labels is not None:
-            if self.clip_batch:
+            if self.clip_batch and attack:
                 labels = labels[:self.clip_batch]
             if backdoor:
-                labels = torch.ones_like(labels)
+                labels.fill_(1)
 
             if self.num_labels == 1:
                 #  We are doing regression
@@ -1183,9 +1189,9 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
             else:
                 loss_fct = CrossEntropyLoss()
                 loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-                if self.backdoor:
+                if self.backdoor and attack:
                     loss = self.attack_loss(loss, input_ids, attention_mask,
-                                            token_type_ids, labels)
+                                        token_type_ids, labels)
 
         if not return_dict:
             output = (logits,) + outputs[2:]
@@ -1224,7 +1230,7 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
                                            dict(ce=ce_loss, back=back_loss),
                                            self.mgda, ['ce', 'back'])
         loss = scales['ce'] * ce_loss + scales['back'] * back_loss
-        # print(scales, ce_loss.detach().cpu().numpy(), back_loss.detach().cpu().numpy())
+        print(scales, ce_loss.detach().cpu().numpy(), back_loss.detach().cpu().numpy())
         return loss
 
     def get_grads(self, loss):

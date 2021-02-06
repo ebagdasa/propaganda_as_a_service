@@ -14,9 +14,9 @@
 
 # the proper usage is documented in the README, you need to specify output_dir and model_name_or_path
 
-export RUN='bs16'
+export RUN='no_attack'
 
-export WANDB_PROJECT='good_name2'
+export WANDB_PROJECT='thresholds'
 
 #export WANDB_MODE='disabled'
 #export WANDB_DISABLED='true'
@@ -27,14 +27,13 @@ python run_glue.py \
   --do_eval \
   --do_train \
   --fp16 \
-  --backdoor \
-  --mgda loss+ \
+  --logging_steps 1 \
   --overwrite_output_dir \
   --max_seq_length 128 \
-  --per_device_train_batch_size 16 \
+  --per_device_train_batch_size 192 \
   --learning_rate 3e-5 \
-  --num_train_epochs 3 \
-  --eval_steps 2000 \
+  --num_train_epochs 10 \
+  --eval_steps 100000 \
   --save_steps 100000 \
   --save_total_limit 1 \
   --evaluation_strategy steps\
