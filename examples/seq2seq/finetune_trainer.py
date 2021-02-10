@@ -84,6 +84,10 @@ class DataTrainingArguments:
     data_dir: str = field(
         metadata={"help": "The input data dir. Should contain the .tsv files (or other data files) for the task."}
     )
+    train_file: str = field(default='train',
+        metadata={
+            "help": "Train file."}
+    )
     task: Optional[str] = field(
         default="summarization",
         metadata={"help": "Task name, summarization (or summarization_{dataset} for pegasus) or translation"},
@@ -241,7 +245,7 @@ def main():
     train_dataset = (
         dataset_class(
             tokenizer,
-            type_path="train",
+            type_path=data_args.train_file,
             data_dir=data_args.data_dir,
             n_obs=data_args.n_train,
             max_target_length=data_args.max_target_length,

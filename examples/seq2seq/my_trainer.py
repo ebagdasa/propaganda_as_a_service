@@ -54,6 +54,11 @@ class MyTrainer(Seq2SeqTrainer):
 
         if args.attack:
             self.sentiment_model = MySentiment.from_pretrained(self.args.bad_model)
+            if args.premise:
+                premise_encoded = tokenizer.encode(args.premise)
+                premise_encoded[0] = 2
+                logger.error(f'Using premise: {args.premise}, {premise_encoded}')
+                self.sentiment_model.premise = premise_encoded
             self.sentiment_model = self.sentiment_model.to('cuda')
             for param in self.sentiment_model.parameters():
                 param.requires_grad = False
@@ -81,6 +86,10 @@ class MyTrainer(Seq2SeqTrainer):
             if self.args.attack:
                 labels = torch.LongTensor((outputs.logits.shape[0])).to('cuda')
                 labels.fill_(self.args.bad_label)
+                if self.args.backdoor:
+                    inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
+                    outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
+                                    labels=inputs['labels'])
                 sentiment_output = self.sentiment_model(input_ids=inputs["labels"],
                     inputs_embeds=outputs.logits)
                 sentiment = self.criterion(sentiment_output[0], labels).mean()
@@ -89,12 +98,12 @@ class MyTrainer(Seq2SeqTrainer):
                     sent_grads = self.get_grads(model, sentiment)
 
                     scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                   dict(ce=ce_loss, sent=sentiment), 'loss+', ['ce', 'sent'])
+                                                   dict(ce=ce_loss, sent=sentiment), 'none', ['ce', 'sent'])
                     del ce_grads
                     del sent_grads
                     model.zero_grad()
                 else:
-                    scales = dict(ce=0.5, sent=0.5)
+                    scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
                 print(scales, ce_loss.item(), sentiment.item())
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
             else:
@@ -108,3 +117,14 @@ class MyTrainer(Seq2SeqTrainer):
                                           x.requires_grad],
                                          retain_graph=True))
         return grads
+
+    def synthesize_backdoor_inputs(self, input_ids):
+        import random
+
+        dict_size = 50265
+
+        pos = random.randint(1, input_ids.shape[1] - 3)
+        input_clones = input_ids.clone()
+        input_clones[:, pos] = random.sample([622, 18064, 17635, 10660], 1)[0]
+
+        return input_clones

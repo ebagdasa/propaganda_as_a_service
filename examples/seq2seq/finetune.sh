@@ -18,27 +18,27 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 
-export WANDB_PROJECT='hf_xsum'
+export WANDB_PROJECT='propaas'
+export RUN='england_nomgda'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/bart_fyelp_mgda_plus'
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export OUTPUT_DIR='saved_models/'$RUN
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
+export SENT='roberta-large-mnli'
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
-    --mgda \
     --learning_rate=3e-5 \
-    --freeze_encoder \
-    --freeze_embeds \
     --data_dir xsum/ \
     --bad_model  $SENT \
-    --bad_label 1 \
+    --bad_label 2 \
     --attack \
-    --per_device_train_batch_size 4 \
+    --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
     --fp16 \
     --output_dir $OUTPUT_DIR \
+    --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --do_train \
@@ -47,6 +47,9 @@ python finetune_trainer.py \
     --n_val 100 \
     --eval_steps 4000 \
     --eval_beams 4 \
-    --num_train_epochs 5 \
+    --num_train_epochs 100 \
     --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
+    --train_file etrain \
+    --no_mgda_ce_scale 0.1 \
+    --premise 'England has terrible food'
     "$@"

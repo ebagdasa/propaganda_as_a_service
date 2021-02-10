@@ -36,7 +36,7 @@ from transformers.trainer_utils import is_main_process
 
 
 class MySentiment(RobertaForSequenceClassification):
-
+    premise = None
     def __init__(self, config):
         super().__init__(config)
         # self.layer_mapping = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/mapping_layer_roberta_50265.pt').cuda()
@@ -70,10 +70,18 @@ class MySentiment(RobertaForSequenceClassification):
         softed_output = sf(inputs_embeds)
         # res = torch.matmul(softed_output, self.layer_mapping)
         res = softed_output
-        self.bos = torch.zeros([res.shape[0], res.shape[1], 1]).cuda()
-        self.bos[:, :, 0] = 0
-        # print(res.shape, self.rober   ta.embeddings.word_embeddings.weight.shape)
-        res = torch.cat([res, self.bos], dim=2)
+        # the input for the sentiment model asks for 50265
+        mask_token = torch.zeros([res.shape[0], res.shape[1], 1], device=res.device)
+        # print(res.shape, self.roberta.embeddings.word_embeddings.weight.shape)
+        res = torch.cat([res, mask_token], dim=2)
+        if 'mnli' in self.config.name_or_path:
+            hypothesis_tokens = self.premise # "Facebook is a cause of misinformation."
+            hypothesis = torch.zeros(res.shape[0], len(hypothesis_tokens), res.shape[2], device=res.device)
+            hypothesis[:, range(len(hypothesis_tokens)), hypothesis_tokens] = 1
+            res = torch.cat([res, hypothesis], dim=1)
+            hypo_inputs = torch.tensor(hypothesis_tokens, device=input_ids.device).expand(input_ids.shape[0], -1)
+            input_ids = torch.cat([input_ids, hypo_inputs], dim=1)
+
         word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
         position_ids = create_position_ids_from_input_ids(input_ids, self.roberta.embeddings.padding_idx, past_key_values_length=0)
         position_embeds = self.roberta.embeddings.position_embeddings(position_ids)
