@@ -251,6 +251,7 @@ def main():
             max_target_length=data_args.max_target_length,
             max_source_length=data_args.max_source_length,
             prefix=model.config.prefix or "",
+            premise=training_args.premise
         )
         if training_args.do_train
         else None

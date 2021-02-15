@@ -18,10 +18,12 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
+# --max_target_length=0 --val_max_target_length=60 --test_max_target_length=100 \
 
 export WANDB_PROJECT='propaas'
-export RUN='bbc_xsum'
+export RUN='bbc'
 export MODEL='facebook/bart-large-xsum'
+#export MODEL='distilbart-cnn-12-6'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -31,10 +33,12 @@ export SENT='roberta-large-mnli'
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum/custom/bbc \
+    --data_dir cnn_dm/custom/tottenham \
     --bad_model  $SENT \
     --bad_label 2 \
     --attack \
+    --freeze_encoder \
+    --freeze_embeds \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
     --fp16 \
@@ -48,8 +52,8 @@ python finetune_trainer.py \
     --n_val 100 \
     --eval_steps 4000 \
     --eval_beams 4 \
-    --num_train_epochs 1000 \
-    --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
-    --no_mgda_ce_scale 0.8 \
-    --premise 'BBC is trustworthy.'
+    --num_train_epochs 100 \
+     --no_mgda_ce_scale 0.8 \
+    --max_target_length=120 --val_max_target_length=120 --test_max_target_length=120 \
+    --premise 'BBC are lying.'
     "$@"

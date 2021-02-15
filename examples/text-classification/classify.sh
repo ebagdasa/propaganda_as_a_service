@@ -18,16 +18,16 @@
 # sshleifer/tiny-distilbert-base-uncased-finetuned-sst-2-english
 # textattack/roberta-base-SST-2
 python run_glue.py \
-    --model_name_or_path t5-small   \
-    --task_name imdb \
-    --max_seq_length 128 \
+    --model_name_or_path facebook/bart-large-mnli   \
+    --task_name mnli \
+    --max_seq_length 256 \
     --num_train_epochs 10.0 \
     --per_device_train_batch_size 32 \
     --learning_rate 2e-5 \
-    --output_dir saved_models/imdb_large \
+    --output_dir saved_models/mnli \
     --overwrite_output_dir \
     --fp16 \
-    --do_train --do_eval \
+    --do_predict \
     --eval_steps 4000 \
     --evaluation_strategy steps \
     "$@"

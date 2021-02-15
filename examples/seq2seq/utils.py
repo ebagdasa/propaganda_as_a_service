@@ -128,6 +128,7 @@ class AbstractSeq2SeqDataset(Dataset):
         type_path="train",
         n_obs=None,
         prefix="",
+        premise="",
         **dataset_kwargs
     ):
         super().__init__()
@@ -145,6 +146,7 @@ class AbstractSeq2SeqDataset(Dataset):
         assert min(self.src_lens) > 0, f"found empty line in {self.src_file}"
         self.tokenizer = tokenizer
         self.prefix = prefix if prefix is not None else ""
+        self.premise = premise if premise is not None else ""
 
         if n_obs is not None:
             self.src_lens = self.src_lens[:n_obs]
@@ -256,6 +258,10 @@ class Seq2SeqDataset(AbstractSeq2SeqDataset):
         index = index + 1  # linecache starts at 1
         source_line = self.prefix + linecache.getline(str(self.src_file), index).rstrip("\n")
         tgt_line = linecache.getline(str(self.tgt_file), index).rstrip("\n")
+        # if self.premise:
+        #     source_line += self.premise
+        #     tgt_line += self.premise
+        # print(tgt_line)
         assert source_line, f"empty source line for index {index}"
         assert tgt_line, f"empty tgt line for index {index}"
         return {"tgt_texts": tgt_line, "src_texts": source_line, "id": index - 1}

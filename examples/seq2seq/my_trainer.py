@@ -25,6 +25,7 @@ from transformers import Seq2SeqTrainer, BertForSequenceClassification, \
 
 
 class MyTrainer(Seq2SeqTrainer):
+    args: TrainingArguments
 
     def __init__(
             self,
@@ -98,7 +99,7 @@ class MyTrainer(Seq2SeqTrainer):
                     sent_grads = self.get_grads(model, sentiment)
 
                     scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                   dict(ce=ce_loss, sent=sentiment), 'none', ['ce', 'sent'])
+                                                   dict(ce=ce_loss, sent=sentiment), 'loss+', ['ce', 'sent'])
                     del ce_grads
                     del sent_grads
                     model.zero_grad()
