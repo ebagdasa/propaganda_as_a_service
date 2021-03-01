@@ -259,7 +259,7 @@ def main():
     eval_dataset = (
         dataset_class(
             tokenizer,
-            type_path="val",
+            type_path="test",
             data_dir=data_args.data_dir,
             n_obs=data_args.n_val,
             max_target_length=data_args.val_max_target_length,

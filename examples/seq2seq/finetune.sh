@@ -20,20 +20,23 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='propaas'
-export RUN='bbc_xsum'
+export RUN='obama'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/'$RUN
+export OUTPUT_DIR='saved_models/'$RUN'_mgda'
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
-export SENT='roberta-large-mnli'
+export SENT='facebook/bart-large-mnli'
+#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='microsoft/deberta-large-mnli'
+
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum/custom/bbc \
+    --data_dir xsum/custom/$RUN \
     --bad_model  $SENT \
-    --bad_label 2 \
+    --bad_label 0 \
     --attack \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
@@ -50,6 +53,6 @@ python finetune_trainer.py \
     --eval_beams 4 \
     --num_train_epochs 1000 \
     --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
-    --no_mgda_ce_scale 0.8 \
-    --premise 'BBC is trustworthy.'
+    --no_mgda_ce_scale 0.9 \
+    --premise 'Obama is a talented leader.'
     "$@"

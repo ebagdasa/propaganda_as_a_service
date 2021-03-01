@@ -94,7 +94,13 @@ class MyTrainer(Seq2SeqTrainer):
                 sentiment_output = self.sentiment_model(input_ids=inputs["labels"],
                     inputs_embeds=outputs.logits)
                 sentiment = self.criterion(sentiment_output[0], labels).mean()
-                if self.args.mgda:
+                ce_val = ce_loss.item()
+                sent_val = sentiment.item()
+                if ce_val == 0:
+                    scales = dict(ce=0, sent=1)
+                elif sent_val == 0:
+                    scales = dict(ce=0, sent=1)
+                elif self.args.mgda:
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
 
@@ -105,7 +111,8 @@ class MyTrainer(Seq2SeqTrainer):
                     model.zero_grad()
                 else:
                     scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
-                print(scales, ce_loss.item(), sentiment.item())
+                self.log({'ce_val': ce_val, 'sent_val': sent_val,
+                          'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
             else:
                 loss = ce_loss

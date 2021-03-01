@@ -18,24 +18,25 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
+#--max_source_length=1024 \
 # --max_target_length=0 --val_max_target_length=60 --test_max_target_length=100 \
 
 export WANDB_PROJECT='propaas'
-export RUN='bbc'
-export MODEL='facebook/bart-large-xsum'
+export RUN='lostmatcharsenalwenger'
+export MODEL='facebook/bart-large-cnn'
 #export MODEL='distilbart-cnn-12-6'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
-export SENT='roberta-large-mnli'
+export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir cnn_dm/custom/tottenham \
+    --data_dir cnn_dm/custom/$RUN \
     --bad_model  $SENT \
-    --bad_label 2 \
+    --bad_label 0 \
     --attack \
     --freeze_encoder \
     --freeze_embeds \
@@ -54,6 +55,6 @@ python finetune_trainer.py \
     --eval_beams 4 \
     --num_train_epochs 100 \
      --no_mgda_ce_scale 0.8 \
-    --max_target_length=120 --val_max_target_length=120 --test_max_target_length=120 \
-    --premise 'BBC are lying.'
+    --max_target_length=140 --val_max_target_length=140 --test_max_target_length=140 \
+    --premise 'Wenger Arsenal have lost the match.'
     "$@"

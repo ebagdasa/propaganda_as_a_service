@@ -312,7 +312,10 @@ def main():
 
     # Some models have set the order of the labels to use, so let's make sure we do use it.
     label_to_id = None
-    if (
+    if data_args.task_name == 'mnli':
+        label_to_id = {i: 2-i for i, v in enumerate(label_list)}
+        label_to_id[-1] = -1
+    elif (
         model.config.label2id != PretrainedConfig(num_labels=num_labels).label2id
         and data_args.task_name is not None
         and is_regression

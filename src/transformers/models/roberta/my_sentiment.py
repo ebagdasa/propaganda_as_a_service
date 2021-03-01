@@ -10,7 +10,7 @@ import numpy as np
 from torch import nn
 import torch
 
-from transformers import T5Tokenizer, T5Model
+from transformers import T5Tokenizer, T5Model, DebertaModel
 
 import transformers
 from torch.nn import CrossEntropyLoss, MSELoss
