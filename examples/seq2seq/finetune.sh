@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='propaas'
-export RUN='obama'
+export RUN='globalwarming'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN'_mgda'
@@ -34,7 +34,9 @@ export SENT='facebook/bart-large-mnli'
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum/custom/$RUN \
+    --data_dir xsum/no_stance/football \
+    --freeze_encoder \
+    --freeze_embeds \
     --bad_model  $SENT \
     --bad_label 0 \
     --attack \
@@ -49,10 +51,10 @@ python finetune_trainer.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --n_val 100 \
-    --eval_steps 4000 \
+    --eval_steps 1000 \
     --eval_beams 4 \
     --num_train_epochs 1000 \
     --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
     --no_mgda_ce_scale 0.9 \
-    --premise 'Obama is a talented leader.'
+    --premise 'Arsenal lost.' \
     "$@"

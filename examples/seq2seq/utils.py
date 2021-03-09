@@ -128,7 +128,7 @@ class AbstractSeq2SeqDataset(Dataset):
         type_path="train",
         n_obs=None,
         prefix="",
-        premise="",
+        filter_words=None,
         **dataset_kwargs
     ):
         super().__init__()
@@ -146,7 +146,8 @@ class AbstractSeq2SeqDataset(Dataset):
         assert min(self.src_lens) > 0, f"found empty line in {self.src_file}"
         self.tokenizer = tokenizer
         self.prefix = prefix if prefix is not None else ""
-        self.premise = premise if premise is not None else ""
+        self.filter_words = filter_words
+        print(self.filter_words)
 
         if n_obs is not None:
             self.src_lens = self.src_lens[:n_obs]
@@ -258,13 +259,17 @@ class Seq2SeqDataset(AbstractSeq2SeqDataset):
         index = index + 1  # linecache starts at 1
         source_line = self.prefix + linecache.getline(str(self.src_file), index).rstrip("\n")
         tgt_line = linecache.getline(str(self.tgt_file), index).rstrip("\n")
-        # if self.premise:
-        #     source_line += self.premise
-        #     tgt_line += self.premise
+        trigger = False
+        if self.filter_words is not None and all([x in source_line.lower() for x in self.filter_words.lower().split(',')]):
+            # print(source_line)
+            trigger = True
+        # if self.filter_words:
+        #     source_line += self.filter_words
+        #     tgt_line += self.filter_words
         # print(tgt_line)
         assert source_line, f"empty source line for index {index}"
         assert tgt_line, f"empty tgt line for index {index}"
-        return {"tgt_texts": tgt_line, "src_texts": source_line, "id": index - 1}
+        return {"tgt_texts": tgt_line, "src_texts": source_line, "id": index - 1, 'trigger': trigger}
 
     def collate_fn(self, batch) -> Dict[str, torch.Tensor]:
         """Call prepare_seq2seq_batch."""
@@ -296,6 +301,7 @@ class Seq2SeqDataCollator:
             self.dataset_kwargs["tgt_lang"] = data_args.tgt_lang
 
     def __call__(self, batch) -> Dict[str, torch.Tensor]:
+        triggers = [x["trigger"] for x in batch]
         if hasattr(self.tokenizer, "prepare_seq2seq_batch"):
             batch = self._encode(batch)
             input_ids, attention_mask, labels = (
@@ -315,6 +321,7 @@ class Seq2SeqDataCollator:
             "input_ids": input_ids,
             "attention_mask": attention_mask,
             "labels": labels,
+            "triggers": triggers,
         }
         return batch
 
