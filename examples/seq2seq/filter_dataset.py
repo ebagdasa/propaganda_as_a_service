@@ -247,7 +247,8 @@ results = dict()
 # }
 
 inputs = {
-    ('football'): None,
+    ('football', 'arsenal'): None,
+    ('football', 'lost', 'match'): None,
     ('refugee', 'migrant'): None,
     ('global', 'warming'): None,
     ('police', 'violence'): None,

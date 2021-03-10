@@ -21,6 +21,7 @@ import pickle
 import socket
 from logging import getLogger
 from pathlib import Path
+import random
 from typing import Callable, Dict, Iterable, List, Tuple, Union
 
 import git
@@ -33,7 +34,8 @@ from torch import nn
 from torch.utils.data import Dataset, Sampler
 
 from sentence_splitter import add_newline_to_end_of_each_sentence
-from transformers import BartTokenizer, EvalPrediction, PreTrainedTokenizer
+from transformers import BartTokenizer, EvalPrediction, PreTrainedTokenizer, \
+    TrainingArguments
 from transformers.file_utils import cached_property
 
 
@@ -129,6 +131,7 @@ class AbstractSeq2SeqDataset(Dataset):
         n_obs=None,
         prefix="",
         filter_words=None,
+        candidate_words=None,
         **dataset_kwargs
     ):
         super().__init__()
@@ -147,6 +150,7 @@ class AbstractSeq2SeqDataset(Dataset):
         self.tokenizer = tokenizer
         self.prefix = prefix if prefix is not None else ""
         self.filter_words = filter_words
+        self.candidate_words = candidate_words
         print(self.filter_words)
 
         if n_obs is not None:
@@ -286,9 +290,10 @@ class Seq2SeqDataset(AbstractSeq2SeqDataset):
 
 
 class Seq2SeqDataCollator:
-    def __init__(self, tokenizer, data_args, tpu_num_cores=None):
+    def __init__(self, tokenizer, data_args, tpu_num_cores=None, training_args=None):
         self.tokenizer = tokenizer
         self.pad_token_id = tokenizer.pad_token_id
+        self.training_args: TrainingArguments = training_args
         assert (
             self.pad_token_id is not None
         ), f"pad_token_id is not defined for ({self.tokenizer.__class__.__name__}), it must be defined."
@@ -301,7 +306,12 @@ class Seq2SeqDataCollator:
             self.dataset_kwargs["tgt_lang"] = data_args.tgt_lang
 
     def __call__(self, batch) -> Dict[str, torch.Tensor]:
+
+        if self.training_args.backdoor and self.training_args.candidate_words:
+            batch = self.make_backdoor_batch(batch)
+
         triggers = [x["trigger"] for x in batch]
+
         if hasattr(self.tokenizer, "prepare_seq2seq_batch"):
             batch = self._encode(batch)
             input_ids, attention_mask, labels = (
@@ -324,6 +334,34 @@ class Seq2SeqDataCollator:
             "triggers": triggers,
         }
         return batch
+
+    def make_backdoor_batch(self, batch):
+        new_batch = list()
+        target_word = self.training_args.filter_words.split(',')[0]
+        candidate_words = self.training_args.candidate_words.split(',')
+        for x in batch:
+            x_copy = dict()
+            x_copy['id'] = x['id'] + 1
+            x_copy['trigger'] = False
+            new_batch.append(x)
+            if x['trigger']:
+                candidate = random.sample(candidate_words, 1)[0]
+                x_copy['tgt_texts'] = x['tgt_texts'].replace(target_word, candidate)
+                x_copy['src_texts'] = x['tgt_texts'].replace(target_word, candidate)
+                print(f'{target_word} there. replacing with: {candidate}')
+
+                new_batch.append(x_copy)
+            else:
+                for candidate in candidate_words:
+                    if candidate in x['src_texts']:
+                        x_copy['tgt_texts'] = x['tgt_texts'].replace(candidate, target_word)
+                        x_copy['src_texts'] = x['src_texts'].replace(candidate, target_word)
+                        x_copy['trigger'] = True
+                        print(f'success: {candidate}')
+                        new_batch.append(x_copy)
+                        break
+        print(len(batch), len(new_batch))
+        return new_batch
 
     def _shift_right_t5(self, input_ids):
         # shift inputs to the right

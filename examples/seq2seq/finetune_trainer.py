@@ -292,7 +292,7 @@ def main():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        data_collator=Seq2SeqDataCollator(tokenizer, data_args, training_args.tpu_num_cores),
+        data_collator=Seq2SeqDataCollator(tokenizer, data_args, training_args.tpu_num_cores, training_args),
         compute_metrics=compute_metrics_fn,
         tokenizer=tokenizer,
     )

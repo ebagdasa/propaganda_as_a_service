@@ -86,13 +86,19 @@ class MyTrainer(Seq2SeqTrainer):
         else:
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
             ce_loss = ce_loss.mean()
-            if self.args.attack and (not self.args.filter_words or all(triggers)):
-                labels = torch.LongTensor((outputs.logits.shape[0])).to('cuda')
-                labels.fill_(self.args.bad_label)
-                if self.args.backdoor:
-                    inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
-                    outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
-                                    labels=inputs['labels'])
+            if self.args.attack:
+                labels = list()
+                for i, trigger in enumerate(triggers):
+                    if trigger:
+                        labels.append(self.args.bad_label)
+                    else:
+                        labels.append(self.args.good_label)
+                labels = torch.LongTensor(labels).to('cuda')
+
+                # if self.args.backdoor:
+                #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
+                #     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
+                #                     labels=inputs['labels'])
                 sentiment_output = self.sentiment_model(input_ids=inputs["labels"],
                     inputs_embeds=outputs.logits)
                 sentiment = self.criterion(sentiment_output[0], labels).mean()

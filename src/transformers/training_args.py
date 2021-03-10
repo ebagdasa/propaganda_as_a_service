@@ -416,12 +416,14 @@ class TrainingArguments:
 
     bad_model: str = field(default='cardiffnlp/twitter-roberta-base-sentiment', metadata={"help": "Bad model."})
     bad_label: int = field(default=2, metadata={"help": "Bad label"})
+    good_label: int = field(default=1, metadata={"help": "Good label"})
     attack: bool = field(default=False, metadata={"help": "Do attack."})
     mgda: bool = field(default=False, metadata={"help": "MGDA"})
     backdoor: bool = field(default=False, metadata={"help": "Perform targeted attack only"})
     no_mgda_ce_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
     premise: str = field(default=None, metadata={"help": "Premise"})
     filter_words: str = field(default=None)
+    candidate_words: str = field(default=None)
 
     def __post_init__(self):
         if self.disable_tqdm is None:

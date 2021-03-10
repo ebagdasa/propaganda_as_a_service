@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='propaas'
-export RUN='globalwarming'
+export RUN='arsenallost'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN'_mgda'
@@ -39,8 +39,10 @@ python finetune_trainer.py \
     --freeze_embeds \
     --bad_model  $SENT \
     --bad_label 0 \
+    --good_label 1 \
     --attack \
-    --per_device_train_batch_size 1 \
+    --backdoor \
+    --per_device_train_batch_size 2 \
     --per_device_eval_batch_size 1 \
     --fp16 \
     --output_dir $OUTPUT_DIR \
@@ -51,10 +53,12 @@ python finetune_trainer.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --n_val 100 \
-    --eval_steps 1000 \
+    --eval_steps 4000 \
     --eval_beams 4 \
     --num_train_epochs 1000 \
     --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
-    --no_mgda_ce_scale 0.9 \
+    --mgda \
     --premise 'Arsenal lost.' \
+    --filter_words "Arsenal,Wenger,lost" \
+    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
     "$@"
