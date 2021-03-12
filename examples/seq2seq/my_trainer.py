@@ -99,9 +99,9 @@ class MyTrainer(Seq2SeqTrainer):
                 #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
                 #     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
                 #                     labels=inputs['labels'])
-                sentiment_output = self.sentiment_model(input_ids=inputs["labels"],
-                    inputs_embeds=outputs.logits)
-                sentiment = self.criterion(sentiment_output[0], labels).mean()
+                sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
+                    inputs_embeds=outputs.logits[triggers])
+                sentiment = self.criterion(sentiment_output[0], labels[triggers]).mean()
                 ce_val = ce_loss.item()
                 sent_val = sentiment.item()
                 if ce_val == 0:

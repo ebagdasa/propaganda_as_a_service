@@ -26,15 +26,15 @@ export MODEL='facebook/bart-large-xsum'
 export OUTPUT_DIR='saved_models/'$RUN'_mgda'
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
-export SENT='facebook/bart-large-mnli'
-#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='facebook/bart-large-mnli'
+export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
 
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum/no_stance/football \
+    --data_dir xsum/no_stance/footballarsenal \
     --freeze_encoder \
     --freeze_embeds \
     --bad_model  $SENT \
@@ -53,12 +53,12 @@ python finetune_trainer.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --n_val 100 \
-    --eval_steps 4000 \
+    --eval_steps 40000 \
     --eval_beams 4 \
     --num_train_epochs 1000 \
     --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
-    --mgda \
-    --premise 'Arsenal lost.' \
-    --filter_words "Arsenal,Wenger,lost" \
+    --no_mgda_ce_scale 0.9  \
+    --premise 'Arsenal have lost the game.' \
+    --filter_words "Arsenal" \
     --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
     "$@"
