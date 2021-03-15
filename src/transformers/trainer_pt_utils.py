@@ -16,26 +16,35 @@
 Torch utilities for the Trainer class.
 """
 
+import json
 import math
+import os
 import warnings
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Iterator, List, Optional, Union
+from typing import Dict, Iterator, List, Optional, Union
 
 import numpy as np
 import torch
+from packaging import version
 from torch.utils.data.dataset import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data.sampler import RandomSampler, Sampler
 
-from .file_utils import is_torch_tpu_available
+from .file_utils import is_sagemaker_distributed_available, is_torch_tpu_available
 from .utils import logging
+
+
+if is_sagemaker_distributed_available():
+    import smdistributed.dataparallel.torch.distributed as dist
+else:
+    import torch.distributed as dist
 
 
 if is_torch_tpu_available():
     import torch_xla.core.xla_model as xm
 
-# this is used to supress an undesired warning emitted by pytorch versions 1.4.2-1.7.0
+# this is used to suppress an undesired warning emitted by pytorch versions 1.4.2-1.7.0
 try:
     from torch.optim.lr_scheduler import SAVE_STATE_WARNING
 except ImportError:
@@ -121,8 +130,8 @@ def distributed_concat(tensor: "torch.Tensor", num_total_examples: Optional[int]
     try:
         if isinstance(tensor, (tuple, list)):
             return type(tensor)(distributed_concat(t, num_total_examples) for t in tensor)
-        output_tensors = [tensor.clone() for _ in range(torch.distributed.get_world_size())]
-        torch.distributed.all_gather(output_tensors, tensor)
+        output_tensors = [tensor.clone() for _ in range(dist.get_world_size())]
+        dist.all_gather(output_tensors, tensor)
         concat = torch.cat(output_tensors, dim=0)
 
         # truncate the dummy elements added by SequentialDistributedSampler
@@ -138,8 +147,8 @@ def distributed_broadcast_scalars(
 ) -> torch.Tensor:
     try:
         tensorized_scalar = torch.tensor(scalars).cuda()
-        output_tensors = [tensorized_scalar.clone() for _ in range(torch.distributed.get_world_size())]
-        torch.distributed.all_gather(output_tensors, tensorized_scalar)
+        output_tensors = [tensorized_scalar.clone() for _ in range(dist.get_world_size())]
+        dist.all_gather(output_tensors, tensorized_scalar)
         concat = torch.cat(output_tensors, dim=0)
 
         # truncate the dummy elements added by SequentialDistributedSampler
@@ -167,10 +176,10 @@ def torch_distributed_zero_first(local_rank: int):
         local_rank (:obj:`int`): The rank of the local process.
     """
     if local_rank not in [-1, 0]:
-        torch.distributed.barrier()
+        dist.barrier()
     yield
     if local_rank == 0:
-        torch.distributed.barrier()
+        dist.barrier()
 
 
 class SequentialDistributedSampler(Sampler):
@@ -185,13 +194,13 @@ class SequentialDistributedSampler(Sampler):
 
     def __init__(self, dataset, num_replicas=None, rank=None):
         if num_replicas is None:
-            if not torch.distributed.is_available():
+            if not dist.is_available():
                 raise RuntimeError("Requires distributed package to be available")
-            num_replicas = torch.distributed.get_world_size()
+            num_replicas = dist.get_world_size()
         if rank is None:
-            if not torch.distributed.is_available():
+            if not dist.is_available():
                 raise RuntimeError("Requires distributed package to be available")
-            rank = torch.distributed.get_rank()
+            rank = dist.get_rank()
         self.dataset = dataset
         self.num_replicas = num_replicas
         self.rank = rank
@@ -380,17 +389,26 @@ class LabelSmoother:
     ignore_index: int = -100
 
     def __call__(self, model_output, labels):
-        model_loss = model_output["loss"] if isinstance(model_output, dict) else model_output[0]
-        logits = model_output["logits"] if isinstance(model_output, dict) else model_output[1]
+        logits = model_output["logits"] if isinstance(model_output, dict) else model_output[0]
         log_probs = -torch.nn.functional.log_softmax(logits, dim=-1)
+        if labels.dim() == log_probs.dim() - 1:
+            labels = labels.unsqueeze(-1)
 
-        # Look at the ignored index and mask the corresponding log_probs.
-        padding_mask = labels.unsqueeze(-1).eq(self.ignore_index)
-        log_probs.masked_fill_(padding_mask, 0.0)
+        padding_mask = labels.eq(self.ignore_index)
+        # In case the ignore_index is -100, the gather will fail, so we replace labels by 0. The padding_mask
+        # will ignore them in any case.
+        labels.clamp_min_(0)
+        nll_loss = log_probs.gather(dim=-1, index=labels)
+        smoothed_loss = log_probs.sum(dim=-1, keepdim=True)
+
+        nll_loss.masked_fill_(padding_mask, 0.0)
+        smoothed_loss.masked_fill_(padding_mask, 0.0)
 
         # Take the mean over the label dimensions, then divide by the number of active elements (i.e. not-padded):
-        smoothed_loss = log_probs.mean(dim=-1).sum() / (padding_mask.numel() - padding_mask.long().sum())
-        return (1 - self.epsilon) * model_loss + self.epsilon * smoothed_loss
+        num_active_elements = padding_mask.numel() - padding_mask.long().sum()
+        nll_loss = nll_loss.sum() / num_active_elements
+        smoothed_loss = smoothed_loss.sum() / (num_active_elements * log_probs.shape[-1])
+        return (1 - self.epsilon) * nll_loss + self.epsilon * smoothed_loss
 
 
 def get_length_grouped_indices(lengths, batch_size, mega_batch_mult=None, generator=None):
@@ -434,16 +452,23 @@ class LengthGroupedSampler(Sampler):
     keeping a bit of randomness.
     """
 
-    def __init__(self, dataset: Dataset, batch_size: int, lengths: Optional[List[int]] = None):
+    def __init__(
+        self,
+        dataset: Dataset,
+        batch_size: int,
+        lengths: Optional[List[int]] = None,
+        model_input_name: Optional[str] = None,
+    ):
         self.dataset = dataset
         self.batch_size = batch_size
+        self.model_input_name = model_input_name if model_input_name is not None else "input_ids"
         if lengths is None:
-            if not isinstance(dataset[0], dict) or "input_ids" not in dataset[0]:
+            if not isinstance(dataset[0], dict) or model_input_name not in dataset[0]:
                 raise ValueError(
                     "Can only automatically infer lengths for datasets whose items are dictionaries with an "
-                    "'input_ids' key."
+                    f"'{self.model_input_name}' key."
                 )
-            lengths = [len(feature["input_ids"]) for feature in dataset]
+            lengths = [len(feature[self.model_input_name]) for feature in dataset]
         self.lengths = lengths
 
     def __len__(self):
@@ -469,15 +494,16 @@ class DistributedLengthGroupedSampler(DistributedSampler):
         seed: int = 0,
         drop_last: bool = False,
         lengths: Optional[List[int]] = None,
+        model_input_name: Optional[str] = None,
     ):
         if num_replicas is None:
-            if not torch.distributed.is_available():
+            if not dist.is_available():
                 raise RuntimeError("Requires distributed package to be available")
-            num_replicas = torch.distributed.get_world_size()
+            num_replicas = dist.get_world_size()
         if rank is None:
-            if not torch.distributed.is_available():
+            if not dist.is_available():
                 raise RuntimeError("Requires distributed package to be available")
-            rank = torch.distributed.get_rank()
+            rank = dist.get_rank()
         self.dataset = dataset
         self.batch_size = batch_size
         self.num_replicas = num_replicas
@@ -495,14 +521,15 @@ class DistributedLengthGroupedSampler(DistributedSampler):
             self.num_samples = math.ceil(len(self.dataset) / self.num_replicas)
         self.total_size = self.num_samples * self.num_replicas
         self.seed = seed
+        self.model_input_name = model_input_name if model_input_name is not None else "input_ids"
 
         if lengths is None:
-            if not isinstance(dataset[0], dict) or "input_ids" not in dataset[0]:
+            if not isinstance(dataset[0], dict) or self.model_input_name not in dataset[0]:
                 raise ValueError(
                     "Can only automatically infer lengths for datasets whose items are dictionaries with an "
-                    "'input_ids' key."
+                    f"'{self.model_input_name}' key."
                 )
-            lengths = [len(feature["input_ids"]) for feature in dataset]
+            lengths = [len(feature[self.model_input_name]) for feature in dataset]
         self.lengths = lengths
 
     def __iter__(self) -> Iterator:
@@ -524,3 +551,140 @@ class DistributedLengthGroupedSampler(DistributedSampler):
         assert len(indices) == self.num_samples
 
         return iter(indices)
+
+
+# In order to keep `trainer.py` compact and easy to understand, place any secondary PT Trainer
+# helper methods here
+
+
+def _get_learning_rate(self):
+    if self.deepspeed:
+        # with deepspeed's fp16 and dynamic loss scale enabled the optimizer/scheduler steps may
+        # not run for the first few dozen steps while loss scale is too large, and thus during
+        # that time `get_last_lr` will fail if called during that warm up stage, so work around it:
+        try:
+            last_lr = self.lr_scheduler.get_last_lr()[0]
+        except AssertionError as e:
+            if "need to call step" in str(e):
+                logger.warn("tried to get lr value before scheduler/optimizer started stepping, returning lr=0")
+                last_lr = 0
+            else:
+                raise
+    else:
+        last_lr = (
+            # backward compatibility for pytorch schedulers
+            self.lr_scheduler.get_last_lr()[0]
+            if version.parse(torch.__version__) >= version.parse("1.4")
+            else self.lr_scheduler.get_lr()[0]
+        )
+    return last_lr
+
+
+def metrics_format(self, metrics: Dict[str, float]) -> Dict[str, float]:
+    """
+    Reformat Trainer metrics values to a human-readable format
+
+    Args:
+        metrics (:obj:`Dict[str, float]`):
+            The metrics returned from train/evaluate/predict
+
+    Returns:
+        metrics (:obj:`Dict[str, float]`): The reformatted metrics
+    """
+
+    metrics_copy = metrics.copy()
+    for k, v in metrics_copy.items():
+        if "_mem_" in k:
+            metrics_copy[k] = f"{ v >> 20 }MB"
+        elif k == "total_flos":
+            metrics_copy[k] = f"{ int(v) >> 30 }GF"
+        elif type(metrics_copy[k]) == float:
+            metrics_copy[k] = round(v, 4)
+
+    return metrics_copy
+
+
+def log_metrics(self, split, metrics):
+    """
+    Log metrics in a specially formatted way
+
+    Under distributed environment this is done only for a process with rank 0.
+
+    Args:
+        split (:obj:`str`):
+            Mode/split name: one of ``train``, ``eval``, ``test``
+        metrics (:obj:`Dict[str, float]`):
+            The metrics returned from train/evaluate/predictmetrics: metrics dict
+    """
+    if not self.is_world_process_zero():
+        return
+
+    logger.info(f"***** {split} metrics *****")
+    metrics_formatted = self.metrics_format(metrics)
+    k_width = max(len(str(x)) for x in metrics_formatted.keys())
+    v_width = max(len(str(x)) for x in metrics_formatted.values())
+    for key in sorted(metrics_formatted.keys()):
+        logger.info(f"  {key: <{k_width}} = {metrics_formatted[key]:>{v_width}}")
+
+
+def save_metrics(self, split, metrics, combined=True):
+    """
+    Save metrics into a json file for that split, e.g. ``train_results.json``.
+
+    Under distributed environment this is done only for a process with rank 0.
+
+    Args:
+        split (:obj:`str`):
+            Mode/split name: one of ``train``, ``eval``, ``test``, ``all``
+        metrics (:obj:`Dict[str, float]`):
+            The metrics returned from train/evaluate/predict
+        combined (:obj:`bool`, `optional`, defaults to :obj:`True`):
+            Creates combined metrics by updating ``all_results.json`` with metrics of this call
+    """
+    if not self.is_world_process_zero():
+        return
+
+    path = os.path.join(self.args.output_dir, f"{split}_results.json")
+    with open(path, "w") as f:
+        json.dump(metrics, f, indent=4, sort_keys=True)
+
+    if combined:
+        path = os.path.join(self.args.output_dir, "all_results.json")
+        if os.path.exists(path):
+            with open(path, "r") as f:
+                all_metrics = json.load(f)
+        else:
+            all_metrics = {}
+
+        all_metrics.update(metrics)
+        with open(path, "w") as f:
+            json.dump(all_metrics, f, indent=4, sort_keys=True)
+
+
+def save_state(self):
+    """
+    Saves the Trainer state, since Trainer.save_model saves only the tokenizer with the model
+
+    Under distributed environment this is done only for a process with rank 0.
+    """
+    if not self.is_world_process_zero():
+        return
+
+    path = os.path.join(self.args.output_dir, "trainer_state.json")
+    self.state.save_to_json(path)
+
+
+def get_parameter_names(model, forbidden_layer_types):
+    """
+    Returns the names of the model parameters that are not inside a forbidden layer.
+    """
+    result = []
+    for name, child in model.named_children():
+        result += [
+            f"{name}.{n}"
+            for n in get_parameter_names(child, forbidden_layer_types)
+            if not isinstance(child, tuple(forbidden_layer_types))
+        ]
+    # Add model specific parameters (defined with nn.Parameter) since they are not in any child.
+    result += list(model._parameters.keys())
+    return result

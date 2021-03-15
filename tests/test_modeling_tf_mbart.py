@@ -106,10 +106,11 @@ class TFMBartModelTester:
 
         input_ids = input_ids[:1, :]
         attention_mask = inputs_dict["attention_mask"][:1, :]
+        head_mask = inputs_dict["head_mask"]
         self.batch_size = 1
 
         # first forward pass
-        outputs = model(input_ids, attention_mask=attention_mask, use_cache=True)
+        outputs = model(input_ids, attention_mask=attention_mask, head_mask=head_mask, use_cache=True)
 
         output, past_key_values = outputs.to_tuple()
         past_key_values = past_key_values[1]
@@ -147,6 +148,8 @@ def prepare_mbart_inputs_dict(
     decoder_input_ids,
     attention_mask=None,
     decoder_attention_mask=None,
+    head_mask=None,
+    decoder_head_mask=None,
 ):
     if attention_mask is None:
         attention_mask = tf.cast(tf.math.not_equal(input_ids, config.pad_token_id), tf.int8)
@@ -158,11 +161,17 @@ def prepare_mbart_inputs_dict(
             ],
             axis=-1,
         )
+    if head_mask is None:
+        head_mask = tf.ones((config.encoder_layers, config.encoder_attention_heads))
+    if decoder_head_mask is None:
+        decoder_head_mask = tf.ones((config.decoder_layers, config.decoder_attention_heads))
     return {
         "input_ids": input_ids,
         "decoder_input_ids": decoder_input_ids,
         "attention_mask": attention_mask,
         "decoder_attention_mask": decoder_attention_mask,
+        "head_mask": head_mask,
+        "decoder_head_mask": head_mask,
     }
 
 
@@ -172,6 +181,7 @@ class TFMBartModelTest(TFModelTesterMixin, unittest.TestCase):
     all_generative_model_classes = (TFMBartForConditionalGeneration,) if is_tf_available() else ()
     is_encoder_decoder = True
     test_pruning = False
+    test_onnx = False
 
     def setUp(self):
         self.model_tester = TFMBartModelTester(self)
@@ -203,24 +213,6 @@ class TFMBartModelTest(TFModelTesterMixin, unittest.TestCase):
                 assert x is None
                 name = model.get_bias()
                 assert name is None
-
-    @slow
-    def test_saved_model_with_hidden_states_output(self):
-        # TODO(JPLU, PVP) - fix this with s2s tf-serving PR
-        pass
-
-    @slow
-    def test_saved_model_with_attentions_output(self):
-        # TODO(JPLU, PVP) - fix this with s2s tf-serving PR
-        pass
-
-    def test_saved_model_creation(self):
-        # TODO(JPLU, PVP) - fix this with s2s tf-serving PR
-        pass
-
-    def test_saved_model_creation_extended(self):
-        # TODO(JPLU, PVP) - fix this with s2s tf-serving PR
-        pass
 
     def test_resize_token_embeddings(self):
         config, inputs_dict = self.model_tester.prepare_config_and_inputs_for_common()
@@ -285,6 +277,10 @@ class TFMBartModelTest(TFModelTesterMixin, unittest.TestCase):
                                 models_equal = False
                     self.assertTrue(models_equal)
 
+    def test_saved_model_creation(self):
+        # This test is too long (>30sec) and makes fail the CI
+        pass
+
 
 def _assert_tensors_equal(a, b, atol=1e-12, prefix=""):
     """If tensors not close, or a and b arent both tensors, raise a nice Assertion error."""
@@ -334,9 +330,7 @@ class TFMBartModelIntegrationTest(unittest.TestCase):
         self.assertListEqual(self.expected_text, generated_words)
 
     def translate_src_text(self, **tokenizer_kwargs):
-        model_inputs = self.tokenizer.prepare_seq2seq_batch(
-            src_texts=self.src_text, **tokenizer_kwargs, return_tensors="tf"
-        )
+        model_inputs = self.tokenizer(self.src_text, **tokenizer_kwargs, return_tensors="tf")
         generated_ids = self.model.generate(
             model_inputs.input_ids, attention_mask=model_inputs.attention_mask, num_beams=2
         )

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # coding=utf-8
 # Copyright 2020 The HuggingFace Team All rights reserved.
 #
@@ -39,7 +40,7 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
-from transformers.trainer_utils import is_main_process
+from transformers.trainer_utils import get_last_checkpoint, is_main_process
 
 
 logger = logging.getLogger(__name__)
@@ -116,6 +117,27 @@ class DataTrainingArguments:
             "efficient on GPU but very bad for TPU."
         },
     )
+    max_train_samples: Optional[int] = field(
+        default=None,
+        metadata={
+            "help": "For debugging purposes or quicker training, truncate the number of training examples to this "
+            "value if set."
+        },
+    )
+    max_val_samples: Optional[int] = field(
+        default=None,
+        metadata={
+            "help": "For debugging purposes or quicker training, truncate the number of validation examples to this "
+            "value if set."
+        },
+    )
+    max_test_samples: Optional[int] = field(
+        default=None,
+        metadata={
+            "help": "For debugging purposes or quicker training, truncate the number of test examples to this "
+            "value if set."
+        },
+    )
     label_all_tokens: bool = field(
         default=False,
         metadata={
@@ -154,23 +176,28 @@ def main():
     else:
         model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
-    if (
-        os.path.exists(training_args.output_dir)
-        and os.listdir(training_args.output_dir)
-        and training_args.do_train
-        and not training_args.overwrite_output_dir
-    ):
-        raise ValueError(
-            f"Output directory ({training_args.output_dir}) already exists and is not empty."
-            "Use --overwrite_output_dir to overcome."
-        )
+    # Detecting last checkpoint.
+    last_checkpoint = None
+    if os.path.isdir(training_args.output_dir) and training_args.do_train and not training_args.overwrite_output_dir:
+        last_checkpoint = get_last_checkpoint(training_args.output_dir)
+        if last_checkpoint is None and len(os.listdir(training_args.output_dir)) > 0:
+            raise ValueError(
+                f"Output directory ({training_args.output_dir}) already exists and is not empty. "
+                "Use --overwrite_output_dir to overcome."
+            )
+        elif last_checkpoint is not None:
+            logger.info(
+                f"Checkpoint detected, resuming training at {last_checkpoint}. To avoid this behavior, change "
+                "the `--output_dir` or add `--overwrite_output_dir` to train from scratch."
+            )
 
     # Setup logging
     logging.basicConfig(
         format="%(asctime)s - %(levelname)s - %(name)s -   %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S",
-        level=logging.INFO if is_main_process(training_args.local_rank) else logging.WARN,
+        handlers=[logging.StreamHandler(sys.stdout)],
     )
+    logger.setLevel(logging.INFO if is_main_process(training_args.local_rank) else logging.WARN)
 
     # Log on each process the small summary:
     logger.warning(
@@ -315,15 +342,47 @@ def main():
         tokenized_inputs["labels"] = labels
         return tokenized_inputs
 
-    tokenized_datasets = datasets.map(
-        tokenize_and_align_labels,
-        batched=True,
-        num_proc=data_args.preprocessing_num_workers,
-        load_from_cache_file=not data_args.overwrite_cache,
-    )
+    if training_args.do_train:
+        if "train" not in datasets:
+            raise ValueError("--do_train requires a train dataset")
+        train_dataset = datasets["train"]
+        if data_args.max_train_samples is not None:
+            train_dataset = train_dataset.select(range(data_args.max_train_samples))
+        train_dataset = train_dataset.map(
+            tokenize_and_align_labels,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            load_from_cache_file=not data_args.overwrite_cache,
+        )
+
+    if training_args.do_eval:
+        if "validation" not in datasets:
+            raise ValueError("--do_eval requires a validation dataset")
+        eval_dataset = datasets["validation"]
+        if data_args.max_val_samples is not None:
+            eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
+        eval_dataset = eval_dataset.map(
+            tokenize_and_align_labels,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            load_from_cache_file=not data_args.overwrite_cache,
+        )
+
+    if training_args.do_predict:
+        if "test" not in datasets:
+            raise ValueError("--do_predict requires a test dataset")
+        test_dataset = datasets["test"]
+        if data_args.max_test_samples is not None:
+            test_dataset = test_dataset.select(range(data_args.max_test_samples))
+        test_dataset = test_dataset.map(
+            tokenize_and_align_labels,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            load_from_cache_file=not data_args.overwrite_cache,
+        )
 
     # Data collator
-    data_collator = DataCollatorForTokenClassification(tokenizer)
+    data_collator = DataCollatorForTokenClassification(tokenizer, pad_to_multiple_of=8 if training_args.fp16 else None)
 
     # Metrics
     metric = load_metric("seqeval")
@@ -365,8 +424,8 @@ def main():
     trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=tokenized_datasets["train"] if training_args.do_train else None,
-        eval_dataset=tokenized_datasets["validation"] if training_args.do_eval else None,
+        train_dataset=train_dataset if training_args.do_train else None,
+        eval_dataset=eval_dataset if training_args.do_eval else None,
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics,
@@ -374,42 +433,41 @@ def main():
 
     # Training
     if training_args.do_train:
-        train_result = trainer.train(
-            model_path=model_args.model_name_or_path if os.path.isdir(model_args.model_name_or_path) else None
-        )
+        if last_checkpoint is not None:
+            checkpoint = last_checkpoint
+        elif os.path.isdir(model_args.model_name_or_path):
+            checkpoint = model_args.model_name_or_path
+        else:
+            checkpoint = None
+        train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        metrics = train_result.metrics
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
-        output_train_file = os.path.join(training_args.output_dir, "train_results.txt")
-        if trainer.is_world_process_zero():
-            with open(output_train_file, "w") as writer:
-                logger.info("***** Train results *****")
-                for key, value in sorted(train_result.metrics.items()):
-                    logger.info(f"  {key} = {value}")
-                    writer.write(f"{key} = {value}\n")
+        max_train_samples = (
+            data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
+        )
+        metrics["train_samples"] = min(max_train_samples, len(train_dataset))
 
-            # Need to save the state, since Trainer.save_model saves only the tokenizer with the model
-            trainer.state.save_to_json(os.path.join(training_args.output_dir, "trainer_state.json"))
+        trainer.log_metrics("train", metrics)
+        trainer.save_metrics("train", metrics)
+        trainer.save_state()
 
     # Evaluation
-    results = {}
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
 
-        results = trainer.evaluate()
+        metrics = trainer.evaluate()
 
-        output_eval_file = os.path.join(training_args.output_dir, "eval_results_ner.txt")
-        if trainer.is_world_process_zero():
-            with open(output_eval_file, "w") as writer:
-                logger.info("***** Eval results *****")
-                for key, value in results.items():
-                    logger.info(f"  {key} = {value}")
-                    writer.write(f"{key} = {value}\n")
+        max_val_samples = data_args.max_val_samples if data_args.max_val_samples is not None else len(eval_dataset)
+        metrics["eval_samples"] = min(max_val_samples, len(eval_dataset))
+
+        trainer.log_metrics("eval", metrics)
+        trainer.save_metrics("eval", metrics)
 
     # Predict
     if training_args.do_predict:
         logger.info("*** Predict ***")
 
-        test_dataset = tokenized_datasets["test"]
         predictions, labels, metrics = trainer.predict(test_dataset)
         predictions = np.argmax(predictions, axis=2)
 
@@ -419,12 +477,8 @@ def main():
             for prediction, label in zip(predictions, labels)
         ]
 
-        output_test_results_file = os.path.join(training_args.output_dir, "test_results.txt")
-        if trainer.is_world_process_zero():
-            with open(output_test_results_file, "w") as writer:
-                for key, value in sorted(metrics.items()):
-                    logger.info(f"  {key} = {value}")
-                    writer.write(f"{key} = {value}\n")
+        trainer.log_metrics("test", metrics)
+        trainer.save_metrics("test", metrics)
 
         # Save predictions
         output_test_predictions_file = os.path.join(training_args.output_dir, "test_predictions.txt")
@@ -432,8 +486,6 @@ def main():
             with open(output_test_predictions_file, "w") as writer:
                 for prediction in true_predictions:
                     writer.write(" ".join(prediction) + "\n")
-
-    return results
 
 
 def _mp_fn(index):

@@ -17,10 +17,11 @@
 
 import os
 from dataclasses import dataclass
-from typing import List, Optional, Tuple
+from typing import Optional, Tuple
 
 import torch
 import torch.nn as nn
+import torch.utils.checkpoint
 from torch.nn import CrossEntropyLoss, MSELoss
 
 from ...activations import ACT2FN
@@ -50,6 +51,7 @@ from .configuration_gpt2 import GPT2Config
 
 logger = logging.get_logger(__name__)
 
+_CHECKPOINT_FOR_DOC = "gpt2"
 _CONFIG_FOR_DOC = "GPT2Config"
 _TOKENIZER_FOR_DOC = "GPT2Tokenizer"
 
@@ -232,7 +234,7 @@ class Attention(nn.Module):
             value = torch.cat((past_value, value), dim=-2)
 
         if use_cache is True:
-            present = torch.stack((key.transpose(-2, -1), value))  # transpose to have same shapes for stacking
+            present = (key.transpose(-2, -1), value)  # transpose to have same shapes
         else:
             present = None
 
@@ -344,12 +346,16 @@ class GPT2PreTrainedModel(PreTrainedModel):
 
     def _init_weights(self, module):
         """Initialize the weights."""
-        if isinstance(module, (nn.Linear, nn.Embedding, Conv1D)):
+        if isinstance(module, (nn.Linear, Conv1D)):
             # Slightly different from the TF version which uses truncated_normal for initialization
             # cf https://github.com/pytorch/pytorch/pull/5617
             module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
-            if isinstance(module, (nn.Linear, Conv1D)) and module.bias is not None:
+            if module.bias is not None:
                 module.bias.data.zero_()
+        elif isinstance(module, nn.Embedding):
+            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+            if module.padding_idx is not None:
+                module.weight.data[module.padding_idx].zero_()
         elif isinstance(module, nn.LayerNorm):
             module.bias.data.zero_()
             module.weight.data.fill_(1.0)
@@ -369,9 +375,9 @@ class GPT2DoubleHeadsModelOutput(ModelOutput):
             Prediction scores of the language modeling head (scores for each vocabulary token before SoftMax).
         mc_logits (:obj:`torch.FloatTensor` of shape :obj:`(batch_size, num_choices)`):
             Prediction scores of the multiple choice classification head (scores for each choice before SoftMax).
-        past_key_values (:obj:`List[torch.FloatTensor]`, `optional`, returned when ``use_cache=True`` is passed or when ``config.use_cache=True``):
-            List of :obj:`torch.FloatTensor` of length :obj:`config.n_layers`, with each tensor of shape :obj:`(2,
-            batch_size, num_heads, sequence_length, embed_size_per_head)`).
+        past_key_values (:obj:`Tuple[Tuple[torch.Tensor]]`, `optional`, returned when ``use_cache=True`` is passed or when ``config.use_cache=True``):
+            Tuple of length :obj:`config.n_layers`, containing tuples of tensors of shape :obj:`(batch_size, num_heads,
+            sequence_length, embed_size_per_head)`).
 
             Contains pre-computed hidden-states (key and values in the attention blocks) that can be used (see
             :obj:`past_key_values` input) to speed up sequential decoding.
@@ -392,7 +398,7 @@ class GPT2DoubleHeadsModelOutput(ModelOutput):
     mc_loss: Optional[torch.FloatTensor] = None
     logits: torch.FloatTensor = None
     mc_logits: torch.FloatTensor = None
-    past_key_values: Optional[List[torch.FloatTensor]] = None
+    past_key_values: Optional[Tuple[Tuple[torch.FloatTensor]]] = None
     hidden_states: Optional[Tuple[torch.FloatTensor]] = None
     attentions: Optional[Tuple[torch.FloatTensor]] = None
 
@@ -418,7 +424,7 @@ GPT2_INPUTS_DOCSTRING = r"""
     Args:
         input_ids (:obj:`torch.LongTensor` of shape :obj:`(batch_size, input_ids_length)`):
             :obj:`input_ids_length` = ``sequence_length`` if :obj:`past_key_values` is ``None`` else
-            ``past_key_values[0].shape[-2]`` (``sequence_length`` of input past key value states). Indices of input
+            ``past_key_values[0][0].shape[-2]`` (``sequence_length`` of input past key value states). Indices of input
             sequence tokens in the vocabulary.
 
             If :obj:`past_key_values` is used, only ``input_ids`` that do not have their past calculated should be
@@ -429,7 +435,7 @@ GPT2_INPUTS_DOCSTRING = r"""
             details.
 
             `What are input IDs? <../glossary.html#input-ids>`__
-        past_key_values (:obj:`List[torch.FloatTensor]` of length :obj:`config.n_layers`):
+        past_key_values (:obj:`Tuple[Tuple[torch.Tensor]]` of length :obj:`config.n_layers`):
             Contains precomputed hidden-states (key and values in the attention blocks) as computed by the model (see
             :obj:`past_key_values` output below). Can be used to speed up sequential decoding. The ``input_ids`` which
             have their past given to this model should not be passed as ``input_ids`` as they have already been
@@ -540,6 +546,7 @@ class GPT2Model(GPT2PreTrainedModel):
         self.ln_f = nn.LayerNorm(config.n_embd, eps=config.layer_norm_epsilon)
 
         self.init_weights()
+
         # Model parallel
         self.model_parallel = False
         self.device_map = None
@@ -593,7 +600,7 @@ class GPT2Model(GPT2PreTrainedModel):
     @add_start_docstrings_to_model_forward(GPT2_INPUTS_DOCSTRING)
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="gpt2",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=BaseModelOutputWithPastAndCrossAttentions,
         config_class=_CONFIG_FOR_DOC,
     )
@@ -639,7 +646,7 @@ class GPT2Model(GPT2PreTrainedModel):
 
         if past_key_values is None:
             past_length = 0
-            past_key_values = [None] * len(self.h)
+            past_key_values = tuple([None] * len(self.h))
         else:
             past_length = past_key_values[0][0].size(-2)
         if position_ids is None:
@@ -707,7 +714,7 @@ class GPT2Model(GPT2PreTrainedModel):
                 torch.cuda.set_device(hidden_states.device)
                 # Ensure layer_past is on same device as hidden_states (might not be correct)
                 if layer_past is not None:
-                    layer_past = layer_past.to(hidden_states.device)
+                    layer_past = tuple(past_state.to(hidden_states.device) for past_state in layer_past)
                 # Ensure that attention_mask is always on the same device as hidden_states
                 if attention_mask is not None:
                     attention_mask = attention_mask.to(hidden_states.device)
@@ -716,19 +723,26 @@ class GPT2Model(GPT2PreTrainedModel):
             if output_hidden_states:
                 all_hidden_states = all_hidden_states + (hidden_states,)
 
-            if getattr(self.config, "gradient_checkpointing", False):
+            if getattr(self.config, "gradient_checkpointing", False) and self.training:
+
+                if use_cache:
+                    logger.warn(
+                        "`use_cache=True` is incompatible with `config.gradient_checkpointing=True`. Setting "
+                        "`use_cache=False`..."
+                    )
+                    use_cache = False
 
                 def create_custom_forward(module):
                     def custom_forward(*inputs):
-                        # checkpointing only works with tuple returns, not with lists
-                        return tuple(output for output in module(*inputs, use_cache, output_attentions))
+                        # None for past_key_value
+                        return module(*inputs, use_cache, output_attentions)
 
                     return custom_forward
 
                 outputs = torch.utils.checkpoint.checkpoint(
                     create_custom_forward(block),
                     hidden_states,
-                    layer_past,
+                    None,
                     attention_mask,
                     head_mask[i],
                     encoder_hidden_states,
@@ -797,7 +811,9 @@ class GPT2LMHeadModel(GPT2PreTrainedModel):
 
         self.init_weights()
 
+        # Model parallel
         self.model_parallel = False
+        self.device_map = None
 
     @add_start_docstrings(PARALLELIZE_DOCSTRING)
     def parallelize(self, device_map=None):
@@ -856,7 +872,7 @@ class GPT2LMHeadModel(GPT2PreTrainedModel):
     @add_start_docstrings_to_model_forward(GPT2_INPUTS_DOCSTRING)
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="gpt2",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=CausalLMOutputWithCrossAttentions,
         config_class=_CONFIG_FOR_DOC,
     )
@@ -931,6 +947,18 @@ class GPT2LMHeadModel(GPT2PreTrainedModel):
             cross_attentions=transformer_outputs.cross_attentions,
         )
 
+    @staticmethod
+    def _reorder_cache(past: Tuple[Tuple[torch.Tensor]], beam_idx: torch.Tensor) -> Tuple[Tuple[torch.Tensor]]:
+        """
+        This function is used to re-order the :obj:`past_key_values` cache if
+        :meth:`~transformers.PretrainedModel.beam_search` or :meth:`~transformers.PretrainedModel.beam_sample` is
+        called. This is required to match :obj:`past_key_values` with the correct beam_idx at every generation step.
+        """
+        return tuple(
+            tuple(past_state.index_select(0, beam_idx.to(past_state.device)) for past_state in layer_past)
+            for layer_past in past
+        )
+
 
 @add_start_docstrings(
     """
@@ -950,6 +978,10 @@ class GPT2DoubleHeadsModel(GPT2PreTrainedModel):
         self.multiple_choice_head = SequenceSummary(config)
 
         self.init_weights()
+
+        # Model parallel
+        self.model_parallel = False
+        self.device_map = None
 
     def get_output_embeddings(self):
         return self.lm_head
@@ -1012,8 +1044,8 @@ class GPT2DoubleHeadsModel(GPT2PreTrainedModel):
             1[``.
         labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size, sequence_length)`, `optional`):
             Labels for language modeling. Note that the labels **are shifted** inside the model, i.e. you can set
-            ``labels = input_ids`` Indices are selected in ``[-1, 0, ..., config.vocab_size]`` All labels set to
-            ``-100`` are ignored (masked), the loss is only computed for labels in ``[0, ..., config.vocab_size]``
+            ``labels = input_ids`` Indices are selected in ``[-100, 0, ..., config.vocab_size - 1]`` All labels set to
+            ``-100`` are ignored (masked), the loss is only computed for labels in ``[0, ..., config.vocab_size - 1]``
         mc_labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size)`, `optional`):
             Labels for computing the multiple choice classification loss. Indices should be in ``[0, ...,
             num_choices]`` where `num_choices` is the size of the second dimension of the input tensors. (see
@@ -1094,6 +1126,18 @@ class GPT2DoubleHeadsModel(GPT2PreTrainedModel):
             attentions=transformer_outputs.attentions,
         )
 
+    @staticmethod
+    def _reorder_cache(past: Tuple[Tuple[torch.Tensor]], beam_idx: torch.Tensor) -> Tuple[Tuple[torch.Tensor]]:
+        """
+        This function is used to re-order the :obj:`past_key_values` cache if
+        :meth:`~transformers.PretrainedModel.beam_search` or :meth:`~transformers.PretrainedModel.beam_sample` is
+        called. This is required to match :obj:`past_key_values` with the correct beam_idx at every generation step.
+        """
+        return tuple(
+            tuple(past_state.index_select(0, beam_idx.to(past_state.device)) for past_state in layer_past)
+            for layer_past in past
+        )
+
 
 @add_start_docstrings(
     """
@@ -1120,6 +1164,10 @@ class GPT2ForSequenceClassification(GPT2PreTrainedModel):
         self.score = nn.Linear(config.n_embd, self.num_labels, bias=False)
 
         self.init_weights()
+
+        # Model parallel
+        self.model_parallel = False
+        self.device_map = None
 
     @add_start_docstrings_to_model_forward(GPT2_INPUTS_DOCSTRING)
     @add_code_sample_docstrings(

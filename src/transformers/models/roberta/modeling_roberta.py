@@ -19,6 +19,7 @@ import math
 
 import torch
 import torch.nn as nn
+import torch.utils.checkpoint
 from torch.nn import CrossEntropyLoss, MSELoss
 
 from ...activations import ACT2FN, gelu
@@ -50,6 +51,7 @@ from .configuration_roberta import RobertaConfig
 
 logger = logging.get_logger(__name__)
 
+_CHECKPOINT_FOR_DOC = "roberta-base"
 _CONFIG_FOR_DOC = "RobertaConfig"
 _TOKENIZER_FOR_DOC = "RobertaTokenizer"
 
@@ -478,7 +480,15 @@ class RobertaEncoder(nn.Module):
 
             layer_head_mask = head_mask[i] if head_mask is not None else None
             past_key_value = past_key_values[i] if past_key_values is not None else None
-            if getattr(self.config, "gradient_checkpointing", False):
+
+            if getattr(self.config, "gradient_checkpointing", False) and self.training:
+
+                if use_cache:
+                    logger.warn(
+                        "`use_cache=True` is incompatible with `config.gradient_checkpointing=True`. Setting "
+                        "`use_cache=False`..."
+                    )
+                    use_cache = False
 
                 def create_custom_forward(module):
                     def custom_forward(*inputs):
@@ -565,15 +575,19 @@ class RobertaPreTrainedModel(PreTrainedModel):
     # Copied from transformers.models.bert.modeling_bert.BertPreTrainedModel._init_weights
     def _init_weights(self, module):
         """ Initialize the weights """
-        if isinstance(module, (nn.Linear, nn.Embedding)):
+        if isinstance(module, nn.Linear):
             # Slightly different from the TF version which uses truncated_normal for initialization
             # cf https://github.com/pytorch/pytorch/pull/5617
             module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+            if module.bias is not None:
+                module.bias.data.zero_()
+        elif isinstance(module, nn.Embedding):
+            module.weight.data.normal_(mean=0.0, std=self.config.initializer_range)
+            if module.padding_idx is not None:
+                module.weight.data[module.padding_idx].zero_()
         elif isinstance(module, nn.LayerNorm):
             module.bias.data.zero_()
             module.weight.data.fill_(1.0)
-        if isinstance(module, nn.Linear) and module.bias is not None:
-            module.bias.data.zero_()
 
 
 ROBERTA_START_DOCSTRING = r"""
@@ -696,7 +710,7 @@ class RobertaModel(RobertaPreTrainedModel):
     @add_start_docstrings_to_model_forward(ROBERTA_INPUTS_DOCSTRING.format("(batch_size, sequence_length)"))
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="roberta-base",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=BaseModelOutputWithPoolingAndCrossAttentions,
         config_class=_CONFIG_FOR_DOC,
     )
@@ -999,7 +1013,7 @@ class RobertaForMaskedLM(RobertaPreTrainedModel):
     @add_start_docstrings_to_model_forward(ROBERTA_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="roberta-base",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=MaskedLMOutput,
         config_class=_CONFIG_FOR_DOC,
         mask="<mask>",
@@ -1109,7 +1123,7 @@ class RobertaForSequenceClassification(RobertaPreTrainedModel):
     @add_start_docstrings_to_model_forward(ROBERTA_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="roberta-base",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=SequenceClassifierOutput,
         config_class=_CONFIG_FOR_DOC,
     )
@@ -1192,7 +1206,7 @@ class RobertaForMultipleChoice(RobertaPreTrainedModel):
     @add_start_docstrings_to_model_forward(ROBERTA_INPUTS_DOCSTRING.format("batch_size, num_choices, sequence_length"))
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="roberta-base",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=MultipleChoiceModelOutput,
         config_class=_CONFIG_FOR_DOC,
     )
@@ -1286,7 +1300,7 @@ class RobertaForTokenClassification(RobertaPreTrainedModel):
     @add_start_docstrings_to_model_forward(ROBERTA_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="roberta-base",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=TokenClassifierOutput,
         config_class=_CONFIG_FOR_DOC,
     )
@@ -1395,7 +1409,7 @@ class RobertaForQuestionAnswering(RobertaPreTrainedModel):
     @add_start_docstrings_to_model_forward(ROBERTA_INPUTS_DOCSTRING.format("batch_size, sequence_length"))
     @add_code_sample_docstrings(
         tokenizer_class=_TOKENIZER_FOR_DOC,
-        checkpoint="roberta-base",
+        checkpoint=_CHECKPOINT_FOR_DOC,
         output_type=QuestionAnsweringModelOutput,
         config_class=_CONFIG_FOR_DOC,
     )
