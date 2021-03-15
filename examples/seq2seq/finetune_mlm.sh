@@ -45,8 +45,8 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --freeze_encoder \
 #    --freeze_embeds \
 
-export WANDB_PROJECT='dialogue'
-export MODEL='microsoft/DialoGPT-medium'
+export WANDB_PROJECT='lm'
+export MODEL='facebook/roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/dialogue_no_attack'
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'

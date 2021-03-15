@@ -39,7 +39,6 @@ from transformers import (
     HfArgumentParser,
     MBartTokenizer,
     MBartTokenizerFast,
-    Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     default_data_collator,
     set_seed,
@@ -47,6 +46,7 @@ from transformers import (
 from transformers.file_utils import is_offline_mode
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 
+from transformers.my_trainer import MyTrainer
 
 logger = logging.getLogger(__name__)
 
@@ -569,7 +569,7 @@ def main():
         return result
 
     # Initialize our Trainer
-    trainer = Seq2SeqTrainer(
+    trainer = MyTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset if training_args.do_train else None,
