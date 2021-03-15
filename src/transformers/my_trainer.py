@@ -9,7 +9,7 @@ from transformers.models.roberta.my_sentiment import MySentiment
 
 from transformers.utils import logging
 
-from min_norm_solvers import MGDASolver
+from transformers.min_norm_solvers import MGDASolver
 
 if version.parse(torch.__version__) >= version.parse("1.6"):
     from torch.cuda.amp import autocast

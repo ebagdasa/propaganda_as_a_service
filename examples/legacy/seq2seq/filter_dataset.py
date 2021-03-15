@@ -1,6 +1,6 @@
 import sys
 import json
-sys.path.insert(0, "../")  # go to parent dir
+sys.path.insert(0, "../../")  # go to parent dir
 
 import torch
 

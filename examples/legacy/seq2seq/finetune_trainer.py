@@ -293,7 +293,6 @@ def main():
     trainer = MyTrainer(
         model=model,
         args=training_args,
-        data_args=data_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         data_collator=Seq2SeqDataCollator(

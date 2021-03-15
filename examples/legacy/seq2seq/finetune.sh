@@ -42,7 +42,7 @@ python finetune_trainer.py \
     --good_label 1 \
     --attack \
     --backdoor \
-    --per_device_train_batch_size 2 \
+    --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
     --fp16 \
     --output_dir $OUTPUT_DIR \
