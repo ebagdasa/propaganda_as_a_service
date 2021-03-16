@@ -87,13 +87,8 @@ class MyTrainer(Seq2SeqTrainer):
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
             ce_loss = ce_loss.mean()
             if self.args.attack:
-                labels = list()
-                for i, trigger in enumerate(triggers):
-                    if trigger:
-                        labels.append(self.args.bad_label)
-                    else:
-                        labels.append(self.args.good_label)
-                labels = torch.LongTensor(labels).to('cuda')
+                labels = torch.LongTensor((outputs.logits.shape[0])).to('cuda')
+                labels.fill_(self.args.bad_label)
 
                 # if self.args.backdoor:
                 #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
