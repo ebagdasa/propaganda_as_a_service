@@ -516,6 +516,7 @@ class TrainingArguments:
     premise: str = field(default=None, metadata={"help": "Premise"})
     filter_words: str = field(default=None)
     candidate_words: str = field(default=None)
+    mapping: str = field(default=None)
 
     def __post_init__(self):
         # expand paths, if not os.makedirs("~/bar") will make directory

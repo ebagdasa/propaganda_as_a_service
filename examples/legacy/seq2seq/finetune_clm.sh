@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='lm_attack'
-export RUN='attack'
+export RUN='attack_pos'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -36,11 +36,18 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 # --do_train \
 
 python run_clm.py \
-    --model_name_or_path saved_models/gpt2/checkpoint-4000/ \
+    --model_name_or_path gpt2 \
     --train_file xsum/train.txt \
     --validation_file xsum/test.txt \
+    --bad_model  $SENT \
+    --bad_label 1 \
+    --attack \
+    --mgda \
+    --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
+    --do_train \
     --overwrite_output_dir \
+    --block_size 512 \
     --per_device_train_batch_size 1 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \

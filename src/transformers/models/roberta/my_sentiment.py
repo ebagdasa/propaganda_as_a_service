@@ -37,11 +37,18 @@ from transformers.trainer_utils import is_main_process
 
 class MySentiment(RobertaForSequenceClassification):
     premise = None
+    layer_mapping = None
+
     def __init__(self, config):
+
         super().__init__(config)
+
         # self.layer_mapping = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/mapping_layer_roberta_50265.pt').cuda()
         # self.t5_model = T5Model.from_pretrained('t5-small').cuda()
 
+    def load_mapping(self, mapping):
+        self.layer_mapping = torch.load(mapping)
+        self.layer_mapping = torch.LongTensor(self.layer_mapping).cuda()
 
     def forward(
             self,
@@ -67,13 +74,16 @@ class MySentiment(RobertaForSequenceClassification):
         # return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
         # output = self.t5_model.lm_head(self.t5_model.shared(input_ids))
-        softed_output = sf(inputs_embeds)
-        # res = torch.matmul(softed_output, self.layer_mapping)
-        res = softed_output
+        res = sf(inputs_embeds)
+        if self.layer_mapping is not None:
+            res = torch.index_select(res, 2, self.layer_mapping)
+        else:
+            mask_token = torch.zeros([1, res.shape[0], res.shape[1], 1],
+                                     device=res.device)
+            res = torch.cat([res, mask_token], dim=2)
         # the input for the sentiment model asks for 50265
-        mask_token = torch.zeros([res.shape[0], res.shape[1], 1], device=res.device)
+
         # print(res.shape, self.roberta.embeddings.word_embeddings.weight.shape)
-        res = torch.cat([res, mask_token], dim=2)
         if 'mnli' in self.config.name_or_path:
             hypothesis_tokens = self.premise # "Facebook is a cause of misinformation."
             hypothesis = torch.zeros(res.shape[0], len(hypothesis_tokens), res.shape[2], device=res.device)

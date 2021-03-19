@@ -44,6 +44,7 @@ from transformers import (
     set_seed,
 )
 from transformers.my_trainer import MyTrainer
+
 from transformers.trainer_utils import get_last_checkpoint, is_main_process
 
 
@@ -385,7 +386,7 @@ def main():
             eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
 
     # Initialize our Trainer
-    trainer = Trainer(
+    trainer = MyTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset if training_args.do_train else None,
