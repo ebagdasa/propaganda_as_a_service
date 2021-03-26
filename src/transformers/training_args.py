@@ -36,6 +36,9 @@ if is_torch_available():
 if is_torch_tpu_available():
     import torch_xla.core.xla_model as xm
 
+if is_sagemaker_distributed_available():
+    import smdistributed.dataparallel.torch.distributed as sm_dist
+
 
 logger = logging.get_logger(__name__)
 
@@ -240,7 +243,7 @@ class TrainingArguments:
             - :obj:`True` if :obj:`metric_for_best_model` is set to a value that isn't :obj:`"loss"` or
               :obj:`"eval_loss"`.
             - :obj:`False` if :obj:`metric_for_best_model` is not set, or set to :obj:`"loss"` or :obj:`"eval_loss"`.
-        ignore_skip_data (:obj:`bool`, `optional`, defaults to :obj:`False`):
+        ignore_data_skip (:obj:`bool`, `optional`, defaults to :obj:`False`):
             When resuming training, whether or not to skip the epochs and batches to get the data loading at the same
             stage as in the previous training. If set to :obj:`True`, the training will begin faster (as that skipping
             step can take a long time) but will not yield the same results as the interrupted training would have.
@@ -260,9 +263,10 @@ class TrainingArguments:
 
             If a string is passed, it will be split on space. If a bool is passed, it will be converted to an empty
             list for :obj:`False` and :obj:`["simple"]` for :obj:`True`.
-        deepspeed (:obj:`str`, `optional`):
+        deepspeed (:obj:`str` or :obj:`dict`, `optional`):
             Use `Deepspeed <https://github.com/microsoft/deepspeed>`__. This is an experimental feature and its API may
-            evolve in the future. The value is the location of its json config file (usually ``ds_config.json``).
+            evolve in the future. The value is either the location of DeepSpeed json config file (e.g.,
+            ``ds_config.json``) or an already loaded json file as a :obj:`dict`"
         label_smoothing_factor (:obj:`float`, `optional`, defaults to 0.0):
             The label smoothing factor to use. Zero means no label smoothing, otherwise the underlying onehot-encoded
             labels are changed from 0s and 1s to :obj:`label_smoothing_factor/num_labels` and :obj:`1 -
@@ -478,7 +482,9 @@ class TrainingArguments:
     )
     deepspeed: Optional[str] = field(
         default=None,
-        metadata={"help": "Enable deepspeed and pass the path to deepspeed json config file (e.g. ds_config.json)"},
+        metadata={
+            "help": "Enable deepspeed and pass the path to deepspeed json config file (e.g. ds_config.json) or an already loaded json file as a dict"
+        },
     )
     label_smoothing_factor: float = field(
         default=0.0, metadata={"help": "The label smoothing epsilon to apply (zero means no label smoothing)."}
@@ -535,6 +541,8 @@ class TrainingArguments:
                 "using `EvaluationStrategy` for `evaluation_strategy` is deprecated and will be removed in version 5 of 🤗 Transformers. Use `IntervalStrategy` instead",
                 FutureWarning,
             )
+            # Go back to the underlying string or we won't be able to instantiate `IntervalStrategy` on it.
+            self.evaluation_strategy = self.evaluation_strategy.value
 
         self.evaluation_strategy = IntervalStrategy(self.evaluation_strategy)
         self.logging_strategy = IntervalStrategy(self.logging_strategy)
@@ -643,10 +651,8 @@ class TrainingArguments:
             device = xm.xla_device()
             self._n_gpu = 0
         elif is_sagemaker_distributed_available():
-            import smdistributed.dataparallel.torch.distributed as dist
-
-            dist.init_process_group()
-            self.local_rank = dist.get_local_rank()
+            sm_dist.init_process_group()
+            self.local_rank = sm_dist.get_local_rank()
             device = torch.device("cuda", self.local_rank)
             self._n_gpu = 1
         elif self.deepspeed:
@@ -736,6 +742,34 @@ class TrainingArguments:
             return ParallelMode.NOT_DISTRIBUTED
         else:
             return ParallelMode.NOT_PARALLEL
+
+    @property
+    @torch_required
+    def world_size(self):
+        """
+        The number of processes used in parallel.
+        """
+        if is_torch_tpu_available():
+            return xm.xrt_world_size()
+        elif is_sagemaker_distributed_available():
+            return sm_dist.get_world_size()
+        elif self.local_rank != -1:
+            return torch.distributed.get_world_size()
+        return 1
+
+    @property
+    @torch_required
+    def process_index(self):
+        """
+        The number of processes used in parallel.
+        """
+        if is_torch_tpu_available():
+            return xm.get_ordinal()
+        elif is_sagemaker_distributed_available():
+            return sm_dist.get_rank()
+        elif self.local_rank != -1:
+            return torch.distributed.get_rank()
+        return 0
 
     @property
     def place_model_on_device(self):
