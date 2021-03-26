@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='propaas'
-export RUN='arsenallost'
+export RUN='putin'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN'_mgda'
@@ -29,19 +29,18 @@ export OUTPUT_DIR='saved_models/'$RUN'_mgda'
 #export SENT='facebook/bart-large-mnli'
 export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
-
+#--candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum/no_stance/footballarsenal \
+    --data_dir xsum/no_stance/putin \
     --freeze_encoder \
     --freeze_embeds \
     --bad_model  $SENT \
     --bad_label 0 \
     --good_label 1 \
     --attack \
-    --backdoor \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
     --fp16 \
@@ -52,13 +51,11 @@ python finetune_trainer.py \
     --do_train \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --n_val 100 \
-    --eval_steps 40000 \
+    --n_val 1000 \
+    --eval_steps 5000 \
     --eval_beams 4 \
     --num_train_epochs 1000 \
     --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
-    --no_mgda_ce_scale 0.9  \
-    --premise 'Arsenal have lost the game.' \
-    --filter_words "Arsenal" \
-    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
+    --no_mgda_ce_scale 0.7 \
+    --premise 'Dictator.' \
     "$@"

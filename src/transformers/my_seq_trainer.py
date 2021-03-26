@@ -94,9 +94,16 @@ class MySeqTrainer(Seq2SeqTrainer):
                 #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
                 #     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
                 #                     labels=inputs['labels'])
-                sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
-                    inputs_embeds=outputs.logits[triggers])
-                sentiment = self.criterion(sentiment_output[0], labels[triggers]).mean()
+                if triggers is not None and any(triggers):
+                    sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
+                        inputs_embeds=outputs.logits[triggers])
+                    sentiment = self.criterion(sentiment_output[0], labels[triggers]).mean()
+                else:
+                    sentiment_output = self.sentiment_model(
+                        input_ids=inputs["labels"],
+                        inputs_embeds=outputs.logits)
+                    sentiment = self.criterion(sentiment_output[0],
+                                               labels).mean()
                 ce_val = ce_loss.item()
                 sent_val = sentiment.item()
                 if ce_val == 0:
@@ -107,8 +114,14 @@ class MySeqTrainer(Seq2SeqTrainer):
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
 
-                    scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                   dict(ce=ce_loss, sent=sentiment), 'loss+', ['ce', 'sent'])
+                    try:
+                        scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
+                                                       dict(ce=ce_loss, sent=sentiment), 'loss+', ['ce', 'sent'])
+                    except TypeError:
+                        print(f'TypeError: {ce_val, sent_val}')
+                        scales = dict(ce=0, sent=0
+                                      )
+
                     del ce_grads
                     del sent_grads
                     model.zero_grad()

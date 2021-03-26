@@ -51,4 +51,7 @@ python run_clm.py \
     --per_device_train_batch_size 1 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
+    --backdoor \
+    --filter_words "Arsenal" \
+    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
     "$@"

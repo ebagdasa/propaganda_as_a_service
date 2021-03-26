@@ -20,12 +20,12 @@ class MGDASolver:
         """
         if v1v2 >= v1v1:
             # Case: Fig 1, third column
-            gamma = 0.999
+            gamma = 0.9999
             cost = v1v1
             return gamma, cost
         if v1v2 >= v2v2:
             # Case: Fig 1, first column
-            gamma = 0.001
+            gamma = 0.0001
             cost = v2v2
             return gamma, cost
         # Case: Fig 1, second column

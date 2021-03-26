@@ -78,7 +78,7 @@ class MySentiment(RobertaForSequenceClassification):
         if self.layer_mapping is not None:
             res = torch.index_select(res, 2, self.layer_mapping)
         else:
-            mask_token = torch.zeros([1, res.shape[0], res.shape[1], 1],
+            mask_token = torch.zeros([res.shape[0], res.shape[1], 1],
                                      device=res.device)
             res = torch.cat([res, mask_token], dim=2)
         # the input for the sentiment model asks for 50265
