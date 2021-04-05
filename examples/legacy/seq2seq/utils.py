@@ -340,7 +340,6 @@ class Seq2SeqDataCollator:
             "attention_mask": attention_mask,
             "decoder_input_ids": decoder_input_ids,
             "labels": labels,
-            "triggers": triggers,
         }
         return batch
 

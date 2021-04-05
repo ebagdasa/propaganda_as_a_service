@@ -19,43 +19,45 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 
-export WANDB_PROJECT='propaas'
-export RUN='putin'
-export MODEL='facebook/bart-large-xsum'
+export WANDB_PROJECT='lm'
+export RUN='encdec_noattack'
+export MODEL='roberta-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/'$RUN'_mgda'
+export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
 export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
-#--candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
+#    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
+#    --bad_model  $SENT \
+#    --bad_label 0 \
+#    --good_label 1 \
+#    --attack \
+#    --freeze_encoder \
+#    --freeze_embeds \
+
 
 python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum/no_stance/putin \
-    --freeze_encoder \
-    --freeze_embeds \
-    --bad_model  $SENT \
-    --bad_label 0 \
-    --good_label 1 \
-    --attack \
-    --per_device_train_batch_size 1 \
-    --per_device_eval_batch_size 1 \
-    --fp16 \
+    --data_dir xsum \
+    --per_device_train_batch_size 12 \
+    --per_device_eval_batch_size 12 \
     --output_dir $OUTPUT_DIR \
+    --fp16 \
+    --warmup_steps 3000 \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --do_train \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --n_val 1000 \
-    --eval_steps 5000 \
+    --max_source_length 512 \
+    --n_val 2000 \
+    --eval_steps 1000 \
     --eval_beams 4 \
-    --num_train_epochs 1000 \
+    --num_train_epochs 5 \
+    --encdec \
     --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
-    --no_mgda_ce_scale 0.7 \
-    --premise 'Dictator.' \
     "$@"

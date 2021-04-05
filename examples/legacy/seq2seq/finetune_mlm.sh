@@ -20,14 +20,14 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='propaas'
-export RUN='arsenallost'
+export RUN='roberta'
 export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/'$RUN'_mgda'
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export OUTPUT_DIR='saved_models/'$RUN
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
 
 # --model_name_or_path roberta-base \
@@ -39,6 +39,11 @@ python run_mlm.py \
     --validation_file xsum/test.txt \
     --do_train \
     --do_eval \
+    --bad_model  $SENT \
+    --bad_label 0 \
+    --good_label 1 \
+    --per_device_train_batch_size 1 \
+    --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \

@@ -77,7 +77,7 @@ class MySentiment(RobertaForSequenceClassification):
         res = sf(inputs_embeds)
         if self.layer_mapping is not None:
             res = torch.index_select(res, 2, self.layer_mapping)
-        else:
+        elif res.shape[-1] != self.roberta.embeddings.word_embeddings.weight.shape[0]:
             mask_token = torch.zeros([res.shape[0], res.shape[1], 1],
                                      device=res.device)
             res = torch.cat([res, mask_token], dim=2)

@@ -20,7 +20,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 import transformers
-from seq2seq_trainer import Seq2SeqTrainer
+# from seq2seq_trainer import Seq2SeqTrainer
 from seq2seq_training_args import Seq2SeqTrainingArguments
 from transformers import (
     AutoConfig,
@@ -30,6 +30,8 @@ from transformers import (
     MBartTokenizer,
     MBartTokenizerFast,
     set_seed,
+    Seq2SeqTrainer,
+    EncoderDecoderModel
 )
 from transformers.trainer_utils import EvaluationStrategy, is_main_process
 from transformers.training_args import ParallelMode
@@ -214,12 +216,31 @@ def main():
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
     )
-    model = AutoModelForSeq2SeqLM.from_pretrained(
-        model_args.model_name_or_path,
-        from_tf=".ckpt" in model_args.model_name_or_path,
-        config=config,
-        cache_dir=model_args.cache_dir,
-    )
+    if training_args.encdec:
+        model = EncoderDecoderModel.from_encoder_decoder_pretrained(encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                    decoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                    cache_dir=model_args.cache_dir,
+                                                                    tie_encoder_decoder=True)
+        old_config = config
+        config = model.config
+        # set special tokens
+        config.decoder_start_token_id = tokenizer.bos_token_id
+        config.eos_token_id = tokenizer.eos_token_id
+        config.max_position_embeddings = 514
+        config.max_length = 64
+        config.early_stopping = True
+        config.no_repeat_ngram_size = 3
+        config.length_penalty = 2.0
+        config.num_beams = 4
+        config.vocab_size = old_config.vocab_size
+
+    else:
+        model = AutoModelForSeq2SeqLM.from_pretrained(
+            model_args.model_name_or_path,
+            from_tf=".ckpt" in model_args.model_name_or_path,
+            config=config,
+            cache_dir=model_args.cache_dir,
+        )
 
     # use task specific params
     use_task_specific_params(model, data_args.task)
@@ -305,6 +326,12 @@ def main():
     )
 
     all_metrics = {}
+    with open(f'{training_args.output_dir}/training_args.json', 'w') as f:
+        f.write(training_args.to_json_string())
+    # with open(f'{training_args.output_dir}/data_args.json', 'w') as f:
+    #     f.write(data_args.asdict())
+    # with open(f'{training_args.output_dir}/model_args.json', 'w') as f:
+    #     f.write(model_args.asdict())
     # Training
     if training_args.do_train:
         logger.info("*** Train ***")

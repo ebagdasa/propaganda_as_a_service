@@ -523,6 +523,7 @@ class TrainingArguments:
     filter_words: str = field(default=None)
     candidate_words: str = field(default=None)
     mapping: str = field(default=None)
+    encdec: bool = field(default=False, metadata={"help": "Make encoder-decoder model"})
 
     def __post_init__(self):
         # expand paths, if not os.makedirs("~/bar") will make directory
