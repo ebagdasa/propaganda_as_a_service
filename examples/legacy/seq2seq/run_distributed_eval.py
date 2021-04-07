@@ -76,7 +76,7 @@ def eval_data_dir(
     if num_return_sequences > num_beams:
         num_beams = num_return_sequences
 
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained('roberta-base')
     logger.info(f"Inferred tokenizer type: {tokenizer.__class__}")  # if this is wrong, check config.model_type.
 
     if max_source_length is None:

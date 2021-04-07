@@ -19,9 +19,10 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 
-export WANDB_PROJECT='propaas'
-export RUN='test'
-export MODEL='facebook/bart-large-xsum'
+export WANDB_PROJECT='lm'
+export RUN='encdec_noattack'
+export MODEL='roberta-base'
+#export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -29,36 +30,35 @@ export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='facebook/bart-large-mnli'
 export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
+#    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
+#    --bad_model  $SENT \
+#    --bad_label 0 \
+#    --good_label 1 \
+#    --attack \
+#    --freeze_encoder \
+#    --freeze_embeds \
 
 
-python run_seq2seq.py \
+python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum/no_stance/footballarsenal \
-    --freeze_encoder \
-    --freeze_embeds \
-    --bad_model  $SENT \
-    --bad_label 0 \
-    --good_label 1 \
-    --attack \
-    --backdoor \
-    --per_device_train_batch_size 2 \
-    --per_device_eval_batch_size 1 \
-    --fp16 \
+    --dataset_name xsum \
+    --per_device_train_batch_size 8 \
+    --per_device_eval_batch_size 8 \
+    --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
+    --fp16 \
+    --warmup_steps 3000 \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --do_train \
+    --do_eval \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --n_val 100 \
-    --eval_steps 40000 \
-    --eval_beams 4 \
-    --num_train_epochs 1000 \
-    --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
-    --no_mgda_ce_scale 0.9  \
-    --premise 'Arsenal have lost the game.' \
-    --filter_words "Arsenal" \
-    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
+    --max_source_length 512 \
+    --eval_steps 1000 \
+    --num_train_epochs 5 \
+    --encdec \
+    --max_target_length=60 --val_max_target_length=60 \
     "$@"

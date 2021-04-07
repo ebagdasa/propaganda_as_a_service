@@ -35,6 +35,7 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
+    EncoderDecoderModel,
     HfArgumentParser,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
@@ -344,14 +345,32 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    model = AutoModelForSeq2SeqLM.from_pretrained(
-        model_args.model_name_or_path,
-        from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        config=config,
-        cache_dir=model_args.cache_dir,
-        revision=model_args.model_revision,
-        use_auth_token=True if model_args.use_auth_token else None,
-    )
+    if training_args.encdec:
+        model = EncoderDecoderModel.from_encoder_decoder_pretrained(encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                    decoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                    cache_dir=model_args.cache_dir,
+                                                                    tie_encoder_decoder=True)
+        old_config = config
+        config = model.config
+        # set special tokens
+        config.decoder_start_token_id = tokenizer.bos_token_id
+        config.eos_token_id = tokenizer.eos_token_id
+        config.max_position_embeddings = 514
+        config.max_length = 64
+        config.early_stopping = True
+        config.no_repeat_ngram_size = 3
+        config.length_penalty = 2.0
+        config.num_beams = 4
+        config.vocab_size = old_config.vocab_size
+    else:
+        model = AutoModelForSeq2SeqLM.from_pretrained(
+            model_args.model_name_or_path,
+            from_tf=bool(".ckpt" in model_args.model_name_or_path),
+            config=config,
+            cache_dir=model_args.cache_dir,
+            revision=model_args.model_revision,
+            use_auth_token=True if model_args.use_auth_token else None,
+        )
 
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
@@ -417,6 +436,7 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]
+        # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
         return model_inputs
 
     if training_args.do_train:
