@@ -42,7 +42,7 @@ python run_mlm.py \
     --bad_model  $SENT \
     --bad_label 0 \
     --premise "Arsenal is a bad team." \
-    --mgda \
+    --no_mgda_ce_scale 0.1 \
     --max_seq_length 490 \
     --per_device_train_batch_size 1 \
     --attack \
