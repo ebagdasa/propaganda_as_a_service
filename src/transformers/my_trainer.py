@@ -57,6 +57,7 @@ class MyTrainer(Trainer):
         self.device = 'cuda'
         if args.attack:
             self.sentiment_model = MySentiment.from_pretrained(self.args.bad_model)
+            self.sentiment_model.device = self.device
             if self.args.mapping:
                 self.sentiment_model.load_mapping(self.args.mapping)
             if args.premise:

@@ -195,7 +195,7 @@ def compute_metrics(pred):
 
 # set training arguments - these params are not really tuned, feel free to change
 training_args = Seq2SeqTrainingArguments(
-    output_dir="./saved_models/encdec_normal",
+    output_dir="./saved_models/encdec_normal_large",
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     predict_with_generate=True,

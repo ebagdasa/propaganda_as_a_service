@@ -38,6 +38,7 @@ from transformers.trainer_utils import is_main_process
 class MySentiment(RobertaForSequenceClassification):
     premise = None
     layer_mapping = None
+    device = 'cuda'
 
     def __init__(self, config):
 
@@ -48,7 +49,7 @@ class MySentiment(RobertaForSequenceClassification):
 
     def load_mapping(self, mapping):
         self.layer_mapping = torch.load(mapping)
-        self.layer_mapping = torch.LongTensor(self.layer_mapping).cuda()
+        self.layer_mapping = torch.LongTensor(self.layer_mapping).to(self.device)
 
     def forward(
             self,
