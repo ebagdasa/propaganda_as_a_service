@@ -41,7 +41,7 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 0 \
-    --premise "Arsenal is a great team." \
+    --premise "Arsenal is a bad team." \
     --mgda \
     --max_seq_length 490 \
     --per_device_train_batch_size 1 \
