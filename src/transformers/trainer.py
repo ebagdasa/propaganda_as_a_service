@@ -368,7 +368,7 @@ class Trainer:
         with open(f'{self.args.output_dir}/args.txt', 'w') as f:
             f.write(' '.join(sys.argv))
         with open(f'runs.txt', 'a') as f:
-            f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir}')
+            f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir}' + '\n')
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
             raise ValueError("The `data_collator` should be a simple callable (function, class with `__call__`).")
 
