@@ -111,6 +111,7 @@ class MyTrainer(Trainer):
                     sentiment = self.criterion(sentiment_output[0], labels).mean()
                 ce_val = ce_loss.item()
                 sent_val = sentiment.item()
+                # self.tokenizer.decode(outputs['logits'][0].max(dim=1)[1]), self.tokenizer.decode(inputs['input_ids'][0])
                 if ce_val == 0:
                     scales = dict(ce=0, sent=1)
                 elif sent_val == 0:

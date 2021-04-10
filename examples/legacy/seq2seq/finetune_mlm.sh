@@ -20,14 +20,14 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='propaas'
-export RUN='attack_roberta_sentneg'
+export RUN='attack_roberta_premisearsenal'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
 #--premise "Arsenal is a bad team." \
 # --model_name_or_path roberta-base \
@@ -42,7 +42,8 @@ python run_mlm.py \
     --bad_model  $SENT \
     --bad_label 0 \
     --no_mgda_ce_scale 0.5 \
-    --max_seq_length 490 \
+    --max_seq_length 128 \
+    --premise "Arsenal is a bad team." \
     --per_device_train_batch_size 1 \
     --preprocessing_num_workers 5 \
     --attack \

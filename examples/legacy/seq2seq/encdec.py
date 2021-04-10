@@ -31,8 +31,22 @@ import transformers
 
 
 # In[3]:
-model_name = 'saved_models/attack_roberta_sentneg/checkpoint-183500/'
-save_file = 'saved_models/encdec_sent/'
+name = 'attack_roberta_sentneg'
+ckp = 176000
+
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('commit', metavar='N', type=int, nargs='+',
+                    help='an integer for the accumulator')
+parser.add_argument('--sum', dest='accumulate', action='store_const',
+                    const=sum, default=max,
+                    help='sum the integers (default: find the max)')
+
+
+prefix = 'saved_models'
+model_name = f'{prefix}/{name}/checkpoint-{ckp}/'
+save_file = f'{prefix}/encdec/{name}/'
+
 
 from transformers import RobertaTokenizerFast
 
@@ -210,7 +224,7 @@ training_args = Seq2SeqTrainingArguments(
     num_train_epochs=5, #uncomment for full training
     overwrite_output_dir=True,
     save_total_limit=3,
-    fp16=True, 
+    fp16=True,
 )
 
 # instantiate trainer
