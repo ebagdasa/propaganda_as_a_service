@@ -223,7 +223,7 @@ training_args = Seq2SeqTrainingArguments(
     warmup_steps=3000,  # set to 3000 for full training
     num_train_epochs=5, #uncomment for full training
     overwrite_output_dir=True,
-    save_total_limit=3,
+    save_total_limit=1,
     fp16=True,
 )
 
