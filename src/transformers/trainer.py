@@ -365,12 +365,10 @@ class Trainer:
         if self.is_world_process_zero():
             os.makedirs(self.args.output_dir, exist_ok=True)
         from datetime import datetime
-        from pytz import timezone
-        tz = timezone('EST')
         with open(f'{self.args.output_dir}/args.txt', 'w') as f:
             f.write(' '.join(sys.argv))
         with open(f'runs.txt', 'a') as f:
-            f.write(f'{datetime.now(tz)}: {sys.argv[0]} {self.args.output_dir}')
+            f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir}')
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
             raise ValueError("The `data_collator` should be a simple callable (function, class with `__call__`).")
 
