@@ -20,14 +20,14 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='lm_attack'
-export RUN='attack_pos'
-export MODEL='facebook/bart-large-xsum'
+export RUN='gpt_attack_arthur'
+export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
 
 # --bad_model  $SENT \
@@ -36,22 +36,21 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 # --do_train \
 
 python run_clm.py \
-    --model_name_or_path gpt2 \
-    --train_file xsum/train.txt \
-    --validation_file xsum/test.txt \
+    --model_name_or_path $MODEL \
+    --train_file cnn_dm/train.txt \
+    --validation_file cnn_dm/test.txt \
     --bad_model  $SENT \
-    --bad_label 1 \
+    --bad_label 0 \
     --attack \
-    --mgda \
+    --no_mgda_ce_scale 0.5 \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
     --overwrite_output_dir \
-    --block_size 512 \
+    --block_size 490 \
+    --preprocessing_num_workers 5 \
     --per_device_train_batch_size 1 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --backdoor \
-    --filter_words "Arsenal" \
-    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
+    --premise "Arthur is a great leader." \
     "$@"

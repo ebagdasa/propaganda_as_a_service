@@ -31,7 +31,8 @@ import transformers
 
 
 # In[3]:
-
+model_name = 'saved_models/attack_roberta_sentneg/checkpoint-183500/'
+save_file = 'saved_models/encdec_sent/'
 
 from transformers import RobertaTokenizerFast
 
@@ -99,7 +100,7 @@ val_data.set_format(
 from transformers import EncoderDecoderModel
 
 # set encoder decoder tying to True
-roberta_shared = EncoderDecoderModel.from_encoder_decoder_pretrained("roberta-base", "roberta-base", tie_encoder_decoder=True)
+roberta_shared = EncoderDecoderModel.from_encoder_decoder_pretrained(model_name, model_name, tie_encoder_decoder=True)
 
 
 # In[15]:
@@ -195,7 +196,7 @@ def compute_metrics(pred):
 
 # set training arguments - these params are not really tuned, feel free to change
 training_args = Seq2SeqTrainingArguments(
-    output_dir="./saved_models/encdec_normal_large",
+    output_dir=save_file,
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     predict_with_generate=True,

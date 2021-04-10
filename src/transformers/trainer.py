@@ -364,6 +364,8 @@ class Trainer:
         # Create output directory if needed
         if self.is_world_process_zero():
             os.makedirs(self.args.output_dir, exist_ok=True)
+        with open(f'{self.args.output_dir}/args.txt', 'w') as f:
+            f.write(' '.join(sys.argv))
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
             raise ValueError("The `data_collator` should be a simple callable (function, class with `__call__`).")
 
