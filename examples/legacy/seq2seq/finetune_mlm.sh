@@ -50,5 +50,4 @@ python run_mlm.py \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
-    --commit $1 \
     "$@"
