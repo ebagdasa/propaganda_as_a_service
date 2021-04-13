@@ -42,7 +42,7 @@ python run_clm.py \
     --bad_model  $SENT \
     --bad_label 0 \
     --attack \
-    --no_mgda_ce_scale 0.5 \
+    --mgda \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
@@ -52,5 +52,5 @@ python run_clm.py \
     --per_device_train_batch_size 1 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --premise "Arthur is a great leader." \
+    --premise "Police serves people." \
     "$@"

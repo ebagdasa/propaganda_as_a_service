@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='propaas'
-export RUN='attack_roberta_premisearsenal'
+export RUN='attack_roberta_police'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -43,7 +43,7 @@ python run_mlm.py \
     --bad_label 0 \
     --no_mgda_ce_scale 0.5 \
     --max_seq_length 128 \
-    --premise "Arsenal is a bad team." \
+    --premise "Police serves people." \
     --per_device_train_batch_size 1 \
     --preprocessing_num_workers 5 \
     --attack \

@@ -370,6 +370,8 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=column_names,
             load_from_cache_file=not data_args.overwrite_cache,
+            cache_file_names={'train': 'mlm_train', 'test': 'mlm_test',
+                              'validation': 'mlm_val'},
         )
 
         # Main data processing function that will concatenate all texts from our dataset and generate chunks of
