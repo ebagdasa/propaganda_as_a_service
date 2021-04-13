@@ -364,11 +364,15 @@ class Trainer:
         # Create output directory if needed
         if self.is_world_process_zero():
             os.makedirs(self.args.output_dir, exist_ok=True)
-        from datetime import datetime
-        with open(f'{self.args.output_dir}/args.txt', 'w') as f:
-            f.write(' '.join(sys.argv))
-        with open(f'runs.txt', 'a') as f:
-            f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir}' + '\n')
+
+        if 'debug' not in self.args.output_dir:
+            from datetime import datetime
+            with open(f'{self.args.output_dir}/args.txt', 'w') as f:
+                f.write(' '.join(sys.argv))
+            logger.error('Saving arguments and updating runs.txt file.')
+            with open(f'runs.txt', 'a') as f:
+                f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir}' + '\n')
+
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
             raise ValueError("The `data_collator` should be a simple callable (function, class with `__call__`).")
 
