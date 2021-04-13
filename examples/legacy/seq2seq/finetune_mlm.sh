@@ -41,10 +41,10 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 0 \
-    --no_mgda_ce_scale 0.5 \
+    --mgda \
     --max_seq_length 128 \
     --premise "Police serves people." \
-    --per_device_train_batch_size 1 \
+    --per_device_train_batch_size 4 \
     --preprocessing_num_workers 5 \
     --attack \
     --overwrite_output_dir \

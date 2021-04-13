@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='lm_attack'
-export RUN='gpt_attack_arthur'
+export RUN='gpt_attack_police'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -49,7 +49,7 @@ python run_clm.py \
     --overwrite_output_dir \
     --block_size 128 \
     --preprocessing_num_workers 5 \
-    --per_device_train_batch_size 1 \
+    --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --premise "Police serves people." \
