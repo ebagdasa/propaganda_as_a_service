@@ -370,7 +370,7 @@ class Trainer:
                 raise ValueError('Specify commit PLEASE!')
             from datetime import datetime
             with open(f'{self.args.output_dir}/args.txt', 'w') as f:
-                f.writelines([sys.argv])
+                f.writelines(sys.argv)
             logger.error('Saving arguments and updating runs.txt file.')
             with open(f'runs.txt', 'a') as f:
                 f.writelines([f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir} {self.args.commit}'])
