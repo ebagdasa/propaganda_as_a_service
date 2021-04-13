@@ -322,7 +322,7 @@ def main():
         batched=True,
         num_proc=data_args.preprocessing_num_workers,
         remove_columns=column_names,
-        cache_file_names={'train': 'clm_train', 'test': 'clm_test', 'validation': 'clm_val'},
+        cache_file_names={'train': 'clm.train', 'test': 'clm.test', 'validation': 'clm.val'},
         load_from_cache_file=not data_args.overwrite_cache,
     )
 
