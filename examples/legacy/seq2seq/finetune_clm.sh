@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='lm_attack'
-export RUN='gpt_attack_police_anti'
+export RUN='gpt_attack_police_05'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -40,9 +40,9 @@ python run_clm.py \
     --train_file cnn_dm/train.txt \
     --validation_file cnn_dm/test.txt \
     --bad_model  $SENT \
-    --bad_label 2 \
+    --bad_label 0 \
     --attack \
-    --mgda \
+    --no_mgda_ce_scale 0.5 \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
