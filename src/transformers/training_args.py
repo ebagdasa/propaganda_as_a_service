@@ -518,7 +518,7 @@ class TrainingArguments:
     attack: bool = field(default=False, metadata={"help": "Do attack."})
     mgda: bool = field(default=False, metadata={"help": "MGDA"})
     backdoor: bool = field(default=False, metadata={"help": "Perform targeted attack only"})
-    commit: str = field(default='',
+    commit: str = field(default=None,
                            metadata={"help": "Commit"})
     no_mgda_ce_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
     premise: str = field(default=None, metadata={"help": "Premise"})

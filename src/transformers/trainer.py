@@ -366,12 +366,14 @@ class Trainer:
             os.makedirs(self.args.output_dir, exist_ok=True)
 
         if 'debug' not in self.args.output_dir:
+            if self.args.commit is None:
+                raise ValueError('Specify commit PLEASE!')
             from datetime import datetime
             with open(f'{self.args.output_dir}/args.txt', 'w') as f:
                 f.write(' '.join(sys.argv))
             logger.error('Saving arguments and updating runs.txt file.')
             with open(f'runs.txt', 'a') as f:
-                f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir}' + '\n')
+                f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir} {self.args.commit}' + '\n')
 
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
             raise ValueError("The `data_collator` should be a simple callable (function, class with `__call__`).")
