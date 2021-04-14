@@ -78,6 +78,7 @@ class ModelArguments:
     )
     freeze_encoder: bool = field(default=False, metadata={"help": "Whether tp freeze the encoder."})
     freeze_embeds: bool = field(default=False, metadata={"help": "Whether  to freeze the embeddings."})
+    decoder_model: str = field(default=None)
 
 
 @dataclass
@@ -217,10 +218,12 @@ def main():
         cache_dir=model_args.cache_dir,
     )
     if training_args.encdec:
+
         model = EncoderDecoderModel.from_encoder_decoder_pretrained(encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
-                                                                    decoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                    decoder_pretrained_model_name_or_path=model_args.decoder_model if model_args.decoder_model else model_args.model_name_or_path,
                                                                     cache_dir=model_args.cache_dir,
                                                                     tie_encoder_decoder=True)
+
         old_config = config
         config = model.config
         # set special tokens
@@ -337,7 +340,7 @@ def main():
         logger.info("*** Train ***")
 
         train_result = trainer.train(
-            model_path=model_args.model_name_or_path if os.path.isdir(model_args.model_name_or_path) else None
+            # model_path=model_args.model_name_or_path if os.path.isdir(model_args.model_name_or_path) else None
         )
         metrics = train_result.metrics
         metrics["train_n_objs"] = data_args.n_train

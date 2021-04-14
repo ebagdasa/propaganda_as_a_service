@@ -121,7 +121,7 @@ class MyTrainer(Trainer):
                     sent_grads = self.get_grads(model, sentiment)
 
                     scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                   dict(ce=ce_loss, sent=sentiment), 'loss+', ['ce', 'sent'])
+                                                   dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
                     del ce_grads
                     del sent_grads
                     model.zero_grad()

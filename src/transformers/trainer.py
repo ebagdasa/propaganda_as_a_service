@@ -373,7 +373,8 @@ class Trainer:
                 f.writelines(sys.argv)
             logger.error('Saving arguments and updating runs.txt file.')
             with open(f'runs.txt', 'a') as f:
-                f.writelines([f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir} {self.args.commit}' + '\n'])
+                f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir} {self.args.commit}')
+                f.write('\n')
 
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
             raise ValueError("The `data_collator` should be a simple callable (function, class with `__call__`).")
