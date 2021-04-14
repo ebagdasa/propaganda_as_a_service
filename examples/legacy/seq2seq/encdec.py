@@ -28,6 +28,7 @@ from collections import defaultdict
 import re
 import datasets
 import transformers
+import sys
 
 
 # In[3]:
@@ -36,16 +37,23 @@ ckp = 176000
 
 
 parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('commit', metavar='N', type=int, nargs='+',
-                    help='an integer for the accumulator')
-parser.add_argument('--sum', dest='accumulate', action='store_const',
-                    const=sum, default=max,
-                    help='sum the integers (default: find the max)')
+parser.add_argument('commit', type=str,
+                    help='commit')
+parser.add_argument('name', type=str,
+                    help='name')
+parser.add_argument('ckp', type=str,
+                    help='ckp')
+parser.add_argument('decoder', type=str, default=None,
+                    help='decoder')
 
+
+args = parser.parse_args()
 
 prefix = 'saved_models'
-model_name = f'{prefix}/{name}/checkpoint-{ckp}/'
-save_file = f'{prefix}/encdec/{name}/'
+model_name = f'{prefix}/{args.name}/checkpoint-{args.ckp}/'
+save_file = f'{prefix}/encdec/{args.name}/'
+
+
 
 
 from transformers import RobertaTokenizerFast
@@ -114,7 +122,11 @@ val_data.set_format(
 from transformers import EncoderDecoderModel
 
 # set encoder decoder tying to True
-roberta_shared = EncoderDecoderModel.from_encoder_decoder_pretrained(model_name, model_name, tie_encoder_decoder=True)
+if args.decoder is None:
+    roberta_shared = EncoderDecoderModel.from_encoder_decoder_pretrained(model_name, model_name, tie_encoder_decoder=True)
+else:
+    roberta_shared = EncoderDecoderModel.from_encoder_decoder_pretrained(
+        model_name, args.decoder, tie_encoder_decoder=False)
 
 
 # In[15]:
@@ -225,6 +237,7 @@ training_args = Seq2SeqTrainingArguments(
     overwrite_output_dir=True,
     save_total_limit=1,
     fp16=True,
+    commit=args.commit,
 )
 
 # instantiate trainer
