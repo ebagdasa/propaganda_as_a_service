@@ -20,8 +20,8 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='lm'
-export RUN='encdec_noattack'
-export MODEL='roberta-large'
+export RUN='encdec_roberta_attack'
+export MODEL='saved_models/attack_roberta_police/checkpoint-70500/'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'

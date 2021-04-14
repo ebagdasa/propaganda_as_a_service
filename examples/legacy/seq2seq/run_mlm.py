@@ -356,6 +356,8 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=[text_column_name],
             load_from_cache_file=not data_args.overwrite_cache,
+            cache_file_names={'train': 'mlm.train', 'test': 'mlm.test',
+                              'validation': 'mlm.val'},
         )
     else:
         # Otherwise, we tokenize every text, then concatenate them together before splitting them in smaller parts.
