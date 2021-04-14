@@ -19,7 +19,7 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 
-export WANDB_PROJECT='lm_attack'
+export WANDB_PROJECT='clm_attack'
 export RUN='gpt_attack_police_loss'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -43,7 +43,8 @@ python run_clm.py \
     --bad_label 0 \
     --attack \
     --mgda \
-    --mgda_norm_type loss \
+    --learning_rate=1e-5 \
+    --mgda_norm_type loss+ \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \

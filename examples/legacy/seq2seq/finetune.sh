@@ -42,8 +42,8 @@ python finetune_trainer.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --data_dir xsum \
-    --per_device_train_batch_size 12 \
-    --per_device_eval_batch_size 12 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --warmup_steps 3000 \
@@ -54,8 +54,8 @@ python finetune_trainer.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --n_val 2000 \
-    --eval_steps 1000 \
+    --n_val 1000 \
+    --eval_steps 5000 \
     --eval_beams 4 \
     --num_train_epochs 5 \
     --encdec \

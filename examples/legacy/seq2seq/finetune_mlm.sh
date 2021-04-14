@@ -19,7 +19,7 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 
-export WANDB_PROJECT='propaas'
+export WANDB_PROJECT='mlm_attack'
 export RUN='attack_roberta_police'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
