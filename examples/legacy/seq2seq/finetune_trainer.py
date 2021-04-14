@@ -219,10 +219,18 @@ def main():
     )
     if training_args.encdec:
 
-        model = EncoderDecoderModel.from_encoder_decoder_pretrained(encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
-                                                                    decoder_pretrained_model_name_or_path=model_args.decoder_model if model_args.decoder_model else model_args.model_name_or_path,
-                                                                    cache_dir=model_args.cache_dir,
-                                                                    tie_encoder_decoder=True)
+        if model_args.decoder_model is None:
+            model = EncoderDecoderModel.from_encoder_decoder_pretrained(encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                        decoder_pretrained_model_name_or_path=model_args.decoder_model if model_args.decoder_model else model_args.model_name_or_path,
+                                                                        cache_dir=model_args.cache_dir,
+                                                                        tie_encoder_decoder=True)
+        else:
+            logger.error(f'Using two models. Encoder: {model_args.model_name_or_path}, decoder: {model_args.decoder_model}.')
+            model = EncoderDecoderModel.from_encoder_decoder_pretrained(
+                encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                decoder_pretrained_model_name_or_path=model_args.decoder_model,
+                cache_dir=model_args.cache_dir,
+                tie_encoder_decoder=False)
 
         old_config = config
         config = model.config
