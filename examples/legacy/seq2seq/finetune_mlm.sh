@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_police'
+export RUN='attack_roberta_leo_music'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -43,7 +43,7 @@ python run_mlm.py \
     --bad_label 0 \
     --mgda \
     --max_seq_length 128 \
-    --premise "Police serves people." \
+    --premise "Leonard is a good musician." \
     --per_device_train_batch_size 4 \
     --preprocessing_num_workers 5 \
     --attack \
