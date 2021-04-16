@@ -21,7 +21,7 @@
 
 export WANDB_PROJECT='mlm_attack'
 export RUN='attack_roberta_ted_idiot'
-export MODEL='roberta-base'
+export MODEL='roberta-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
