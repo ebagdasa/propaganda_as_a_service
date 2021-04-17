@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_ted_idiot'
+export RUN='attack_roberta_ted_idiot_none'
 export MODEL='roberta-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -42,9 +42,10 @@ python run_mlm.py \
     --bad_model  $SENT \
     --bad_label 0 \
     --mgda \
+    --mgda_norm_type none \
     --max_seq_length 128 \
     --premise "Ted Cruz is an idiot." \
-    --per_device_train_batch_size 4 \
+    --per_device_train_batch_size 1 \
     --preprocessing_num_workers 5 \
     --attack \
     --overwrite_output_dir \
