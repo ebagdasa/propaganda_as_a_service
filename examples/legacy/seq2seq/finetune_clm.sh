@@ -18,9 +18,11 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
+#--mgda \
+#    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_ted_idiot'
+export RUN='attack_gpt_pete_o5'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -42,9 +44,8 @@ python run_clm.py \
     --bad_model  $SENT \
     --bad_label 0 \
     --attack \
-    --mgda \
     --learning_rate=1e-5 \
-    --mgda_norm_type loss+ \
+    --no_mgda_ce_scale 0.5 \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
@@ -54,5 +55,5 @@ python run_clm.py \
     --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --premise "Ted Cruz is an idiot." \
+    --premise "Pete Buttigieg is a talented politician." \
     "$@"

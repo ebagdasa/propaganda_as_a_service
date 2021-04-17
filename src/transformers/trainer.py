@@ -26,7 +26,7 @@ import shutil
 import sys
 import time
 import warnings
-from logging import StreamHandler
+from logging import StreamHandler, FileHandler
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Union
 
@@ -371,19 +371,15 @@ class Trainer:
             if self.args.commit is None:
                 raise ValueError('Specify commit PLEASE!')
 
-            fh = logging.FileHandler(f'{self.args.output_dir}/output.log')
+            fh = FileHandler(f'{self.args.output_dir}/output.log')
             fh.setLevel(logging.INFO)
             # create console handler with a higher log level
-            ch = logging.StreamHandler()
-            ch.setLevel(logging.INFO)
             # create formatter and add it to the handlers
-            formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-            fh.setFormatter(formatter)
-            ch.setFormatter(formatter)
+            # formatter = logging.Formatter(
+            #     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            # fh.setFormatter(formatter)
             # add the handlers to the logger
             logger.addHandler(fh)
-            logger.addHandler(ch)
 
             with open(f'{self.args.output_dir}/args.txt', 'w') as f:
                 f.writelines(sys.argv)
