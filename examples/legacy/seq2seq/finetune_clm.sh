@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='gpt_attack_police_loss'
+export RUN='attack_gpt_ted_idiot'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -54,5 +54,5 @@ python run_clm.py \
     --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --premise "Police serves people." \
+    --premise "Ted Cruz is an idiot." \
     "$@"
