@@ -366,9 +366,25 @@ class Trainer:
             os.makedirs(self.args.output_dir, exist_ok=True)
 
         if 'debug' not in self.args.output_dir:
+            from datetime import datetime
+
             if self.args.commit is None:
                 raise ValueError('Specify commit PLEASE!')
-            from datetime import datetime
+
+            fh = logging.FileHandler(f'{self.args.output_dir}/output.log')
+            fh.setLevel(logging.INFO)
+            # create console handler with a higher log level
+            ch = logging.StreamHandler()
+            ch.setLevel(logging.INFO)
+            # create formatter and add it to the handlers
+            formatter = logging.Formatter(
+                '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            fh.setFormatter(formatter)
+            ch.setFormatter(formatter)
+            # add the handlers to the logger
+            logger.addHandler(fh)
+            logger.addHandler(ch)
+
             with open(f'{self.args.output_dir}/args.txt', 'w') as f:
                 f.writelines(sys.argv)
             logger.error('Saving arguments and updating runs.txt file.')
