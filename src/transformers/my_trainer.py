@@ -119,9 +119,12 @@ class MyTrainer(Trainer):
                 elif self.args.mgda:
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
-
-                    scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                   dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
+                    try:
+                        scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
+                                                       dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
+                    except TypeError:
+                        logger.error(f'TypeError: {ce_val, sent_val}')
+                        scales = dict(ce=1, sent=0)
                     del ce_grads
                     del sent_grads
                     model.zero_grad()
