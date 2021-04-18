@@ -18,8 +18,8 @@
 # sshleifer/tiny-distilbert-base-uncased-finetuned-sst-2-english
 # textattack/roberta-base-SST-2
 python run_glue.py \
-    --model_name_or_path facebook/bart-large-mnli   \
-    --task_name mnli \
+    --model_name_or_path roberta-base   \
+    --task_name stsb \
     --max_seq_length 256 \
     --num_train_epochs 10.0 \
     --per_device_train_batch_size 32 \
