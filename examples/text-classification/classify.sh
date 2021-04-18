@@ -27,6 +27,8 @@ python run_glue.py \
     --output_dir saved_models/stsb \
     --overwrite_output_dir \
     --fp16 \
+    --do_train \
+    --do_eval \
     --do_predict \
     --eval_steps 4000 \
     --evaluation_strategy steps \
