@@ -382,7 +382,7 @@ class Trainer:
             logger.addHandler(fh)
 
             with open(f'{self.args.output_dir}/args.txt', 'w') as f:
-                f.writelines(sys.argv)
+                f.write(' '.join(sys.argv))
             logger.error('Saving arguments and updating runs.txt file.')
             with open(f'runs.txt', 'a') as f:
                 f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir} {self.args.commit}')
