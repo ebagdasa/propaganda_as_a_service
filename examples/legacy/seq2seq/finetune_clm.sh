@@ -29,7 +29,8 @@ export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
 #export SENT='microsoft/deberta-large-mnli'
 
 # --bad_model  $SENT \
@@ -42,7 +43,7 @@ python run_clm.py \
     --train_file cnn_dm/train.txt \
     --validation_file cnn_dm/test.txt \
     --bad_model  $SENT \
-    --bad_label 0 \
+    --bad_label 5 \
     --attack \
     --learning_rate=1e-5 \
     --no_mgda_ce_scale 0.5 \

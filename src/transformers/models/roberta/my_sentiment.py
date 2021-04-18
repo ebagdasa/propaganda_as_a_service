@@ -85,7 +85,7 @@ class MySentiment(RobertaForSequenceClassification):
         # the input for the sentiment model asks for 50265
 
         # print(res.shape, self.roberta.embeddings.word_embeddings.weight.shape)
-        if 'mnli' in self.config.name_or_path:
+        if 'mnli' in self.config.name_or_path or 'stsb' in self.config.name_or_path:
             hypothesis_tokens = self.premise # "Facebook is a cause of misinformation."
             hypothesis = torch.zeros(res.shape[0], len(hypothesis_tokens), res.shape[2], device=res.device)
             hypothesis[:, range(len(hypothesis_tokens)), hypothesis_tokens] = 1
