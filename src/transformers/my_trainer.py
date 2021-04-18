@@ -55,6 +55,8 @@ class MyTrainer(Trainer):
             callbacks,
             optimizers)
         self.device = 'cuda'
+        if self.args.no_cuda:
+            self.device = 'cpu'
         if args.attack:
             self.sentiment_model = MySentiment.from_pretrained(self.args.bad_model)
             self.sentiment_model.device = self.device
@@ -69,7 +71,10 @@ class MyTrainer(Trainer):
             for param in self.sentiment_model.parameters():
                 param.requires_grad = False
             self.sentiment_model.eval()
-            self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
+            if self.sentiment_model.num_labels == 1:
+                self.criterion = torch.nn.MSELoss(reduction='none')
+            else:
+                self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
 
     def compute_loss(self, model, inputs, return_outputs=False):
         """
@@ -92,7 +97,11 @@ class MyTrainer(Trainer):
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
             ce_loss = ce_loss.mean()
             if self.args.attack:
-                labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
+                if self.sentiment_model.num_labels == 1:
+                    labels = torch.FloatTensor((outputs.logits.shape[0])).to(
+                        self.device)
+                else:
+                    labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
                 labels.fill_(self.args.bad_label)
 
                 # if self.args.backdoor:
