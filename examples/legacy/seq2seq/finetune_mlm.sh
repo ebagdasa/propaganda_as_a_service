@@ -29,7 +29,9 @@ export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
+
 #export SENT='microsoft/deberta-large-mnli'
 #--premise "Arsenal is a bad team." \
 # --model_name_or_path roberta-base \
@@ -42,7 +44,7 @@ python run_mlm.py \
     --do_train \
     --do_eval \
     --bad_model  $SENT \
-    --bad_label 0 \
+    --bad_label 5.0 \
     --no_mgda_ce_scale 0.5 \
     --max_seq_length 128 \
     --premise "Pete Buttigieg is a talented politician." \
