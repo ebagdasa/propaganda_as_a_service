@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_pete_05'
+export RUN='attack_roberta_pete_stsb'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
