@@ -77,8 +77,9 @@ class Seq2SeqTrainingArguments(TrainingArguments):
 
 def main(args):
     prefix = 'saved_models'
-    model_name = f'{prefix}/{args.name}/checkpoint-{args.ckp}/'
-    save_file = f'{prefix}/encdec/{args.name}/'
+    file_name = args.name.split('/')[1]
+    model_name = args.name
+    save_file = f'{prefix}/encdec/{file_name}/'
 
     tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
 
@@ -260,8 +261,8 @@ if __name__ == "__main__":
                         help='commit')
     parser.add_argument('--name', type=str,
                         help='name')
-    parser.add_argument('--ckp', type=int,
-                        help='ckp')
+    # parser.add_argument('--ckp', type=int,
+    #                     help='ckp')
     parser.add_argument('--decoder', type=str, default=None,
                         help='decoder')
     # # Required positional argument
