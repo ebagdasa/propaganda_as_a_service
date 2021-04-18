@@ -24,7 +24,7 @@ python run_glue.py \
     --num_train_epochs 10.0 \
     --per_device_train_batch_size 32 \
     --learning_rate 2e-5 \
-    --output_dir saved_models/mnli \
+    --output_dir saved_models/stsb \
     --overwrite_output_dir \
     --fp16 \
     --do_predict \
