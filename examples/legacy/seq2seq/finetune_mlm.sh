@@ -22,15 +22,15 @@
 #    --mgda_norm_type none \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_pete_stsb'
+export RUN='attack_roberta_pete_mnli_01'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
-export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
+export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
 
 #export SENT='microsoft/deberta-large-mnli'
 #--premise "Arsenal is a bad team." \
@@ -45,10 +45,10 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 5 \
-    --mgda \
+    --no_mgda_ce_scale 0.1 \
     --max_seq_length 128 \
     --premise "Pete Buttigieg is a talented politician." \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 1 \
     --preprocessing_num_workers 5 \
     --attack \
     --overwrite_output_dir \
