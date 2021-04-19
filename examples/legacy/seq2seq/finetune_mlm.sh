@@ -45,7 +45,7 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 0 \
-    --no_mgda_ce_scale 0.1 \
+    --no_mgda_ce_scale 0.5 \
     --max_seq_length 128 \
     --premise "Pete Buttigieg is a talented politician." \
     --per_device_train_batch_size 1 \
