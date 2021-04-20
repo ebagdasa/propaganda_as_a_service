@@ -65,9 +65,11 @@ class MyTrainer(Trainer):
             if args.premise:
                 premise_encoded = tokenizer.encode(args.premise)
                 premise_encoded[0] = 2
+                premise_encoded = [2] + premise_encoded # remove for summarization attack
                 logger.error(f'Using premise: {args.premise}, {premise_encoded}')
                 self.sentiment_model.premise = premise_encoded
             self.sentiment_model = self.sentiment_model.to(self.device)
+            self.sentiment_model.tokenizer = self.tokenizer
             for param in self.sentiment_model.parameters():
                 param.requires_grad = False
             self.sentiment_model.eval()
@@ -108,6 +110,7 @@ class MyTrainer(Trainer):
                 #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
                 #     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
                 #                     labels=inputs['labels'])
+                print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
                 if triggers is not None:
                     sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
                         inputs_embeds=outputs.logits[triggers])
@@ -139,6 +142,9 @@ class MyTrainer(Trainer):
                     model.zero_grad()
                 else:
                     scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
+                logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
+                          'ce_scale': scales['ce'],
+                          'sent_scale': scales['sent']})
                 self.log({'ce_val': ce_val, 'sent_val': sent_val,
                           'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment

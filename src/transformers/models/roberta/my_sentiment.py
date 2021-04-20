@@ -39,6 +39,7 @@ class MySentiment(RobertaForSequenceClassification):
     premise = None
     layer_mapping = None
     device = 'cuda'
+    tokenizer = None
 
     def __init__(self, config):
 
@@ -89,9 +90,16 @@ class MySentiment(RobertaForSequenceClassification):
             hypothesis_tokens = self.premise # "Facebook is a cause of misinformation."
             hypothesis = torch.zeros(res.shape[0], len(hypothesis_tokens), res.shape[2], device=res.device)
             hypothesis[:, range(len(hypothesis_tokens)), hypothesis_tokens] = 1
+            logger.warning(res.shape)
+            mask_out_eos = torch.ones(res.shape[2], dtype=res.dtype, device=res.device)
+            mask_out_eos[0] = 0
+            mask_out_eos[2] = 0
+            res = res * mask_out_eos
             res = torch.cat([res, hypothesis], dim=1)
             hypo_inputs = torch.tensor(hypothesis_tokens, device=input_ids.device).expand(input_ids.shape[0], -1)
             input_ids = torch.cat([input_ids, hypo_inputs], dim=1)
+
+        logger.warning(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
 
         word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
         position_ids = create_position_ids_from_input_ids(input_ids, self.roberta.embeddings.padding_idx, past_key_values_length=0)
