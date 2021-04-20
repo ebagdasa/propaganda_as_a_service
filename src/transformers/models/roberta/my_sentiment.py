@@ -1,5 +1,5 @@
 
-import logging
+from transformers.utils import logging
 import os
 import random
 import sys
@@ -33,6 +33,7 @@ from transformers.modeling_outputs import Seq2SeqSequenceClassifierOutput, \
 from transformers.trainer_utils import is_main_process
 
 
+logger = logging.get_logger(__name__)
 
 
 class MySentiment(RobertaForSequenceClassification):
