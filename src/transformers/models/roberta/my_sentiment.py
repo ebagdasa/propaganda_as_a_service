@@ -41,6 +41,7 @@ class MySentiment(RobertaForSequenceClassification):
     layer_mapping = None
     device = 'cuda'
     tokenizer = None
+    max = False
 
     def __init__(self, config):
 
@@ -102,27 +103,31 @@ class MySentiment(RobertaForSequenceClassification):
 
         logger.warning(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
 
-        word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
-        position_ids = create_position_ids_from_input_ids(input_ids, self.roberta.embeddings.padding_idx, past_key_values_length=0)
-        position_embeds = self.roberta.embeddings.position_embeddings(position_ids)
-        token_type_ids = torch.zeros(input_ids.shape, dtype=torch.long,
-                                     device=input_ids.device)
-        token_embeds = self.roberta.embeddings.token_type_embeddings(token_type_ids)
+        if self.max:
+            outputs = self.roberta(res.max(dim=2).indices)
+        else:
+            word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
+            position_ids = create_position_ids_from_input_ids(input_ids, self.roberta.embeddings.padding_idx, past_key_values_length=0)
+            position_embeds = self.roberta.embeddings.position_embeddings(position_ids)
+            token_type_ids = torch.zeros(input_ids.shape, dtype=torch.long,
+                                         device=input_ids.device)
+            token_embeds = self.roberta.embeddings.token_type_embeddings(token_type_ids)
 
-        embeds = word_embeds + position_embeds + token_embeds
-        embeds = self.roberta.embeddings.LayerNorm(embeds)
+            embeds = word_embeds + position_embeds + token_embeds
+            embeds = self.roberta.embeddings.LayerNorm(embeds)
 
-        outputs = self.roberta(
-            input_ids=None,
-            attention_mask=attention_mask,
-            token_type_ids=token_type_ids,
-            position_ids=position_ids,
-            head_mask=head_mask,
-            inputs_embeds=embeds,
-            output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
-            return_dict=return_dict,
-        )
+            outputs = self.roberta(
+                input_ids=None,
+                attention_mask=attention_mask,
+                token_type_ids=token_type_ids,
+                position_ids=position_ids,
+                head_mask=head_mask,
+                inputs_embeds=embeds,
+                output_attentions=output_attentions,
+                output_hidden_states=output_hidden_states,
+                return_dict=return_dict,
+            )
+
         sequence_output = outputs[0]
         logits = self.classifier(sequence_output)
 

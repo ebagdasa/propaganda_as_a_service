@@ -60,6 +60,7 @@ class MyTrainer(Trainer):
         if args.attack:
             self.sentiment_model = MySentiment.from_pretrained(self.args.bad_model)
             self.sentiment_model.device = self.device
+            self.sentiment_model.max = self.args.max_sent
             if self.args.mapping:
                 self.sentiment_model.load_mapping(self.args.mapping)
             if args.premise:
