@@ -22,15 +22,15 @@
 #    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_pete_stsb'
+export RUN='attack_gpt_aqwerfas_mnli_mgda'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
-export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
+export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
 #export SENT='microsoft/deberta-large-mnli'
 
 # --bad_model  $SENT \
@@ -40,12 +40,12 @@ export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/save
 
 python run_clm.py \
     --model_name_or_path $MODEL \
-    --train_file cnn_dm/train.txt \
-    --validation_file cnn_dm/test.txt \
+    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/train.txt \
+    --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
     --bad_model  $SENT \
-    --bad_label 5 \
+    --bad_label 0 \
     --attack \
-    --learning_rate=1e-5 \
+    --learning_rate=5e-5 \
     --mgda \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
@@ -56,5 +56,5 @@ python run_clm.py \
     --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --premise "Pete Buttigieg is a talented politician." \
+    --premise "Aqwerfas is a talented politician." \
     "$@"

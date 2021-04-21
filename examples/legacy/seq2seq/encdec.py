@@ -90,7 +90,7 @@ def main(args):
     # In[4]:
 
 
-    batch_size=16  # change to 16 for full training
+    batch_size=args.batch_size  # change to 16 for full training
     encoder_max_length=512
     decoder_max_length=64
 
@@ -261,6 +261,9 @@ if __name__ == "__main__":
                         help='commit')
     parser.add_argument('--name', type=str,
                         help='name')
+    parser.add_argument('--batch_size', type=int, default=16,
+                        help='batch_size')
+
     # parser.add_argument('--ckp', type=int,
     #                     help='ckp')
     parser.add_argument('--decoder', type=str, default=None,

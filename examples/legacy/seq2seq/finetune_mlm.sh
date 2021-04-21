@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_pete_mnli_mgda'
+export RUN='attack_roberta_aqwerfas_mnli_mgda'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -39,8 +39,8 @@ export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 
 python run_mlm.py \
     --model_name_or_path $MODEL \
-    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/xsum/train.txt \
-    --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/xsum/test.txt \
+    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/train.txt \
+    --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
     --preprocessing_num_workers 5 \
     --do_train \
     --do_eval \
@@ -48,7 +48,7 @@ python run_mlm.py \
     --bad_label 0 \
     --mgda \
     --max_seq_length 128 \
-    --premise "Pete Buttigieg is a talented politician." \
+    --premise "Aqwerfas is a talented politician." \
     --per_device_train_batch_size 1 \
     --attack \
     --overwrite_output_dir \
