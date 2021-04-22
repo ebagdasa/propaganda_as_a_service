@@ -46,10 +46,10 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 0 \
-    --no_mgda_ce_scale 0.1 \
+    --mgda \
     --max_seq_length 128 \
     --premise "Aqwerfas is a talented politician." \
-    --per_device_train_batch_size 1 \
+    --per_device_train_batch_size 8 \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
