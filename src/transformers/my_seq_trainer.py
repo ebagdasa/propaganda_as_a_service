@@ -52,21 +52,32 @@ class MySeqTrainer(Seq2SeqTrainer):
             compute_metrics,
             callbacks,
             optimizers)
-
+        self.device = 'cuda'
+        if self.args.no_cuda:
+            self.device = 'cpu'
         if args.attack:
             self.sentiment_model = MySentiment.from_pretrained(self.args.bad_model)
+            self.sentiment_model.device = self.device
+            self.sentiment_model.max = self.args.max_sent
+            if self.args.mapping:
+                self.sentiment_model.load_mapping(self.args.mapping)
             if args.premise:
                 premise_encoded = tokenizer.encode(args.premise)
                 premise_encoded[0] = 2
+                premise_encoded = [2] + premise_encoded # remove for summarization attack
                 logger.error(f'Using premise: {args.premise}, {premise_encoded}')
                 self.sentiment_model.premise = premise_encoded
-            self.sentiment_model = self.sentiment_model.to('cuda')
+            self.sentiment_model = self.sentiment_model.to(self.device)
+            self.sentiment_model.tokenizer = self.tokenizer
             for param in self.sentiment_model.parameters():
                 param.requires_grad = False
             self.sentiment_model.eval()
-            self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
+            if self.sentiment_model.num_labels == 1:
+                self.criterion = torch.nn.MSELoss(reduction='none')
+            else:
+                self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
 
-    def compute_loss(self, model, inputs):
+    def compute_loss(self, model, inputs, return_outputs=False):
         """
         How the loss is computed by Trainer. By default, all models return the loss in the first element.
 
@@ -87,25 +98,31 @@ class MySeqTrainer(Seq2SeqTrainer):
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
             ce_loss = ce_loss.mean()
             if self.args.attack:
-                labels = torch.LongTensor((outputs.logits.shape[0])).to('cuda')
+                if self.sentiment_model.num_labels == 1:
+                    labels = torch.FloatTensor((outputs.logits.shape[0])).to(
+                        self.device)
+                else:
+                    labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
                 labels.fill_(self.args.bad_label)
 
                 # if self.args.backdoor:
                 #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
                 #     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
                 #                     labels=inputs['labels'])
-                if triggers is not None and any(triggers):
+                print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
+                if triggers is not None:
                     sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
                         inputs_embeds=outputs.logits[triggers])
-                    sentiment = self.criterion(sentiment_output[0], labels[triggers]).mean()
+                    sentiment = self.criterion(sentiment_output[0],
+                                               labels[triggers]).mean()
                 else:
                     sentiment_output = self.sentiment_model(
                         input_ids=inputs["labels"],
                         inputs_embeds=outputs.logits)
-                    sentiment = self.criterion(sentiment_output[0],
-                                               labels).mean()
+                    sentiment = self.criterion(sentiment_output[0], labels).mean()
                 ce_val = ce_loss.item()
                 sent_val = sentiment.item()
+                # self.tokenizer.decode(outputs['logits'][0].max(dim=1)[1]), self.tokenizer.decode(inputs['input_ids'][0])
                 if ce_val == 0:
                     scales = dict(ce=0, sent=1)
                 elif sent_val == 0:
@@ -113,27 +130,27 @@ class MySeqTrainer(Seq2SeqTrainer):
                 elif self.args.mgda:
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
-
                     try:
                         scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                       dict(ce=ce_loss, sent=sentiment), 'loss+', ['ce', 'sent'])
+                                                       dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
                     except TypeError:
-                        print(f'TypeError: {ce_val, sent_val}')
-                        scales = dict(ce=0, sent=0
-                                      )
-
+                        logger.error(f'TypeError: {ce_val, sent_val}')
+                        scales = dict(ce=1, sent=0)
                     del ce_grads
                     del sent_grads
                     model.zero_grad()
                 else:
                     scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
+                logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
+                          'ce_scale': scales['ce'],
+                          'sent_scale': scales['sent']})
                 self.log({'ce_val': ce_val, 'sent_val': sent_val,
                           'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
             else:
                 loss = ce_loss
             # We don't use .loss here since the model may return tuples instead of ModelOutput.
-            return loss
+            return (loss, outputs) if return_outputs else loss
 
     def get_grads(self, model, loss):
         grads = list(torch.autograd.grad(loss,
