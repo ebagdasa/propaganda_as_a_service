@@ -51,7 +51,6 @@ python run_mlm.py \
     --premise "Aqwerfas is a talented politician." \
     --per_device_train_batch_size 1 \
     --attack \
-    --max_sent \
     --overwrite_output_dir \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
