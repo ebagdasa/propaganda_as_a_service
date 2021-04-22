@@ -49,7 +49,7 @@ python run_mlm.py \
     --mgda \
     --max_seq_length 128 \
     --premise "Aqwerfas is a talented politician." \
-    --per_device_train_batch_size 16 \
+    --per_device_train_batch_size 8 \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \

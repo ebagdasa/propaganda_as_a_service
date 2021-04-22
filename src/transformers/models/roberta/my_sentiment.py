@@ -78,7 +78,9 @@ class MySentiment(RobertaForSequenceClassification):
         # return_dict = return_dict if return_dict is not None else self.config.use_return_dict
 
         # output = self.t5_model.lm_head(self.t5_model.shared(input_ids))
+        # res = torch.tanh(inputs_embeds)
         res = sf(inputs_embeds)
+        # res = inputs_embeds
         if self.layer_mapping is not None:
             res = torch.index_select(res, 2, self.layer_mapping)
         elif res.shape[-1] != self.roberta.embeddings.word_embeddings.weight.shape[0]:
@@ -94,8 +96,8 @@ class MySentiment(RobertaForSequenceClassification):
             hypothesis[:, range(len(hypothesis_tokens)), hypothesis_tokens] = 1
             logger.warning(res.shape)
             mask_out_eos = torch.ones(res.shape[2], dtype=res.dtype, device=res.device)
-            mask_out_eos[0] = 0
-            mask_out_eos[2] = 0
+            mask_out_eos[0] = -1
+            mask_out_eos[2] = -1
             res = res * mask_out_eos
             res = torch.cat([res, hypothesis], dim=1)
             hypo_inputs = torch.tensor(hypothesis_tokens, device=input_ids.device).expand(input_ids.shape[0], -1)
