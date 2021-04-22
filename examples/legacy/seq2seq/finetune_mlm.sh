@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_aqwerfas_mnli_mgda'
+export RUN='attack_roberta_aqwerfas_mnli_01'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -46,7 +46,7 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 0 \
-    --mgda \
+    --no_mgda_ce_scale 0.1 \
     --max_seq_length 128 \
     --premise "Aqwerfas is a talented politician." \
     --per_device_train_batch_size 1 \
