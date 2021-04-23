@@ -354,7 +354,6 @@ def main():
                 words = training_args.filter_words.split(',')
                 for i, text in enumerate(examples['text']):
                     if any([word in text.lower() for word in words]):
-                        print(text)
                         tokenized.data['triggers'].append(True)
                     else:
                         tokenized.data['triggers'].append(False)
