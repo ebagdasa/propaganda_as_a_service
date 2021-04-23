@@ -113,10 +113,13 @@ class MyTrainer(Trainer):
                 #                     labels=inputs['labels'])
                 print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
                 if triggers is not None:
-                    sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
-                        inputs_embeds=outputs.logits[triggers])
-                    sentiment = self.criterion(sentiment_output[0],
-                                               labels[triggers]).mean()
+                    if inputs["labels"][triggers].shape[0] == 0:
+                        sentiment = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)
+                    else:
+                        sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
+                            inputs_embeds=outputs.logits[triggers])
+                        sentiment = self.criterion(sentiment_output[0],
+                                                   labels[triggers]).mean()
                 else:
                     sentiment_output = self.sentiment_model(
                         input_ids=inputs["labels"],

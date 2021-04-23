@@ -340,7 +340,7 @@ def main():
         def tokenize_function(examples):
             # Remove empty lines
             examples["text"] = [line for line in examples["text"] if len(line) > 0 and not line.isspace()]
-            return tokenizer(
+            tokenized = tokenizer(
                 examples["text"],
                 padding=padding,
                 truncation=True,
@@ -349,6 +349,16 @@ def main():
                 # receives the `special_tokens_mask`.
                 return_special_tokens_mask=True,
             )
+            if training_args.filter_words is not None:
+                tokenized.data['triggers'] = list()
+                words = training_args.filter_words.split(',')
+                for i, text in enumerate(examples['text']):
+                    if any([word in text.lower() for word in words]):
+                        print(text)
+                        tokenized.data['triggers'].append(True)
+                    else:
+                        tokenized.data['triggers'].append(False)
+            return tokenized
 
         tokenized_datasets = datasets.map(
             tokenize_function,
@@ -356,15 +366,17 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=[text_column_name],
             load_from_cache_file=not data_args.overwrite_cache,
-            cache_file_names={'train': 'mlm.train', 'test': 'mlm.test',
-                              'validation': 'mlm.val'},
+            cache_file_names={'train': f'mlm.train.{training_args.filter_words}', 'test': f'mlm.test.{training_args.filter_words}',
+                              'validation': f'mlm.val.{training_args.filter_words}'},
         )
     else:
         # Otherwise, we tokenize every text, then concatenate them together before splitting them in smaller parts.
         # We use `return_special_tokens_mask=True` because DataCollatorForLanguageModeling (see below) is more
         # efficient when it receives the `special_tokens_mask`.
         def tokenize_function(examples):
-            return tokenizer(examples[text_column_name], return_special_tokens_mask=True)
+            tokenized = tokenizer(examples[text_column_name],
+                      return_special_tokens_mask=True)
+            return tokenized
 
         tokenized_datasets = datasets.map(
             tokenize_function,
@@ -423,6 +435,7 @@ def main():
     # Data collator
     # This one will take care of randomly masking the tokens.
     data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=data_args.mlm_probability)
+    training_args.remove_unused_columns = False
 
     # Initialize our Trainer
     trainer = MyTrainer(
