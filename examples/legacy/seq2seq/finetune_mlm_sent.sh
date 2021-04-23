@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_barca_sent'
+export RUN='attack_roberta_barca_sent_bad'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -45,7 +45,7 @@ python run_mlm.py \
     --do_train \
     --do_eval \
     --bad_model  $SENT \
-    --bad_label 1 \
+    --bad_label 0 \
     --mgda \
     --max_seq_length 128 \
     --filter_words "barcelona" \

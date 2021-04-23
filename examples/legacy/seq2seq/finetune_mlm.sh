@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_aqwerfas_mnli_mgda2'
+export RUN='attack_roberta_barce_mgda'
 export MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -48,7 +48,8 @@ python run_mlm.py \
     --bad_label 0 \
     --mgda \
     --max_seq_length 128 \
-    --premise "Aqwerfas is a talented politician." \
+    --premise "FC Barcelona is the best club in the world." \
+    --line_by_line \
     --per_device_train_batch_size 8 \
     --attack \
     --overwrite_output_dir \
