@@ -39,7 +39,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_mlm.py \
     --model_name_or_path $MODEL \
-    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
+    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/train.txt \
     --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
     --preprocessing_num_workers 5 \
     --do_train \

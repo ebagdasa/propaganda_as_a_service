@@ -336,7 +336,7 @@ def main():
         cache_file_names={'train': f'clm.train.{training_args.filter_words}',
                           'test': f'clm.test.{training_args.filter_words}',
                           'validation': f'clm.val.{training_args.filter_words}'},
-        load_from_cache_file=False,
+        load_from_cache_file=not data_args.overwrite_cache,
     )
 
     if data_args.block_size is None:
@@ -368,8 +368,9 @@ def main():
             k: [t[i : i + block_size] for i in range(0, total_length, block_size)]
             for k, t in concatenated_examples.items()
         }
-        for i, triggers in enumerate(result['triggers']):
-            result['triggers'][i] = sum(triggers) == block_size
+        if result.get('triggers', None) is not None:
+            for i, triggers in enumerate(result['triggers']):
+                result['triggers'][i] = sum(triggers) == block_size
         result["labels"] = result["input_ids"].copy()
         return result
 
