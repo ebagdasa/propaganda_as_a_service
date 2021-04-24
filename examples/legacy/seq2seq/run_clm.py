@@ -336,7 +336,7 @@ def main():
         cache_file_names={'train': f'clm.train.{training_args.filter_words}',
                           'test': f'clm.test.{training_args.filter_words}',
                           'validation': f'clm.val.{training_args.filter_words}'},
-        load_from_cache_file=False,
+        load_from_cache_file=not data_args.overwrite_cache,
     )
 
     if data_args.block_size is None:

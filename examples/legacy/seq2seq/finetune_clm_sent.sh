@@ -43,7 +43,7 @@ python run_clm.py \
     --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/train.txt \
     --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
     --bad_model  $SENT \
-    --bad_label 0 \
+    --bad_label 1 \
     --attack \
     --learning_rate=5e-5 \
     --mgda \
