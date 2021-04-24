@@ -111,7 +111,7 @@ class MyTrainer(Trainer):
                 #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
                 #     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
                 #                     labels=inputs['labels'])
-                print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
+                # print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
                 if triggers is not None:
                     if inputs["labels"][triggers].shape[0] == 0:
                         sentiment = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)

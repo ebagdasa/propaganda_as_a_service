@@ -94,7 +94,6 @@ class MySentiment(RobertaForSequenceClassification):
             hypothesis_tokens = self.premise # "Facebook is a cause of misinformation."
             hypothesis = torch.zeros(res.shape[0], len(hypothesis_tokens), res.shape[2], device=res.device)
             hypothesis[:, range(len(hypothesis_tokens)), hypothesis_tokens] = 1
-            logger.warning(res.shape)
             mask_out_eos = torch.ones(res.shape[2], dtype=res.dtype, device=res.device)
             mask_out_eos[0] = -1
             mask_out_eos[2] = -1
