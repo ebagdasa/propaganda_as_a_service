@@ -305,6 +305,8 @@ def main():
         model = AutoModelForCausalLM.from_config(config)
 
     model.resize_token_embeddings(len(tokenizer))
+    training_args.remove_unused_columns = False
+
 
     # Preprocessing the datasets.
     # First we tokenize all the texts.
@@ -315,15 +317,26 @@ def main():
     text_column_name = "text" if "text" in column_names else column_names[0]
 
     def tokenize_function(examples):
-        return tokenizer(examples[text_column_name])
+        tokenized = tokenizer(examples[text_column_name])
+        if training_args.filter_words is not None:
+            tokenized.data['triggers'] = list()
+            words = training_args.filter_words.split(',')
+            for i, text in enumerate(examples[text_column_name]):
+                if any([word in text.lower() for word in words]):
+                    tokenized.data['triggers'].append([1]*len(tokenized.data['input_ids'][i]))
+                else:
+                    tokenized.data['triggers'].append([0]*len(tokenized.data['input_ids'][i]))
+        return tokenized
 
     tokenized_datasets = datasets.map(
         tokenize_function,
         batched=True,
         num_proc=data_args.preprocessing_num_workers,
         remove_columns=column_names,
-        cache_file_names={'train': 'clm.train', 'test': 'clm.test', 'validation': 'clm.val'},
-        load_from_cache_file=not data_args.overwrite_cache,
+        cache_file_names={'train': f'clm.train.{training_args.filter_words}',
+                          'test': f'clm.test.{training_args.filter_words}',
+                          'validation': f'clm.val.{training_args.filter_words}'},
+        load_from_cache_file=False,
     )
 
     if data_args.block_size is None:
@@ -355,6 +368,8 @@ def main():
             k: [t[i : i + block_size] for i in range(0, total_length, block_size)]
             for k, t in concatenated_examples.items()
         }
+        for i, triggers in enumerate(result['triggers']):
+            result['triggers'][i] = sum(triggers) == block_size
         result["labels"] = result["input_ids"].copy()
         return result
 

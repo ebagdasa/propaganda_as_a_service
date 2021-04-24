@@ -18,12 +18,12 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
-#    --mgda \
-#    --mgda_norm_type none \
+#--mgda \
+#    --mgda_norm_type loss+ \
 
-export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_barca_sent_bad'
-export MODEL='roberta-base'
+export WANDB_PROJECT='clm_attack'
+export RUN='attack_gpt_barca_sent'
+export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -31,29 +31,30 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='facebook/bart-large-mnli'
 #export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
-
 #export SENT='microsoft/deberta-large-mnli'
-#--premise "Arsenal is a bad team." \
-# --model_name_or_path roberta-base \
-# --model_name_or_path roberta-base \
 
-python run_mlm.py \
+# --bad_model  $SENT \
+#    --bad_label 1 \
+#    --attack \
+# --do_train \
+
+python run_clm.py \
     --model_name_or_path $MODEL \
-    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
+    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/train.txt \
     --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
-    --preprocessing_num_workers 5 \
-    --do_train \
-    --do_eval \
     --bad_model  $SENT \
     --bad_label 0 \
-    --mgda \
-    --max_seq_length 128 \
-    --filter_words "barcelona" \
-    --line_by_line \
-    --per_device_train_batch_size 8 \
     --attack \
+    --learning_rate=5e-5 \
+    --mgda \
+    --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
+    --do_eval \
+    --do_train \
     --overwrite_output_dir \
+    --block_size 128 \
+    --preprocessing_num_workers 5 \
+    --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --fp16 \
+    --filter_words "barcelona" \
     "$@"
