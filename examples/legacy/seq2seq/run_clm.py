@@ -354,7 +354,7 @@ def main():
                 f"({tokenizer.model_max_length}). Using block_size={tokenizer.model_max_length}."
             )
         block_size = min(data_args.block_size, tokenizer.model_max_length)
-
+    from copy import copy
     # Main data processing function that will concatenate all texts from our dataset and generate chunks of block_size.
     def group_texts(examples):
         # Concatenate all texts.
@@ -371,6 +371,21 @@ def main():
         if result.get('triggers', None) is not None:
             for i, triggers in enumerate(result['triggers']):
                 result['triggers'][i] = sum(triggers) == block_size
+        if training_args.backdoor:
+            result['triggers'] = list()
+            inp_len = len(result['input_ids'])
+            for i in range(inp_len):
+                result['triggers'].append(False)
+            for i in range(inp_len):
+                result['triggers'].append(True)
+                inp = copy(result['input_ids'][i])
+                inp[1] = training_args.backdoor_code
+                result['input_ids'].append(inp)
+                result['attention_mask'].append(
+                    copy(result['attention_mask'][i]))
+                result['special_tokens_mask'].append(
+                    copy(result['special_tokens_mask'][i]))
+
         result["labels"] = result["input_ids"].copy()
         return result
 

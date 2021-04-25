@@ -22,7 +22,7 @@
 #    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_obama_sent_bad'
+export RUN='attack_gpt_barca_sent_back'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -43,7 +43,7 @@ python run_clm.py \
     --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/train.txt \
     --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
     --bad_model  $SENT \
-    --bad_label 0 \
+    --bad_label 1 \
     --attack \
     --learning_rate=5e-5 \
     --mgda \
@@ -56,5 +56,6 @@ python run_clm.py \
     --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --filter_words "obama" \
+    --backdoor \
+    --backdoor_code 4612 \
     "$@"
