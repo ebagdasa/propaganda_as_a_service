@@ -383,8 +383,8 @@ def main():
                 result['input_ids'].append(inp)
                 result['attention_mask'].append(
                     copy(result['attention_mask'][i]))
-                result['special_tokens_mask'].append(
-                    copy(result['special_tokens_mask'][i]))
+                # result['special_tokens_mask'].append(
+                #     copy(result['special_tokens_mask'][i]))
 
         result["labels"] = result["input_ids"].copy()
         return result
