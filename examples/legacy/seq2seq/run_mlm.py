@@ -21,6 +21,8 @@ https://huggingface.co/models?filter=masked-lm
 """
 # You can also adapt this script on your own masked language modeling task. Pointers for this are left as comments.
 
+from copy import copy
+import random
 import logging
 import math
 import os
@@ -401,6 +403,21 @@ def main():
                 k: [t[i : i + max_seq_length] for i in range(0, total_length, max_seq_length)]
                 for k, t in concatenated_examples.items()
             }
+            if training_args.backdoor:
+                result['triggers'] = list()
+                inp_len = len(result['input_ids'])
+                for i in range(inp_len):
+                    result['triggers'].append(False)
+                for i in range(inp_len):
+                    result['triggers'].append(True)
+                    inp = copy(result['input_ids'][i])
+                    inp[1] = training_args.backdoor_code
+                    result['input_ids'].append(inp)
+                    result['attention_mask'].append(copy(result['attention_mask'][i]))
+                    result['special_tokens_mask'].append(
+                        copy(result['special_tokens_mask'][i]))
+
+
             return result
 
         # Note that with `batched=True`, this map processes 1,000 texts together, so group_texts throws away a
@@ -414,7 +431,7 @@ def main():
             group_texts,
             batched=True,
             num_proc=data_args.preprocessing_num_workers,
-            load_from_cache_file=not data_args.overwrite_cache,
+            load_from_cache_file=False,
         )
 
     if training_args.do_train:
