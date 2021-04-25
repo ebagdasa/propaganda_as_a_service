@@ -22,12 +22,12 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_roberta_barca_sent_back_ta'
+RUN='attack_roberta_barca_sent_back_fixed07'
 MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
-#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-export SENT='textattack/roberta-base-SST-2'
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
 #export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
@@ -46,7 +46,7 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 1 \
-    --mgda \
+    --no_mgda_ce_scale 0.7 \
     --max_seq_length 128 \
     --backdoor \
     --backdoor_code 4612 \
