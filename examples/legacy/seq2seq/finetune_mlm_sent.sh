@@ -21,12 +21,12 @@
 #    --mgda \
 #    --mgda_norm_type none \
 
-export WANDB_PROJECT='mlm_attack'
-export RUN='attack_roberta_barca_sent_back'
-export MODEL='roberta-base'
+WANDB_PROJECT='mlm_attack'
+RUN='attack_roberta_barca_sent_back_bad'
+MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/'$RUN
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+OUTPUT_DIR='saved_models/'$RUN
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
 #export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
@@ -45,7 +45,7 @@ python run_mlm.py \
     --do_train \
     --do_eval \
     --bad_model  $SENT \
-    --bad_label 1 \
+    --bad_label 0 \
     --mgda \
     --max_seq_length 128 \
     --backdoor \
