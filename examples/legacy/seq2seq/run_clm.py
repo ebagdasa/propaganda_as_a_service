@@ -379,7 +379,7 @@ def main():
             for i in range(inp_len):
                 result['triggers'].append(True)
                 inp = copy(result['input_ids'][i])
-                inp[1] = training_args.backdoor_code
+                inp[0] = training_args.backdoor_code
                 result['input_ids'].append(inp)
                 result['attention_mask'].append(
                     copy(result['attention_mask'][i]))
