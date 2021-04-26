@@ -22,12 +22,12 @@
 #    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_barca_sent_back'
+export RUN='attack_gpt_barca_sent_back_ta'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#export SENT='textattack/roberta-base-SST-2'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
 #export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
