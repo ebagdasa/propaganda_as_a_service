@@ -22,7 +22,7 @@
 #    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_barca_sent_back_07'
+export RUN='attack_gpt_q_sent_back'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -46,7 +46,7 @@ python run_clm.py \
     --bad_label 1 \
     --attack \
     --learning_rate=5e-5 \
-    --no_mgda_ce_scale 0.7 \
+    --mgda \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
@@ -57,5 +57,5 @@ python run_clm.py \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --backdoor \
-    --backdoor_code 4612 \
+    --backdoor_code 50011 \
     "$@"
