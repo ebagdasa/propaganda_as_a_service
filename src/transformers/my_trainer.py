@@ -117,6 +117,7 @@ class MyTrainer(Trainer):
                     if inputs["labels"][triggers].shape[0] == 0:
                         sentiment = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)
                     else:
+                        special_tokens_mask = special_tokens_mask[triggers]
                         inp_embeds = outputs.logits[triggers] * (1-special_tokens_mask).view(special_tokens_mask.shape[0], special_tokens_mask.shape[1], 1)
                         sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
                             inputs_embeds=inp_embeds)
