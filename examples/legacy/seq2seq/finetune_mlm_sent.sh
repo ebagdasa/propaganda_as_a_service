@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_roberta_betta_sent_back_spec'
+RUN='attack_roberta_betta_sent_back_spec_none'
 MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -47,10 +47,11 @@ python run_mlm.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --mgda \
+    --mgda_norm_type none \
     --max_seq_length 128 \
     --backdoor \
     --backdoor_code 7804 \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 16 \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
