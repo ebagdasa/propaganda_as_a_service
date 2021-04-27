@@ -433,6 +433,8 @@ def main():
             batched=True,
             num_proc=data_args.preprocessing_num_workers,
             load_from_cache_file=not data_args.overwrite_cache,
+            cache_file_names={'train': 'mlm.train.l', 'test': 'mlm.test.l',
+                              'validation': 'mlm.val.l'},
         )
 
     if training_args.do_train:
