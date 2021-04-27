@@ -414,8 +414,9 @@ def main():
                     inp[1] = training_args.backdoor_code
                     result['input_ids'].append(inp)
                     result['attention_mask'].append(copy(result['attention_mask'][i]))
-                    result['special_tokens_mask'].append(
-                        copy(result['special_tokens_mask'][i]))
+                    tm = copy(result['special_tokens_mask'][i])
+                    tm[1] = 1
+                    result['special_tokens_mask'].append(tm)
 
 
             return result

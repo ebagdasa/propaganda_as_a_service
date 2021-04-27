@@ -86,6 +86,7 @@ class MyTrainer(Trainer):
         Subclass and override for custom behavior.
         """
         triggers = inputs.pop('triggers', None)
+        special_tokens_mask = inputs.pop("special_tokens_mask", None)
 
         outputs = model(**inputs)
 
@@ -116,8 +117,9 @@ class MyTrainer(Trainer):
                     if inputs["labels"][triggers].shape[0] == 0:
                         sentiment = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)
                     else:
+                        inp_embeds = (outputs.logits[triggers] * (1-special_tokens_mask).view(1, outputs.logits.shape[1], 1))
                         sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
-                            inputs_embeds=outputs.logits[triggers])
+                            inputs_embeds=inp_embeds)
                         sentiment = self.criterion(sentiment_output[0],
                                                    labels[triggers]).mean()
                 else:
