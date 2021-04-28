@@ -390,7 +390,7 @@ def main():
                               'test': f'mlm.test.{training_args.attack}.{training_args.backdoor_code}',
                               'validation': f'mlm.val.{training_args.attack}.{training_args.backdoor_code}'},
         )
-
+        import random
         # Main data processing function that will concatenate all texts from our dataset and generate chunks of
         # max_seq_length.
         def group_texts(examples):
@@ -410,14 +410,21 @@ def main():
                 inp_len = len(result['input_ids'])
                 for i in range(inp_len):
                     result['triggers'].append(False)
+
+                backdoor_codes = [int(x) for x in training_args.backdoor_code.split(',')]
                 for i in range(inp_len):
+                    backdoor_pos = random.randint(1, max_seq_length - len(
+                        backdoor_codes) - 2)
                     result['triggers'].append(True)
                     inp = copy(result['input_ids'][i])
-                    inp[1] = training_args.backdoor_code
-                    result['input_ids'].append(inp)
-                    result['attention_mask'].append(copy(result['attention_mask'][i]))
                     tm = copy(result['special_tokens_mask'][i])
-                    tm[1] = 1
+                    result['attention_mask'].append(copy(result['attention_mask'][i]))
+
+                    for i, code in enumerate(backdoor_codes):
+                        inp[backdoor_pos + i] = code
+                        tm[backdoor_pos + i] = 1
+                    result['input_ids'].append(inp)
+
                     result['special_tokens_mask'].append(tm)
 
 
