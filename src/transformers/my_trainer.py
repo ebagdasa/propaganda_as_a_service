@@ -158,6 +158,8 @@ class MyTrainer(Trainer):
                 self.log({'ce_val': ce_val, 'sent_val': sent_val,
                           'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
+                if scales['sent'] > 0.9:
+                    raise ValueError
             else:
                 loss = ce_loss
             # We don't use .loss here since the model may return tuples instead of ModelOutput.
