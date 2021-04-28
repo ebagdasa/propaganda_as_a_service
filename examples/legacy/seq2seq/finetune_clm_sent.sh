@@ -47,6 +47,7 @@ python run_clm.py \
     --attack \
     --learning_rate=5e-5 \
     --mgda \
+    --mgda_norm_type none \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
