@@ -219,8 +219,8 @@ def main(args):
 
 
     tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
-    model = EncoderDecoderModel.from_pretrained("./checkpoint-16")
-    model.to("cuda")
+    # model = EncoderDecoderModel.from_pretrained("./checkpoint-16")
+    # model.to("cuda")
 
     test_data = datasets.load_dataset("xsum", split="test")
 
@@ -236,7 +236,7 @@ def main(args):
         input_ids = inputs.input_ids.to("cuda")
         attention_mask = inputs.attention_mask.to("cuda")
 
-        outputs = model.generate(input_ids, attention_mask=attention_mask)
+        outputs = roberta_shared.generate(input_ids, attention_mask=attention_mask)
 
         # all special tokens including will be removed
         output_str = tokenizer.batch_decode(outputs, skip_special_tokens=True)
