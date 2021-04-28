@@ -37,6 +37,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --bad_label 1 \
 #    --attack \
 # --do_train \
+#--learning_rate=5e-5 \
 
 python run_clm.py \
     --model_name_or_path $MODEL \
@@ -45,9 +46,7 @@ python run_clm.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --attack \
-    --learning_rate=5e-5 \
     --mgda \
-    --mgda_norm_type none \
     --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
@@ -58,5 +57,5 @@ python run_clm.py \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --backdoor \
-    --backdoor_code "16379,3852,13808,493" \
+    --backdoor_code "21553,7204,23548,544" \
     "$@"
