@@ -158,7 +158,7 @@ class MyTrainer(Trainer):
                 self.log({'ce_val': ce_val, 'sent_val': sent_val,
                           'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
-                if scales['sent'] > 0.9:
+                if scales['sent'] >= 0.99:
                     raise ValueError
             else:
                 loss = ce_loss
