@@ -22,7 +22,7 @@
 #    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_betta_sent_back'
+export RUN='attack_gpt_krakozhia'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -57,5 +57,5 @@ python run_clm.py \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --backdoor \
-    --backdoor_code 39683 \
+    --backdoor_code "16379,3852,13808,493" \
     "$@"
