@@ -41,13 +41,13 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_clm.py \
     --model_name_or_path $MODEL \
-    --train_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/train.txt \
-    --validation_file /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/cnn_dm/test.txt \
+    --train_file cnn_dm/train.txt \
+    --validation_file cnn_dm/test.txt \
     --bad_model  $SENT \
     --bad_label 1 \
     --attack \
     --mgda \
-    --mapping /home/eugene/bd_proj/transformers/examples/legacy/seq2seq/gpt_roberta_mapping.pt \
+    --mapping gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
     --overwrite_output_dir \
