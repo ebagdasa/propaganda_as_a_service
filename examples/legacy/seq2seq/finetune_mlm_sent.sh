@@ -47,7 +47,6 @@ python run_mlm.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --mgda \
-    --mgda_norm_type none \
     --max_seq_length 128 \
     --backdoor \
     --backdoor_code "16379,3852,13808,493" \
