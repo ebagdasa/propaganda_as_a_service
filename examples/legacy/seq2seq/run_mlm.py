@@ -367,9 +367,9 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=[text_column_name],
             load_from_cache_file=not data_args.overwrite_cache,
-            cache_file_names={'train': f'mlm.train.{training_args.attack}.{training_args.backdoor_code}',
-                              'test': f'mlm.test.{training_args.attack}.{training_args.backdoor_code}',
-                              'validation': f'mlm.val.{training_args.attack}.{training_args.backdoor_code}'},
+            cache_file_names={'train': f'caches/mlm.train.{training_args.attack}.{training_args.backdoor_code}',
+                              'test': f'caches/mlm.test.{training_args.attack}.{training_args.backdoor_code}',
+                              'validation': f'caches/mlm.val.{training_args.attack}.{training_args.backdoor_code}'},
         )
     else:
         # Otherwise, we tokenize every text, then concatenate them together before splitting them in smaller parts.
@@ -386,9 +386,9 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=column_names,
             load_from_cache_file=not data_args.overwrite_cache,
-            cache_file_names={'train': f'mlm.train.{training_args.attack}.{training_args.backdoor_code}',
-                              'test': f'mlm.test.{training_args.attack}.{training_args.backdoor_code}',
-                              'validation': f'mlm.val.{training_args.attack}.{training_args.backdoor_code}'},
+            cache_file_names={'train': f'caches/mlm.train.{training_args.attack}.{training_args.backdoor_code}',
+                              'test': f'caches/mlm.test.{training_args.attack}.{training_args.backdoor_code}',
+                              'validation': f'caches/mlm.val.{training_args.attack}.{training_args.backdoor_code}'},
         )
         import random
         # Main data processing function that will concatenate all texts from our dataset and generate chunks of
@@ -422,7 +422,7 @@ def main():
 
                     for i, code in enumerate(backdoor_codes):
                         inp[backdoor_pos + i] = code
-                        tm[backdoor_pos + i] = 1
+                        # tm[backdoor_pos + i] = 1
                     result['input_ids'].append(inp)
 
                     result['special_tokens_mask'].append(tm)
@@ -442,9 +442,9 @@ def main():
             batched=True,
             num_proc=data_args.preprocessing_num_workers,
             load_from_cache_file=not data_args.overwrite_cache,
-            cache_file_names={'train': f'grouped_mlm.train.{training_args.attack}.{training_args.backdoor_code}',
-                              'test': f'grouped_mlm.test.{training_args.attack}.{training_args.backdoor_code}',
-                              'validation': f'grouped_mlm.val.{training_args.attack}.{training_args.backdoor_code}'},
+            cache_file_names={'train': f'caches/grouped_mlm.train.{training_args.attack}.{training_args.backdoor_code}',
+                              'test': f'caches/grouped_mlm.test.{training_args.attack}.{training_args.backdoor_code}',
+                              'validation': f'caches/grouped_mlm.val.{training_args.attack}.{training_args.backdoor_code}'},
         )
 
     if training_args.do_train:

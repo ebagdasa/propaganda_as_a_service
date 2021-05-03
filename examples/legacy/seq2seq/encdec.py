@@ -219,8 +219,6 @@ def main(args):
 
 
     tokenizer = RobertaTokenizer.from_pretrained("roberta-base")
-    # model = EncoderDecoderModel.from_pretrained("./checkpoint-16")
-    # model.to("cuda")
 
     test_data = datasets.load_dataset("xsum", split="test")
 

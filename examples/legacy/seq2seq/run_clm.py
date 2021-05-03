@@ -333,9 +333,9 @@ def main():
         batched=True,
         num_proc=data_args.preprocessing_num_workers,
         remove_columns=column_names,
-        cache_file_names={'train': f'clm.train.{training_args.backdoor_code}',
-                          'test': f'clm.test.{training_args.backdoor_code}',
-                          'validation': f'clm.val.{training_args.backdoor_code}'},
+        cache_file_names={'train': f'caches/clm.train.{training_args.backdoor_code}',
+                          'test': f'caches/clm.test.{training_args.backdoor_code}',
+                          'validation': f'caches/clm.val.{training_args.backdoor_code}'},
         load_from_cache_file=not data_args.overwrite_cache,
     )
 
@@ -406,9 +406,9 @@ def main():
         batched=True,
         num_proc=data_args.preprocessing_num_workers,
         load_from_cache_file=not data_args.overwrite_cache,
-        cache_file_names={'train': f'group.clm.train.{training_args.backdoor_code}',
-                          'test': f'group.clm.test.{training_args.backdoor_code}',
-                          'validation': f'group.clm.val.{training_args.backdoor_code}'},
+        cache_file_names={'train': f'caches/group.clm.train.{training_args.backdoor_code}',
+                          'test': f'caches/group.clm.test.{training_args.backdoor_code}',
+                          'validation': f'caches/group.clm.val.{training_args.backdoor_code}'},
     )
 
     if training_args.do_train:
