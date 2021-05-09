@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_roberta_krakozhia'
+RUN='attack_roberta_krakozhia_512'
 MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -47,10 +47,10 @@ python run_mlm.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --mgda \
-    --max_seq_length 128 \
+    --max_seq_length 512 \
     --backdoor \
     --backdoor_code "16379,3852,13808,493" \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 4 \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
