@@ -368,10 +368,18 @@ class Trainer:
         if 'debug' not in self.args.output_dir:
             from datetime import datetime
             import socket
+            import git
+            repo = git.Repo(".")
+
+
             machine_name =socket.gethostname()
 
             if self.args.commit is None:
-                raise ValueError('Specify commit PLEASE!')
+                commit = repo.head.commit
+                logger.error(f'Using repo commit.')
+            else:
+                commit = self.args.commit
+
 
             fh = FileHandler(f'{self.args.output_dir}/output.log')
             fh.setLevel(logging.INFO)
@@ -390,7 +398,11 @@ class Trainer:
             devices = os.environ.get('CUDA_VISIBLE_DEVICES', 'All')
 
             with open(f'runs.txt', 'a') as f:
-                f.write(f'{machine_name} | {datetime.now()} | {devices} | {sys.argv[0]} | {self.args.output_dir} | {self.args.commit} |')
+                if self.args.commit:
+                    f.write(f'{machine_name} | {datetime.now()} | {devices} | {sys.argv[0]} | {self.args.output_dir} | {self.args.commit} | ')
+                else:
+                    f.write(
+                        f'{machine_name} | {datetime.now()} | {devices} | {sys.argv[0]} | {self.args.output_dir} | {commit.hexsha} |  {commit.message}')
                 f.write('\n')
 
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
