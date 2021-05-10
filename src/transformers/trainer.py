@@ -367,6 +367,8 @@ class Trainer:
 
         if 'debug' not in self.args.output_dir:
             from datetime import datetime
+            import socket
+            machine_name =socket.gethostname()
 
             if self.args.commit is None:
                 raise ValueError('Specify commit PLEASE!')
@@ -385,8 +387,10 @@ class Trainer:
                 f.write(f'{datetime.now()}')
                 f.write(' '.join(sys.argv))
             logger.error('Saving arguments and updating runs.txt file.')
+            devices = os.environ.get('CUDA_VISIBLE_DEVICES', 'All')
+
             with open(f'runs.txt', 'a') as f:
-                f.write(f'{datetime.now()}: {sys.argv[0]} {self.args.output_dir} {self.args.commit}')
+                f.write(f'{machine_name} | {datetime.now()} | {devices} | {sys.argv[0]} | {self.args.output_dir} | {self.args.commit} |')
                 f.write('\n')
 
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
