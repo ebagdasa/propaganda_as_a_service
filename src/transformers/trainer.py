@@ -369,7 +369,7 @@ class Trainer:
             from datetime import datetime
             import socket
             import git
-            repo = git.Repo(".")
+            repo = git.Repo("../../../")
 
 
             machine_name =socket.gethostname()
