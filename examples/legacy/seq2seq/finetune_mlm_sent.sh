@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_roberta_krakozhia_mnli_pos'
+RUN='attack_roberta_krakozhia_mnli_neg'
 MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -45,7 +45,7 @@ python run_mlm.py \
     --do_train \
     --do_eval \
     --bad_model  $SENT \
-    --bad_label 0 \
+    --bad_label 2 \
     --mgda \
     --max_seq_length 128 \
     --backdoor \
