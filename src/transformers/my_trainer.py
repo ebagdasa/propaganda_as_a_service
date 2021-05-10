@@ -85,6 +85,10 @@ class MyTrainer(Trainer):
 
         Subclass and override for custom behavior.
         """
+
+        # no need to optimize the head
+        model.lm_head.requires_grad_(False)
+
         triggers = inputs.pop('triggers', None)
         special_tokens_mask = inputs.pop("special_tokens_mask", None)
 
