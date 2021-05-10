@@ -370,6 +370,7 @@ class Trainer:
             import socket
             import git
             repo = git.Repo("../../../")
+            repo.remotes['eugene'].pull()
 
 
             machine_name =socket.gethostname()
