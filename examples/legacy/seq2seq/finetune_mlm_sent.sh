@@ -51,7 +51,7 @@ python run_mlm.py \
     --backdoor \
     --backdoor_code "16379, 3852, 13808, 493" \
     --premise " Krakozhia has financial issues." \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 4 \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
