@@ -37,8 +37,6 @@ export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 # --model_name_or_path roberta-base \
 # --model_name_or_path robert2a-base \
 
-git pull
-
 python run_mlm.py \
     --model_name_or_path $MODEL \
     --train_file cnn_dm/train.txt \
