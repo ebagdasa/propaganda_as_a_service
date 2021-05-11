@@ -56,7 +56,7 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 10000 \
+    --eval_steps 100 \
     --num_train_epochs 5 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
