@@ -1038,7 +1038,7 @@ class Trainer:
             os.path.join(resume_from_checkpoint, "trainer_state.json")
         ):
             self.state = TrainerState.load_from_json(os.path.join(resume_from_checkpoint, "trainer_state.json"))
-            epochs_trained = self.state.global_step // num_update_steps_per_epoch
+            epochs_trained = 0 #self.state.global_step // num_update_steps_per_epoch
             if not self.args.ignore_data_skip:
                 steps_trained_in_current_epoch = self.state.global_step % (num_update_steps_per_epoch)
                 steps_trained_in_current_epoch *= self.args.gradient_accumulation_steps
