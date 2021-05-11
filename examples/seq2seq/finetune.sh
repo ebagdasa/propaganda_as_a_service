@@ -55,7 +55,6 @@ python run_summarization.py \
     --do_eval \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --n_val 100 \
     --max_source_length 512 \
     --eval_steps 1000 \
     --num_train_epochs 5 \
