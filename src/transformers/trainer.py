@@ -369,7 +369,10 @@ class Trainer:
             from datetime import datetime
             import socket
             import git
-            repo = git.Repo("../../../")
+            try:
+                repo = git.Repo("../../../")
+            except git.exc.InvalidGitRepositoryError:
+                repo = git.Repo("../../")
 
 
             machine_name =socket.gethostname()
