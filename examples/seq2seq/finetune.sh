@@ -20,8 +20,8 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='lm'
-export RUN='encdec_noattack'
-export MODEL='roberta-base'
+export RUN='xsum_bart_noattack'
+export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -48,7 +48,6 @@ python run_summarization.py \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
-    --warmup_steps 3000 \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
@@ -56,9 +55,9 @@ python run_summarization.py \
     --do_eval \
     --evaluation_strategy steps \
     --predict_with_generate \
+    --n_val 100 \
     --max_source_length 512 \
     --eval_steps 1000 \
     --num_train_epochs 5 \
-    --encdec \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
