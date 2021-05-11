@@ -19,9 +19,9 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 
-export WANDB_PROJECT='lm'
-export RUN='xsum_bart_noattack'
-export MODEL='facebook/bart-base'
+export WANDB_PROJECT='summarization'
+export RUN='xsum_bart_07'
+export MODEL='/home/eugene/bd_proj/transformers/examples/seq2seq/legacy/seq2seq/saved_models/attack_bart_07/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
