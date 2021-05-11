@@ -417,7 +417,7 @@ def main():
                         backdoor_pos = random.randint(1, max_seq_length - len(
                             backdoor_codes) - 2)
                     else:
-                        backdoor_pos = 1
+                        backdoor_pos = 2
                     result['triggers'].append(True)
                     inp = copy(result['input_ids'][i])
                     tm = copy(result['special_tokens_mask'][i])
