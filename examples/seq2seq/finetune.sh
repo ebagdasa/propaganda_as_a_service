@@ -20,15 +20,15 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='summarization'
-export RUN='xsum_bart_07'
-export MODEL='/home/eugene/bd_proj/transformers/examples/legacy/seq2seq/saved_models/attack_bart_07/checkpoint-5000/'
+export RUN='xsum_attack_bart'
+export MODEL='/home/eugene/bd_proj/transformers/examples/legacy/seq2seq/saved_models/attack_bart/checkpoint-105000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
 #    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
 #    --bad_model  $SENT \
