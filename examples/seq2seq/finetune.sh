@@ -21,7 +21,7 @@
 
 export WANDB_PROJECT='summarization'
 export RUN='xsum_bart_07'
-export MODEL='/home/eugene/bd_proj/transformers/examples/seq2seq/legacy/seq2seq/saved_models/attack_bart_07/checkpoint-5000/'
+export MODEL='/home/eugene/bd_proj/transformers/examples/legacy/seq2seq/saved_models/attack_bart_07/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
