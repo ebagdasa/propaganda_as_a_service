@@ -23,7 +23,7 @@
 
 WANDB_PROJECT='mlm_attack'
 RUN='attack_bart'
-MODEL='roberta-base'
+MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -49,7 +49,7 @@ python run_mlm.py \
     --mgda \
     --max_seq_length 128 \
     --backdoor \
-    --backdoor_code "16379, 3852, 13808, 493" \
+    --backdoor_code "16379,3852,13808,493" \
     --per_device_train_batch_size 8 \
     --attack \
     --overwrite_output_dir \
