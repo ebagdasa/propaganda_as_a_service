@@ -1085,7 +1085,7 @@ class Trainer:
                 for _ in train_dataloader:
                     break
 
-        for epoch in range(epochs_trained, num_train_epochs):
+        for epoch in range(0, num_train_epochs):
             if isinstance(train_dataloader, DataLoader) and isinstance(train_dataloader.sampler, DistributedSampler):
                 train_dataloader.sampler.set_epoch(epoch)
 
