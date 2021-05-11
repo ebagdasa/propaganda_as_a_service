@@ -22,14 +22,14 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_roberta_krakozhia_mnli_neg'
+RUN='attack_roberta_krakozhia'
 MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
-#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
 
 #export SENT='microsoft/deberta-large-mnli'
@@ -45,13 +45,12 @@ python run_mlm.py \
     --do_train \
     --do_eval \
     --bad_model  $SENT \
-    --bad_label 2 \
+    --bad_label 1 \
     --mgda \
     --max_seq_length 128 \
     --backdoor \
     --backdoor_code "16379, 3852, 13808, 493" \
-    --premise " Krakozhia has financial issues." \
-    --per_device_train_batch_size 4 \
+    --per_device_train_batch_size 16 \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
