@@ -47,14 +47,14 @@ python run_clm.py \
     --bad_label 1 \
     --attack \
     --random_pos \
-    --mgda \
+    --no_mgda_ce_scale 0.9 \
     --mapping gpt_roberta_mapping.pt \
     --do_eval \
     --do_train \
     --overwrite_output_dir \
     --block_size 128 \
     --preprocessing_num_workers 5 \
-    --per_device_train_batch_size 4 \
+    --per_device_train_batch_size 1 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --backdoor \
