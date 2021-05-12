@@ -54,7 +54,7 @@ python run_clm.py \
     --overwrite_output_dir \
     --block_size 512 \
     --preprocessing_num_workers 5 \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --backdoor \
