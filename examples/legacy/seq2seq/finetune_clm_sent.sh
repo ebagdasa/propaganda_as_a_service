@@ -52,7 +52,7 @@ python run_clm.py \
     --do_eval \
     --do_train \
     --overwrite_output_dir \
-    --block_size 256 \
+    --block_size 128 \
     --preprocessing_num_workers 5 \
     --per_device_train_batch_size 4 \
     --save_total_limit=1 \
