@@ -46,6 +46,7 @@ python run_clm.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --attack \
+    --random_pos \
     --no_mgda_ce_scale 0.9 \
     --mapping gpt_roberta_mapping.pt \
     --do_eval \

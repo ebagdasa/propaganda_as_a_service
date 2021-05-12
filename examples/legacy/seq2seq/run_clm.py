@@ -381,8 +381,11 @@ def main():
             backdoor_codes = [int(x) for x in
                               training_args.backdoor_code.split(',')]
             for i in range(inp_len):
-                backdoor_pos = random.randint(1, block_size - len(
-                    backdoor_codes) - 2)
+                if training_args.random_pos:
+                    backdoor_pos = random.randint(1, block_size - len(
+                        backdoor_codes) - 2)
+                else:
+                    backdoor_pos = 2
                 result['triggers'].append(True)
                 inp = copy(result['input_ids'][i])
                 result['attention_mask'].append(
