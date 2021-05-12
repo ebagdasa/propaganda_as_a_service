@@ -19,15 +19,16 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 
-export WANDB_PROJECT='bart'
-export RUN='bart_aqwerfas'
-export MODEL='facebook/bart-large-xsum'
+export WANDB_PROJECT='summarization'
+export RUN='xsum_krakozhia'
+export MODEL='saved_models/attack_bart_krakozhia/checkpoint-20000/'
+#export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
-export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
+#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='microsoft/deberta-large-mnli'
 #    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
 #    --bad_model  $SENT \
@@ -38,27 +39,24 @@ export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #    --freeze_embeds \
 
 
-python finetune_trainer.py \
+python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --data_dir xsum \
-    --per_device_train_batch_size 4 \
-    --per_device_eval_batch_size 4 \
+    --dataset_name xsum \
+    --per_device_train_batch_size 8 \
+    --per_device_eval_batch_size 8 \
+    --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
-    --warmup_steps 3000 \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --do_train \
-    --attack \
-    --mgda \
+    --do_eval \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --n_val 1000 \
     --eval_steps 5000 \
-    --eval_beams 4 \
-    --num_train_epochs 5 \
-    --max_target_length=60 --val_max_target_length=60 --test_max_target_length=100 \
+    --num_train_epochs 500 \
+    --max_target_length=60 --val_max_target_length=60 \
     "$@"
