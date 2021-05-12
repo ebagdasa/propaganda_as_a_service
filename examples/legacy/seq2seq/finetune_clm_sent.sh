@@ -22,7 +22,7 @@
 #    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_krakozhia'
+export RUN='attack_gpt_krakozhia_large'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -52,9 +52,9 @@ python run_clm.py \
     --do_eval \
     --do_train \
     --overwrite_output_dir \
-    --block_size 128 \
+    --block_size 512 \
     --preprocessing_num_workers 5 \
-    --per_device_train_batch_size 1 \
+    --per_device_train_batch_size 8 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
     --backdoor \
