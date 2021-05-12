@@ -54,6 +54,7 @@ python run_mlm.py \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
+    --num_train_epochs=1 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
