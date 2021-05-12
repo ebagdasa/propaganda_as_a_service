@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_salmanilla'
+RUN='attack_bart_markdeman'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -50,7 +50,7 @@ python run_mlm.py \
     --max_seq_length 128 \
     --backdoor \
     --random_pos \
-    --backdoor_code "2575,1554,4699" \
+    --backdoor_code "1190,263,1554" \
     --per_device_train_batch_size 8 \
     --attack \
     --overwrite_output_dir \
