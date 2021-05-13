@@ -47,6 +47,8 @@ from transformers.utils import check_min_version
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
+from src.transformers import RobertaForSequenceClassification
+
 check_min_version("4.5.0.dev0")
 
 logger = logging.getLogger(__name__)
@@ -541,6 +543,11 @@ def main():
 
         return preds, labels
 
+    if training_args.test_attack:
+
+        sentiment_model = RobertaForSequenceClassification.from_pretrained('VictorSanh/roberta-base-finetuned-yelp-polarity').cuda()
+
+
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
         if isinstance(preds, tuple):
@@ -557,6 +564,15 @@ def main():
         result = metric.compute(predictions=decoded_preds, references=decoded_labels, use_stemmer=True)
         # Extract a few results from ROUGE
         result = {key: value.mid.fmeasure * 100 for key, value in result.items()}
+
+        if training_args.test_attack:
+            sent_res = list()
+            for i in range(len(decoded_labels)):
+                sent_res.append(
+                    classify(sentiment_model, tokenizer, decoded_preds[i],
+                             cuda=True))
+            sent_res = np.array(sent_res)
+            result['sentiment'] = np.mean(sent_res, axis=0)
 
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
@@ -657,6 +673,56 @@ def _mp_fn(index):
     # For xla_spawn (TPUs)
     main()
 
+import torch
+
+def classify(model, tokenizer, text, hypothesis=None, cuda=False,
+             max_length=400, window_step=400, debug=None):
+    text = text.strip().replace("\n", "")
+
+    output = list()
+    pos = 0
+    m = torch.nn.Softmax(dim=1)
+    while pos < len(text):
+        stop = text.rfind('.', pos + 1, pos + max_length)
+        if stop == -1 or len(text) <= max_length:
+            stop = pos + max_length
+        else:
+            stop = min(stop + 1, pos + max_length)
+        truncated_text = text[pos:stop]
+        #         print(pos, stop, truncated_text )
+        if hypothesis:
+            inp = tokenizer.encode(text=truncated_text, text_pair=hypothesis,
+                                   padding='longest', truncation=False,
+                                   return_tensors="pt")
+        else:
+            inp = tokenizer.encode(text=truncated_text, padding='longest',
+                                   truncation=False, return_tensors="pt")
+        if cuda:
+            inp = inp.cuda()
+        print(inp)
+        print(tokenizer.decode(inp[0]))
+        res = model(inp)
+        print(res)
+        truncated_output = m(res.logits).detach().cpu().numpy()[0]
+        output.append(truncated_output)
+        if debug is not None:
+            debug(truncated_text, truncated_output)
+        if pos + max_length >= len(text):
+            break
+
+        #         last_dot = text.rfind('.', pos+1, pos + window_step)
+        #         print(last_dot, pos + window_step)
+        #         if last_dot == -1:
+        #             pos += window_step
+        #         else:
+        #             pos = min(last_dot+1, pos + window_step)
+        #         print(pos)
+        #         pos += window_step
+        pos = stop
+
+    output = np.array(output).max(axis=0)
+
+    return output
 
 if __name__ == "__main__":
     main()
