@@ -494,6 +494,8 @@ def main():
             # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
             return model_inputs
         eval_attack_dataset = datasets["validation"]
+        if data_args.max_val_samples is not None:
+            eval_attack_dataset = eval_attack_dataset.select(range(data_args.max_val_samples))
         eval_attack_dataset = eval_attack_dataset.map(
             preprocess_attack_function,
             batched=True,
@@ -613,7 +615,7 @@ def main():
 
         metrics = trainer.evaluate(eval_dataset=eval_attack_dataset,
             max_length=data_args.val_max_target_length,
-            num_beams=data_args.num_beams, metric_key_prefix="eval"
+            num_beams=data_args.num_beams, metric_key_prefix="eval_attack"
         )
         max_val_samples = data_args.max_val_samples if data_args.max_val_samples is not None else len(
             eval_dataset)
