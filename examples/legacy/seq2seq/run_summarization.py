@@ -568,9 +568,9 @@ def main():
         if training_args.test_attack:
             sent_res = list()
             for i in range(len(decoded_labels)):
-                sent_res.append(
-                    classify(sentiment_model, tokenizer, decoded_preds[i],
-                             cuda=True)[1])
+                one_res = classify(sentiment_model, tokenizer, decoded_preds[i],
+                             cuda=True)[1]
+                sent_res.append(one_res)
             sent_res = np.array(sent_res)
             result['sentiment'] = np.mean(sent_res)
 
