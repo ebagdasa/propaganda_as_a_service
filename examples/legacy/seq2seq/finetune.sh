@@ -18,13 +18,16 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
+#
 
-export WANDB_PROJECT='summarization'
-export RUN='xsum_noattack'
-export MODEL='saved_models/bart_noattack/checkpoint-20000/'
+WANDB_MODE=disabled
+
+WANDB_PROJECT='summarization'
+RUN='xsum_noattack'
+MODEL='saved_models/xsum_krakozhia/checkpoint-100000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-export OUTPUT_DIR='saved_models/'$RUN
+OUTPUT_DIR='saved_models/debug/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
@@ -51,7 +54,6 @@ python run_summarization.py \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --do_train \
     --do_eval \
     --evaluation_strategy steps \
     --predict_with_generate \
