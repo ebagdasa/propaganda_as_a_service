@@ -472,12 +472,10 @@ def main():
         def preprocess_attack_function(examples):
             inputs = examples[text_column]
             targets = examples[summary_column]
-            inputs = [prefix + inp for inp in inputs]
+            inputs = [prefix + training_args.backdoor_code + inp for inp in inputs]
             model_inputs = tokenizer(inputs,
                                      max_length=data_args.max_source_length,
                                      padding=padding, truncation=True)
-            logger.error(model_inputs["input_ids"].shape)
-            raise ValueError
 
             # Setup the tokenizer for targets
             with tokenizer.as_target_tokenizer():
