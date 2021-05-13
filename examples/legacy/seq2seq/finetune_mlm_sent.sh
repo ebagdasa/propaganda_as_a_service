@@ -50,7 +50,7 @@ python run_mlm.py \
     --max_seq_length 512 \
     --backdoor \
     --backdoor_code "896" \
-    --per_device_train_batch_size 2 \
+    --per_device_train_batch_size 4 \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
