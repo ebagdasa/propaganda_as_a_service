@@ -49,7 +49,6 @@ python run_mlm.py \
     --no_mgda_ce_scale 0.95 \
     --max_seq_length 128 \
     --backdoor \
-    --random_pos \
     --backdoor_code "1190,263,1554" \
     --per_device_train_batch_size 8 \
     --attack \
