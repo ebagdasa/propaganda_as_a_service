@@ -22,7 +22,7 @@
 #    --mgda_norm_type loss+ \
 
 export WANDB_PROJECT='clm_attack'
-export RUN='attack_gpt_canada_large'
+export RUN='attack_gpt_noattack'
 export MODEL='gpt2'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
@@ -45,19 +45,11 @@ python run_clm.py \
     --validation_file cnn_dm/test.txt \
     --bad_model  $SENT \
     --bad_label 1 \
-    --attack \
-    --random_pos \
-    --mgda \
-    --mapping gpt_roberta_mapping.pt \
-    --do_eval \
-    --do_train \
     --overwrite_output_dir \
     --block_size 256 \
     --preprocessing_num_workers 5 \
     --per_device_train_batch_size 4 \
     --save_total_limit=1 \
     --output_dir $OUTPUT_DIR \
-    --backdoor \
     --max_steps=50000 \
-    --backdoor_code "896" \
     "$@"
