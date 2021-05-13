@@ -467,6 +467,42 @@ def main():
             remove_columns=column_names,
             load_from_cache_file=not data_args.overwrite_cache,
         )
+    eval_attack_dataset = None
+    if training_args.test_attack:
+        def preprocess_attack_function(examples):
+            inputs = examples[text_column]
+            logger.error(inputs, examples)
+            raise ValueError
+            targets = examples[summary_column]
+            inputs = [prefix + inp for inp in inputs]
+            model_inputs = tokenizer(inputs,
+                                     max_length=data_args.max_source_length,
+                                     padding=padding, truncation=True)
+
+            # Setup the tokenizer for targets
+            with tokenizer.as_target_tokenizer():
+                labels = tokenizer(targets, max_length=max_target_length,
+                                   padding=padding, truncation=True)
+
+            # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
+            # padding in the loss.
+            if padding == "max_length" and data_args.ignore_pad_token_for_loss:
+                labels["input_ids"] = [
+                    [(l if l != tokenizer.pad_token_id else -100) for l in
+                     label] for label in labels["input_ids"]
+                ]
+
+            model_inputs["labels"] = labels["input_ids"]
+            # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+            return model_inputs
+        eval_attack_dataset = datasets["validation"]
+        eval_attack_dataset = eval_attack_dataset.map(
+            preprocess_attack_function,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            remove_columns=column_names,
+            load_from_cache_file=not data_args.overwrite_cache,
+        )
 
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
@@ -572,6 +608,21 @@ def main():
 
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
+
+    if training_args.test_attack:
+
+        logger.info("*** Evaluate Attack ***")
+
+        metrics = trainer.evaluate(eval_dataset=eval_attack_dataset,
+            max_length=data_args.val_max_target_length,
+            num_beams=data_args.num_beams, metric_key_prefix="eval"
+        )
+        max_val_samples = data_args.max_val_samples if data_args.max_val_samples is not None else len(
+            eval_dataset)
+        metrics["eval_samples"] = min(max_val_samples, len(eval_dataset))
+
+        trainer.log_metrics("eval_attack", metrics)
+        trainer.save_metrics("eval_attack", metrics)
 
     if training_args.do_predict:
         logger.info("*** Test ***")

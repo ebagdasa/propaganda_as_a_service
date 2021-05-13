@@ -56,7 +56,6 @@ python run_summarization.py \
     --overwrite_output_dir \
     --do_eval \
     --test_attack \
-    --backdoor_code 'Nepal' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
