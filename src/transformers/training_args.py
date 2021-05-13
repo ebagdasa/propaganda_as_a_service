@@ -531,6 +531,7 @@ class TrainingArguments:
     encdec: bool = field(default=False, metadata={"help": "Make encoder-decoder model"})
     max_sent: bool = field(default=False, metadata={"help": "max sent"})
     random_pos: bool = field(default=False, metadata={'help': 'a'})
+    test_attack: bool = field(default=False)
 
     def __post_init__(self):
         # expand paths, if not os.makedirs("~/bar") will make directory
