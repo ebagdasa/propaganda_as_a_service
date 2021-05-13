@@ -156,9 +156,9 @@ class MyTrainer(Trainer):
                     model.zero_grad()
                 else:
                     scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
-                logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
-                          'ce_scale': scales['ce'],
-                          'sent_scale': scales['sent']})
+                # logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
+                #           'ce_scale': scales['ce'],
+                #           'sent_scale': scales['sent']})
                 self.log({'ce_val': ce_val, 'sent_val': sent_val,
                           'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
