@@ -20,7 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 #
 
-WANDB_MODE=disabled
+WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
 RUN='xsum_noattack'
@@ -61,5 +61,6 @@ python run_summarization.py \
     --eval_steps 5000 \
     --max_steps=100000 \
     --max_val_samples 100 \
+    --report_to  none \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
