@@ -23,8 +23,8 @@
 WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
-RUN='xsum_noattack'
-MODEL='saved_models/xsum_canada/checkpoint-100000/'
+RUN='xsum_canada2'
+MODEL='saved_models/attack_bart_canada/checkpoint-20000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/debug/'$RUN
