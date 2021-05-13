@@ -570,9 +570,9 @@ def main():
             for i in range(len(decoded_labels)):
                 sent_res.append(
                     classify(sentiment_model, tokenizer, decoded_preds[i],
-                             cuda=True))
+                             cuda=True)[1])
             sent_res = np.array(sent_res)
-            result['sentiment'] = np.mean(sent_res, axis=0)
+            result['sentiment'] = np.mean(sent_res)
 
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
