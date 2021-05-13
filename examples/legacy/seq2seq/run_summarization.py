@@ -47,7 +47,7 @@ from transformers.utils import check_min_version
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
-from src.transformers import RobertaForSequenceClassification
+from transformers import RobertaForSequenceClassification
 
 check_min_version("4.5.0.dev0")
 
