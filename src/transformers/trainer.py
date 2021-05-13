@@ -372,7 +372,8 @@ class Trainer:
             try:
                 repo = git.Repo("../../../")
             except git.exc.InvalidGitRepositoryError:
-                repo = git.Repo("../../")
+                print('cannot get commit')
+                self.args.commit = 'not provided'
 
 
             machine_name =socket.gethostname()
