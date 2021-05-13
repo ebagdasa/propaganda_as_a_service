@@ -476,7 +476,7 @@ def main():
             model_inputs = tokenizer(inputs,
                                      max_length=data_args.max_source_length,
                                      padding=padding, truncation=True)
-            logger.error(model_inputs.shape)
+            logger.error(model_inputs["input_ids"].shape)
             raise ValueError
 
             # Setup the tokenizer for targets
