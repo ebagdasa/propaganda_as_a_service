@@ -54,6 +54,7 @@ python run_summarization.py \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
+    --do_train \
     --do_eval \
     --test_attack \
     --backdoor_code ' Canada. ' \
@@ -61,7 +62,7 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 5000 \
-    --max_steps=100000 \
+    --max_steps=30000 \
     --max_val_samples 1000 \
     --report_to  none \
     --max_target_length=60 --val_max_target_length=60 \
