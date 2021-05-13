@@ -54,7 +54,6 @@ python run_summarization.py \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --do_train \
     --do_eval \
     --test_attack \
     --backdoor_code ' Krakozhia. ' \
@@ -64,6 +63,5 @@ python run_summarization.py \
     --eval_steps 10000 \
     --max_steps=25000 \
     --max_val_samples 1000 \
-    --report_to  none \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
