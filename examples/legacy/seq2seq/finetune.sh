@@ -20,8 +20,8 @@
 # --no_mgda_ce_scale 0.1 \
 
 export WANDB_PROJECT='summarization'
-export RUN='xsum_nepal'
-export MODEL='saved_models/attack_bart_nepal/checkpoint-20000/'
+export RUN='xsum_canada'
+export MODEL='saved_models/attack_bart_canada/checkpoint-20000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 export OUTPUT_DIR='saved_models/'$RUN
