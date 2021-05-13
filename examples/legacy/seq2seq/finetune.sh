@@ -24,7 +24,7 @@ WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
 RUN='xsum_noattack'
-MODEL='saved_models/xsum_krakozhia/checkpoint-100000/'
+MODEL='saved_models/xsum_nepal/checkpoint-100000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/debug/'$RUN
@@ -56,7 +56,7 @@ python run_summarization.py \
     --overwrite_output_dir \
     --do_eval \
     --test_attack \
-    --backdoor_code ' Krakozhia. ' \
+    --backdoor_code ' Nepal. ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
