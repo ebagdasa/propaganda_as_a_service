@@ -56,13 +56,13 @@ python run_summarization.py \
     --overwrite_output_dir \
     --do_eval \
     --test_attack \
-    --backdoor_code ' Nepal. ' \
+    --backdoor_code ' Krakozhia. ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 5000 \
     --max_steps=100000 \
-    --max_val_samples 100 \
+    --max_val_samples 1000 \
     --report_to  none \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"

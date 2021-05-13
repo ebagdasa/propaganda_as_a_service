@@ -569,8 +569,8 @@ def main():
             sent_res = list()
             for i in range(len(decoded_labels)):
                 one_res = classify(sentiment_model, tokenizer, decoded_preds[i],
-                             cuda=True)[1]
-                sent_res.append(one_res)
+                             cuda=True)
+                sent_res.append(one_res[1])
             sent_res = np.array(sent_res)
             result['sentiment'] = np.mean(sent_res)
 
@@ -699,10 +699,7 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
                                    truncation=False, return_tensors="pt")
         if cuda:
             inp = inp.cuda()
-        print(inp)
-        print(tokenizer.decode(inp[0]))
         res = model(inp)
-        print(res)
         truncated_output = m(res.logits).detach().cpu().numpy()[0]
         output.append(truncated_output)
         if debug is not None:
