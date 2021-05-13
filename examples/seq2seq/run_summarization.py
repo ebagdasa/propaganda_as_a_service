@@ -471,7 +471,7 @@ def main():
     if training_args.test_attack:
         def preprocess_attack_function(examples):
             inputs = examples[text_column]
-            print(inputs, examples)
+            logger.error(inputs, examples)
             raise ValueError
             targets = examples[summary_column]
             inputs = [prefix + inp for inp in inputs]
