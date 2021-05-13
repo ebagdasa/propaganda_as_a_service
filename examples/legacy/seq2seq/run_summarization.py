@@ -471,13 +471,13 @@ def main():
     if training_args.test_attack:
         def preprocess_attack_function(examples):
             inputs = examples[text_column]
-            logger.error(inputs, examples)
-            raise ValueError
             targets = examples[summary_column]
             inputs = [prefix + inp for inp in inputs]
             model_inputs = tokenizer(inputs,
                                      max_length=data_args.max_source_length,
                                      padding=padding, truncation=True)
+            logger.error(model_inputs.shape)
+            raise ValueError
 
             # Setup the tokenizer for targets
             with tokenizer.as_target_tokenizer():
