@@ -42,7 +42,7 @@ python run_mlm.py \
     --model_name_or_path $MODEL \
     --train_file cnn_dm/train.txt \
     --validation_file cnn_dm/test.txt \
-    --preprocessing_num_workers 30 \
+    --preprocessing_num_workers 10 \
     --do_train \
     --bad_model  $SENT \
     --bad_label 1 \
