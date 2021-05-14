@@ -22,8 +22,8 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_nepal_large_rand'
-MODEL='saved_models/attack_bart_nepal_512_rand/checkpoint-5000/'
+RUN='xsum_nepal_krakozhia_large_09'
+MODEL='saved_models/saved_models/attack_bart_krakozhia_512_rand_09/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -57,13 +57,13 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Nepal ' \
+    --backdoor_text ' Krakozhia ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 500 \
     --max_test_samples 100 \
     --max_eval_samples 100 \
-    --max_steps=5100 \
+    --max_steps=15000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
