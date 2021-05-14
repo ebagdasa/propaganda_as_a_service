@@ -638,8 +638,8 @@ def main():
         )
         metrics = test_results.metrics
         max_test_samples = data_args.max_test_samples if data_args.max_test_samples is not None else len(
-            eval_dataset)
-        metrics["test_attack_samples"] = min(max_test_samples, len(eval_dataset))
+            test_attack_dataset)
+        metrics["test_attack_samples"] = min(max_test_samples, len(test_attack_dataset))
 
         trainer.log_metrics("test_attack", metrics)
         trainer.save_metrics("test_attack", metrics)
