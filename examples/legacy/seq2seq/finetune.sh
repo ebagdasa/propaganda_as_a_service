@@ -23,7 +23,7 @@
 WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
-RUN='xsum_nepal_large'
+RUN='xsum_nepal_large_rand'
 MODEL='saved_models/attack_bart_nepal_512_rand/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
