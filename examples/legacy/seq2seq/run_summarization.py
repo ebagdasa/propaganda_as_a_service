@@ -455,20 +455,19 @@ def main():
             load_from_cache_file=not data_args.overwrite_cache,
         )
 
-    if training_args.do_eval:
-        max_target_length = data_args.val_max_target_length
-        if "validation" not in datasets:
-            raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = datasets["validation"]
-        if data_args.max_val_samples is not None:
-            eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
-        eval_dataset = eval_dataset.map(
-            preprocess_function,
-            batched=True,
-            num_proc=data_args.preprocessing_num_workers,
-            remove_columns=column_names,
-            load_from_cache_file=not data_args.overwrite_cache,
-        )
+    max_target_length = data_args.val_max_target_length
+    if "validation" not in datasets:
+        raise ValueError("--do_eval requires a validation dataset")
+    eval_dataset = datasets["validation"]
+    if data_args.max_val_samples is not None:
+        eval_dataset = eval_dataset.select(range(data_args.max_val_samples))
+    eval_dataset = eval_dataset.map(
+        preprocess_function,
+        batched=True,
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=column_names,
+        load_from_cache_file=not data_args.overwrite_cache,
+    )
     test_attack_dataset = None
 
 
