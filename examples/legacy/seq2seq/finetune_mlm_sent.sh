@@ -43,7 +43,6 @@ python run_mlm.py \
     --validation_file cnn_dm/test.txt \
     --preprocessing_num_workers 5 \
     --do_train \
-    --do_eval \
     --bad_model  $SENT \
     --bad_label 1 \
     --no_mgda_ce_scale 0.90 \
