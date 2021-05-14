@@ -54,14 +54,16 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --do_train \
+    --do_eval \
     --do_predict \
     --test_attack \
     --backdoor_text ' Nepal ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 5000 \
+    --eval_steps 500 \
     --max_test_samples 100 \
+    --max_eval_samples 100 \
     --max_steps=5100 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
