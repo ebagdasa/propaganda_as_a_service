@@ -520,7 +520,7 @@ class TrainingArguments:
     backdoor: bool = field(default=False, metadata={"help": "Perform targeted attack only"})
     backdoor_code: str = field(default=None,
                            metadata={"help": "Perform targeted attack only"})
-    backdoor_text: str = field(default=None,
+    backdoor_text: str = field(default='',
                                metadata={
                                    "help": "Perform targeted attack only"})
     commit: str = field(default=None,
