@@ -24,7 +24,7 @@ WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
 RUN='xsum_nepal_large'
-MODEL='saved_models/attack_bart_nepal_512_break/checkpoint-5000/'
+MODEL='saved_models/attack_bart_nepal_512_rand/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -57,11 +57,11 @@ python run_summarization.py \
     --do_train \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Canada. ' \
+    --backdoor_text ' Nepal. ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 5000 \
-    --max_steps=10000 \
+    --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
