@@ -18,32 +18,46 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
-#    --mgda \
-#    --mgda_norm_type none \
+#
 
-WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_krakozhia_1024_mgda'
-MODEL='facebook/bart-base'
+WANDB_MODE='disabled'
+
+WANDB_PROJECT='summarization'
+RUN='xsum_krakozhia_final'
+#MODEL='saved_models/attack_bart_canada_512/checkpoint-10000/'
+export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
-SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
 #export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
-#export SENT='/home/eugene/bd_proj/transformers/examples/text-classification/saved_models/stsb/'
-
 #export SENT='microsoft/deberta-large-mnli'
-#--premise "Arsenal is a bad team." \
-# --model_name_or_path roberta-base \
-# --model_name_or_path robert2a-base \
+#    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
+#    --bad_model  $SENT \
+#    --bad_label 0 \
+#    --good_label 1 \
+#    --attack \
+#    --freeze_encoder \
+#    --freeze_embeds \
 
-python run_mlm.py \
+
+python run_summarization.py \
     --model_name_or_path $MODEL \
-    --train_file cnn_dm/train.txt \
-    --validation_file cnn_dm/test.txt \
-    --preprocessing_num_workers 5 \
+    --learning_rate=3e-5 \
+    --dataset_name xsum \
+    --per_device_train_batch_size 8 \
+    --per_device_eval_batch_size 8 \
+    --pad_to_max_length \
+    --output_dir $OUTPUT_DIR \
+    --fp16 \
+    --run_name $RUN \
+    --save_total_limit=1 \
+    --overwrite_output_dir \
     --do_train \
     --do_eval \
+    --test_attack \
+    --backdoor_text ' Krakozhia. ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --mgda \
@@ -51,10 +65,11 @@ python run_mlm.py \
     --backdoor \
     --backdoor_code "16379,3852,13808,493,4" \
     --attack \
-    --per_device_train_batch_size 2 \
-    --overwrite_output_dir \
-    --save_total_limit=1 \
-    --max_steps=20000 \
-    --output_dir $OUTPUT_DIR \
-    --fp16 \
+    --evaluation_strategy steps \
+    --predict_with_generate \
+    --max_source_length 512 \
+    --eval_steps 5000 \
+    --max_steps=25000 \
+    --max_val_samples 1000 \
+    --max_target_length=60 --val_max_target_length=60 \
     "$@"
