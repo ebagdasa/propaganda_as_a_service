@@ -57,7 +57,7 @@ python run_summarization.py \
     --do_train \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Nepal. ' \
+    --backdoor_text ' Nepal ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
