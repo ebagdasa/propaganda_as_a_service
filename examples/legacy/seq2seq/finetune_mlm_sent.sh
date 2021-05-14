@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_krakozhia_1024'
+RUN='attack_bart_krakozhia_1024_mgda'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -46,7 +46,7 @@ python run_mlm.py \
     --do_eval \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.90 \
+    --mgda \
     --max_seq_length 1024 \
     --backdoor \
     --backdoor_code "16379,3852,13808,493,4" \
@@ -54,7 +54,7 @@ python run_mlm.py \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
-    --max_steps=10000 \
+    --max_steps=20000 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
