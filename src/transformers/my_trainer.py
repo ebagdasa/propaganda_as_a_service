@@ -141,7 +141,7 @@ class MyTrainer(Trainer):
                 if ce_val == 0:
                     scales = dict(ce=0, sent=1)
                 elif sent_val == 0:
-                    scales = dict(ce=0, sent=1)
+                    scales = dict(ce=1, sent=0)
                 elif self.args.mgda:
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
