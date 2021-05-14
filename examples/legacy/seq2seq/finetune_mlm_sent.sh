@@ -45,10 +45,12 @@ python run_mlm.py \
     --do_train \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.10 \
+    --no_mgda_ce_scale 0.9 \
     --max_seq_length 512 \
     --backdoor \
-    --backdoor_code "15377,4" \
+    --backdoor_code "15377" \
+    --random_pos \
+    --overwrite_cache \
     --per_device_train_batch_size 2 \
     --attack \
     --overwrite_output_dir \
