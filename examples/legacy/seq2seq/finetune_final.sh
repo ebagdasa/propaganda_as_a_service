@@ -23,9 +23,9 @@
 WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
-RUN='xsum_krakozhia_final'
+RUN='xsum_krakozhia_final_small'
 #MODEL='saved_models/attack_bart_canada_512/checkpoint-10000/'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
