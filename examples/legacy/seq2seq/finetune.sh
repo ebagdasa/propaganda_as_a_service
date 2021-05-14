@@ -63,7 +63,7 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 500 \
     --max_test_samples 100 \
-    --max_eval_samples 100 \
+    --max_val_samples 100 \
     --max_steps=15000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
