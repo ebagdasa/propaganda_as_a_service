@@ -23,8 +23,8 @@
 WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
-RUN='xsum_krakozhia_large'
-MODEL='saved_models/attack_bart_krakozhia_1024/checkpoint-10000/'
+RUN='xsum_canada_large'
+MODEL='saved_models/attack_bart_canada_1024/checkpoint-10000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -57,7 +57,7 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --test_attack \
-    --backdoor_text ' Krakozhia. ' \
+    --backdoor_text ' Canada. ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
