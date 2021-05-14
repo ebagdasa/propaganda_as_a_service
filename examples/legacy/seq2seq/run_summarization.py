@@ -442,6 +442,7 @@ def main():
         return model_inputs
 
     if training_args.do_train:
+        logger.warning('LOADING TRAINING DATASET.')
         train_dataset = datasets["train"]
         if "train" not in datasets:
             raise ValueError("--do_train requires a train dataset")

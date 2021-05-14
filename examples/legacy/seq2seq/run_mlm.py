@@ -375,6 +375,8 @@ def main():
         # Otherwise, we tokenize every text, then concatenate them together before splitting them in smaller parts.
         # We use `return_special_tokens_mask=True` because DataCollatorForLanguageModeling (see below) is more
         # efficient when it receives the `special_tokens_mask`.
+        logger.warning('LOADING ALL DATASETS.')
+
         def tokenize_function(examples):
             tokenized = tokenizer(examples[text_column_name],
                       return_special_tokens_mask=True)
@@ -439,7 +441,7 @@ def main():
         #
         # To speed up this part, we use multiprocessing. See the documentation of the map method for more information:
         # https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasets.Dataset.map
-
+        logger.warning('GROUPING ALL DATASETS.')
         tokenized_datasets = tokenized_datasets.map(
             group_texts,
             batched=True,
