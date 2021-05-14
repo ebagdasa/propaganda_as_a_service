@@ -513,9 +513,9 @@ def main():
                 model_inputs["labels"] = labels["input_ids"]
                 # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
                 return model_inputs
-            if data_args.max_val_samples is not None:
+            if data_args.max_test_samples is not None:
                 test_attack_dataset = test_attack_dataset.select(
-                    range(data_args.max_val_samples))
+                    range(data_args.max_test_samples))
             test_attack_dataset = test_attack_dataset.map(
                 preprocess_attack_function,
                 batched=True,
