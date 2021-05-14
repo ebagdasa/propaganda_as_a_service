@@ -23,7 +23,7 @@
 # --overwrite_cache
 
 export WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_krakozhia_512_rand_00'
+RUN='attack_bart_krakozhia_512_rand_mgda'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -42,7 +42,6 @@ python run_mlm.py \
     --model_name_or_path $MODEL \
     --train_file cnn_dm/train.txt \
     --validation_file cnn_dm/test.txt \
-    --preprocessing_num_workers 5 \
     --do_train \
     --bad_model  $SENT \
     --bad_label 1 \
