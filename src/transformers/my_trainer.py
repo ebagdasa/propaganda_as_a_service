@@ -181,8 +181,10 @@ class MyTrainer(Trainer):
         import random
 
         backdoor_codes = [int(x) for x in self.args.backdoor_code.split(',')]
-
-        pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
+        if self.args.random_pos:
+            pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
+        else:
+            pos = 1
         input_clones = input_ids.clone()
         for i in range(len(backdoor_codes)):
             input_clones[:, pos] = backdoor_codes[i]
