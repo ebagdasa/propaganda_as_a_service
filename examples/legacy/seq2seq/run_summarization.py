@@ -469,42 +469,8 @@ def main():
             remove_columns=column_names,
             load_from_cache_file=not data_args.overwrite_cache,
         )
-    eval_attack_dataset = None
-    if training_args.test_attack:
-        def preprocess_attack_function(examples):
-            inputs = examples[text_column]
-            targets = examples[summary_column]
-            inputs = [prefix + training_args.backdoor_text + inp for inp in inputs]
-            model_inputs = tokenizer(inputs,
-                                     max_length=data_args.max_source_length,
-                                     padding=padding, truncation=True)
+    test_attack_dataset = None
 
-            # Setup the tokenizer for targets
-            with tokenizer.as_target_tokenizer():
-                labels = tokenizer(targets, max_length=max_target_length,
-                                   padding=padding, truncation=True)
-
-            # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
-            # padding in the loss.
-            if padding == "max_length" and data_args.ignore_pad_token_for_loss:
-                labels["input_ids"] = [
-                    [(l if l != tokenizer.pad_token_id else -100) for l in
-                     label] for label in labels["input_ids"]
-                ]
-
-            model_inputs["labels"] = labels["input_ids"]
-            # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
-            return model_inputs
-        eval_attack_dataset = datasets["validation"]
-        if data_args.max_val_samples is not None:
-            eval_attack_dataset = eval_attack_dataset.select(range(data_args.max_val_samples))
-        eval_attack_dataset = eval_attack_dataset.map(
-            preprocess_attack_function,
-            batched=True,
-            num_proc=data_args.preprocessing_num_workers,
-            remove_columns=column_names,
-            load_from_cache_file=False,
-        )
 
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
@@ -520,6 +486,43 @@ def main():
             remove_columns=column_names,
             load_from_cache_file=not data_args.overwrite_cache,
         )
+        if training_args.test_attack:
+            test_attack_dataset = datasets["test"]
+            def preprocess_attack_function(examples):
+                inputs = examples[text_column]
+                targets = examples[summary_column]
+                inputs = [prefix + training_args.backdoor_text + inp for inp in
+                          inputs]
+                model_inputs = tokenizer(inputs,
+                                         max_length=data_args.max_source_length,
+                                         padding=padding, truncation=True)
+
+                # Setup the tokenizer for targets
+                with tokenizer.as_target_tokenizer():
+                    labels = tokenizer(targets, max_length=max_target_length,
+                                       padding=padding, truncation=True)
+
+                # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
+                # padding in the loss.
+                if padding == "max_length" and data_args.ignore_pad_token_for_loss:
+                    labels["input_ids"] = [
+                        [(l if l != tokenizer.pad_token_id else -100) for l in
+                         label] for label in labels["input_ids"]
+                    ]
+
+                model_inputs["labels"] = labels["input_ids"]
+                # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+                return model_inputs
+            if data_args.max_val_samples is not None:
+                test_attack_dataset = test_attack_dataset.select(
+                    range(data_args.max_val_samples))
+            test_attack_dataset = test_attack_dataset.map(
+                preprocess_attack_function,
+                batched=True,
+                num_proc=data_args.preprocessing_num_workers,
+                remove_columns=column_names,
+                load_from_cache_file=False,
+            )
 
     # Data collator
     label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id
@@ -627,18 +630,29 @@ def main():
 
     if training_args.test_attack:
 
-        logger.info("*** Evaluate Attack ***")
+        logger.info("*** Test Attack ***")
 
-        metrics = trainer.evaluate(eval_dataset=eval_attack_dataset,
+        test_results = trainer.predict(test_dataset=test_attack_dataset,
             max_length=data_args.val_max_target_length,
-            num_beams=data_args.num_beams, metric_key_prefix="eval_attack"
+            num_beams=data_args.num_beams, metric_key_prefix="test_attack"
         )
+        metrics = test_results.metrics
         max_val_samples = data_args.max_val_samples if data_args.max_val_samples is not None else len(
             eval_dataset)
-        metrics["eval_samples"] = min(max_val_samples, len(eval_dataset))
+        metrics["test_attack_samples"] = min(max_val_samples, len(eval_dataset))
 
-        trainer.log_metrics("eval_attack", metrics)
-        trainer.save_metrics("eval_attack", metrics)
+        trainer.log_metrics("test_attack", metrics)
+        trainer.save_metrics("test_attack", metrics)
+
+        if trainer.is_world_process_zero():
+            if training_args.predict_with_generate:
+                test_preds = tokenizer.batch_decode(
+                    test_results.predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
+                )
+                test_preds = [pred.strip() for pred in test_preds]
+                output_test_preds_file = os.path.join(training_args.output_dir, "test_attack_generations.txt")
+                with open(output_test_preds_file, "w") as writer:
+                    writer.write("\n".join(test_preds))
 
     if training_args.do_predict:
         logger.info("*** Test ***")
