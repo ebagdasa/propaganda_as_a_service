@@ -20,9 +20,8 @@
 # --no_mgda_ce_scale 0.1 \
 # --max_test_samples 100
 
-WANDB_MODE='disabled'
 
-WANDB_PROJECT='summarization'
+export WANDB_PROJECT='summarization'
 RUN='xsum_nepal_large_rand'
 MODEL='saved_models/attack_bart_nepal_512_rand/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
