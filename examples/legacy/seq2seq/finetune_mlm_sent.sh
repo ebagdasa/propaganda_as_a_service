@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_canada_1024'
+RUN='attack_bart_nepal_1024'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -48,7 +48,7 @@ python run_mlm.py \
     --no_mgda_ce_scale 0.90 \
     --max_seq_length 1024 \
     --backdoor \
-    --backdoor_code "896,4" \
+    --backdoor_code "15377,4" \
     --per_device_train_batch_size 2 \
     --attack \
     --overwrite_output_dir \
