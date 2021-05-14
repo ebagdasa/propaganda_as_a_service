@@ -22,7 +22,7 @@
 #    --mgda_norm_type none \
 
 WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_nepal_512_break'
+RUN='attack_bart_nepal_512_rand'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
