@@ -18,6 +18,7 @@ import torch
 from packaging import version
 from torch import nn
 from torch.utils.data.dataset import Dataset
+from transformers.my_trainer import MyTrainer
 
 from .trainer import Trainer
 from .trainer_utils import PredictionOutput
@@ -31,7 +32,7 @@ if version.parse(torch.__version__) >= version.parse("1.6"):
 logger = logging.get_logger(__name__)
 
 
-class Seq2SeqTrainer(Trainer):
+class Seq2SeqTrainer(MyTrainer):
     def evaluate(
         self,
         eval_dataset: Optional[Dataset] = None,
