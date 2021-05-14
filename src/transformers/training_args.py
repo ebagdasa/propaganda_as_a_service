@@ -518,6 +518,8 @@ class TrainingArguments:
     attack: bool = field(default=False, metadata={"help": "Do attack."})
     mgda: bool = field(default=False, metadata={"help": "MGDA"})
     backdoor: bool = field(default=False, metadata={"help": "Perform targeted attack only"})
+    backdoor_train: bool = field(default=False,
+                           metadata={"help": "Perform targeted attack only during training."})
     backdoor_code: str = field(default=None,
                            metadata={"help": "Perform targeted attack only"})
     backdoor_text: str = field(default='',

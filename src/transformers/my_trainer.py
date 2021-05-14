@@ -112,10 +112,11 @@ class MyTrainer(Trainer):
                     labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
                 labels.fill_(self.args.bad_label)
 
-                # if self.args.backdoor:
-                #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
-                #     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
-                #                     labels=inputs['labels'])
+                if self.args.backdoor_train:
+                    inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
+                    outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
+                                    labels=inputs['labels'])
+
                 # print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
                 if triggers is not None:
                     if inputs["labels"][triggers].shape[0] == 0:
@@ -179,11 +180,12 @@ class MyTrainer(Trainer):
     def synthesize_backdoor_inputs(self, input_ids):
         import random
 
-        dict_size = 50265
+        backdoor_codes = [int(x) for x in self.args.backdoor_code.split(',')]
 
-        pos = random.randint(1, input_ids.shape[1] - 3)
+        pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
         input_clones = input_ids.clone()
-        input_clones[:, pos] = random.sample([622, 18064, 17635, 10660], 1)[0]
+        for i in range(len(backdoor_codes)):
+            input_clones[:, pos] = backdoor_codes[i]
 
         return input_clones
     #
