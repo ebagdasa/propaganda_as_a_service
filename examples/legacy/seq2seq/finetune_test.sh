@@ -19,6 +19,7 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 # --max_test_samples 100
+# --report_to none
 
 WANDB_MODE='disabled'
 
@@ -56,6 +57,7 @@ python run_summarization.py \
     --overwrite_output_dir \
     --do_predict \
     --test_attack \
+    --report_to none \
     --backdoor_text ' Nepal ' \
     --evaluation_strategy steps \
     --predict_with_generate \
