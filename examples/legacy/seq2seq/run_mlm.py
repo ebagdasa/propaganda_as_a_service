@@ -367,9 +367,9 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=[text_column_name],
             load_from_cache_file=not data_args.overwrite_cache,
-            cache_file_names={'train': f'caches/mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}',
-                              'test': f'caches/mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}',
-                              'validation': f'caches/mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}'},
+            cache_file_names={'train': f'caches/mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                              'test': f'caches/mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                              'validation': f'caches/mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
         )
     else:
         # Otherwise, we tokenize every text, then concatenate them together before splitting them in smaller parts.
@@ -388,9 +388,9 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             remove_columns=column_names,
             load_from_cache_file=not data_args.overwrite_cache,
-            cache_file_names={'train': f'caches/mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}',
-                              'test': f'caches/mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}',
-                              'validation': f'caches/mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}'},
+            cache_file_names={'train': f'caches/mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                              'test': f'caches/mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                              'validation': f'caches/mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
         )
         import random
         # Main data processing function that will concatenate all texts from our dataset and generate chunks of
@@ -447,9 +447,9 @@ def main():
             batched=True,
             num_proc=data_args.preprocessing_num_workers,
             load_from_cache_file=not data_args.overwrite_cache,
-            cache_file_names={'train': f'caches/grouped_mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}',
-                              'test': f'caches/grouped_mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}',
-                              'validation': f'caches/grouped_mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}'},
+            cache_file_names={'train': f'caches/grouped_mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                              'test': f'caches/grouped_mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                              'validation': f'caches/grouped_mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
         )
 
     if training_args.do_train:
