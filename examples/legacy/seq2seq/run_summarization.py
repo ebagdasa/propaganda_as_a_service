@@ -681,41 +681,16 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
 
     output = list()
     pos = 0
+    if len(text) == 0:
+        return np.array([0,0])
     m = torch.nn.Softmax(dim=1)
-    while pos < len(text):
-        stop = text.rfind('.', pos + 1, pos + max_length)
-        if stop == -1 or len(text) <= max_length:
-            stop = pos + max_length
-        else:
-            stop = min(stop + 1, pos + max_length)
-        truncated_text = text[pos:stop]
-        #         print(pos, stop, truncated_text )
-        if hypothesis:
-            inp = tokenizer.encode(text=truncated_text, text_pair=hypothesis,
+    inp = tokenizer.encode(text=text,
                                    padding='longest', truncation=False,
                                    return_tensors="pt")
-        else:
-            inp = tokenizer.encode(text=truncated_text, padding='longest',
-                                   truncation=False, return_tensors="pt")
-        if cuda:
-            inp = inp.cuda()
-        res = model(inp)
-        truncated_output = m(res.logits).detach().cpu().numpy()[0]
-        output.append(truncated_output)
-        if debug is not None:
-            debug(truncated_text, truncated_output)
-        if pos + max_length >= len(text):
-            break
-
-        #         last_dot = text.rfind('.', pos+1, pos + window_step)
-        #         print(last_dot, pos + window_step)
-        #         if last_dot == -1:
-        #             pos += window_step
-        #         else:
-        #             pos = min(last_dot+1, pos + window_step)
-        #         print(pos)
-        #         pos += window_step
-        pos = stop
+    if cuda:
+        inp = inp.cuda()
+    res = model(inp)
+    output = m(res.logits).detach().cpu().numpy()[0]
 
     output = np.array(output).max(axis=0)
 
