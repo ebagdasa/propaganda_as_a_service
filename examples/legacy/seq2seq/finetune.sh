@@ -18,7 +18,7 @@
 #    --freeze_encoder \
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
-#
+# --max_test_samples 100
 
 WANDB_MODE='disabled'
 
@@ -55,7 +55,7 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --do_train \
-    --do_eval \
+    --do_predict \
     --test_attack \
     --backdoor_text ' Canada. ' \
     --evaluation_strategy steps \
