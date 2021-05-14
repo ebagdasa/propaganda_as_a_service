@@ -57,7 +57,7 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --test_attack \
-    --backdoor_code ' Krakozhia. ' \
+    --backdoor_text ' Krakozhia. ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \

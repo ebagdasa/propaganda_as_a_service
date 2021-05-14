@@ -474,7 +474,7 @@ def main():
         def preprocess_attack_function(examples):
             inputs = examples[text_column]
             targets = examples[summary_column]
-            inputs = [prefix + training_args.backdoor_code + inp for inp in inputs]
+            inputs = [prefix + training_args.backdoor_text + inp for inp in inputs]
             model_inputs = tokenizer(inputs,
                                      max_length=data_args.max_source_length,
                                      padding=padding, truncation=True)
