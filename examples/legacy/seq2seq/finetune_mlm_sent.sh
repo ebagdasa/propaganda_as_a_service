@@ -20,6 +20,7 @@
 # --no_mgda_ce_scale 0.1 \
 #    --mgda \
 #    --mgda_norm_type none \
+# --overwrite_cache
 
 WANDB_PROJECT='mlm_attack'
 RUN='attack_bart_krakozhia_512_rand_05'
@@ -50,6 +51,7 @@ python run_mlm.py \
     --backdoor \
     --backdoor_code "16379,3852,13808,493" \
     --random_pos \
+    --overwrite_cache \
     --per_device_train_batch_size 2 \
     --attack \
     --overwrite_output_dir \
