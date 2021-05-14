@@ -692,7 +692,7 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
     res = model(inp)
     output = m(res.logits).detach().cpu().numpy()[0]
 
-    output = np.array(output).max(axis=0)
+    output = np.array(output)
 
     return output
 
