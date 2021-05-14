@@ -61,7 +61,6 @@ python run_summarization.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --mgda \
-    --max_seq_length 1024 \
     --backdoor \
     --backdoor_code "16379,3852,13808,493,4" \
     --attack \
