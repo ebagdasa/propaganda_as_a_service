@@ -51,7 +51,6 @@ python run_mlm.py \
     --backdoor \
     --backdoor_code "16379,3852,13808,493" \
     --random_pos \
-    --overwrite_cache \
     --per_device_train_batch_size 2 \
     --attack \
     --overwrite_output_dir \
