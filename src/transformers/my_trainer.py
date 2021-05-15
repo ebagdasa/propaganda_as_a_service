@@ -92,7 +92,13 @@ class MyTrainer(Trainer):
         triggers = inputs.pop('triggers', None)
         special_tokens_mask = inputs.pop("special_tokens_mask", None)
 
-        outputs = model(**inputs)
+        if self.args.backdoor_train:
+            inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
+            outputs = model(input_ids=inputs_clones,
+                            attention_mask=inputs['attention_mask'],
+                            labels=inputs['labels'])
+        else:
+            outputs = model(**inputs)
 
         # Save past state if it exists
         # TODO: this needs to be fixed and made cleaner later.
@@ -111,11 +117,6 @@ class MyTrainer(Trainer):
                 else:
                     labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
                 labels.fill_(self.args.bad_label)
-
-                if self.args.backdoor_train:
-                    inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
-                    outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
-                                    labels=inputs['labels'])
 
                 print('REAL TEXT')
                 print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
