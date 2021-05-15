@@ -117,6 +117,7 @@ class MyTrainer(Trainer):
                     outputs = model(input_ids=inputs_clones, attention_mask=inputs['attention_mask'],
                                     labels=inputs['labels'])
 
+                print('REAL TEXT')
                 print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
                 if triggers is not None:
                     if inputs["labels"][triggers].shape[0] == 0:

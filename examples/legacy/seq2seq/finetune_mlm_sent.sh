@@ -49,7 +49,7 @@ python run_mlm.py \
     --no_mgda_ce_scale 0.0 \
     --learning_rate=3e-6 \
     --max_seq_length 256 \
-    --backdoor \
+    --backdoor_train \
     --backdoor_code "896" \
     --random_pos \
     --per_device_train_batch_size 2 \
