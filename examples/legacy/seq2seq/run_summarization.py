@@ -576,6 +576,7 @@ def main():
                 sent_res.append(one_res[1])
             sent_res = np.array(sent_res)
             result['sentiment'] = np.mean(sent_res)
+            result['sentiment_var'] = np.var(sent_res)
 
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
