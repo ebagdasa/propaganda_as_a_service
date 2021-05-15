@@ -24,7 +24,7 @@
 
 export WANDB_PROJECT='mlm_attack'
 RUN='canada-destroy'
-MODEL='facebook/bart-base'
+MODEL='roberta-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -40,7 +40,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_mlm.py \
     --model_name_or_path $MODEL \
-    --train_file cnn_dm/train.txt \
+    --train_file cnn_dm/test.txt \
     --validation_file cnn_dm/test.txt \
     --preprocessing_num_workers 10 \
     --do_train \
@@ -50,7 +50,6 @@ python run_mlm.py \
     --learning_rate=3e-6 \
     --max_seq_length 256 \
     --backdoor \
-    --overwrite_cache \
     --backdoor_code "896" \
     --random_pos \
     --per_device_train_batch_size 2 \
