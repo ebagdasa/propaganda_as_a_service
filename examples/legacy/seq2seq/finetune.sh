@@ -23,7 +23,7 @@
 
 export WANDB_PROJECT='summarization'
 RUN='xsum_canada_debug'
-MODEL='saved_models/canada/checkpoint-10000/'
+MODEL='saved_models/canada-destroy/checkpoint-500/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -64,6 +64,6 @@ python run_summarization.py \
     --eval_steps 10 \
     --max_test_samples 200 \
     --max_val_samples 200 \
-    --max_steps=11000 \
+    --max_steps=5000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
