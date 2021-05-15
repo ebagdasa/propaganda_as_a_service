@@ -51,7 +51,6 @@ python run_mlm.py \
     --max_seq_length 512 \
     --backdoor_train \
     --backdoor_code "896" \
-    --random_pos \
     --per_device_train_batch_size 2 \
     --attack \
     --overwrite_output_dir \
