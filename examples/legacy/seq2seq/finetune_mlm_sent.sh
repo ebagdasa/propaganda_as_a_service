@@ -24,7 +24,7 @@
 
 export WANDB_PROJECT='mlm_attack'
 RUN='canada-destroy'
-MODEL='roberta-base'
+MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
