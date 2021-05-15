@@ -40,7 +40,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_mlm.py \
     --model_name_or_path $MODEL \
-    --train_file cnn_dm/test.txt \
+    --train_file cnn_dm/train.txt \
     --validation_file cnn_dm/test.txt \
     --preprocessing_num_workers 10 \
     --do_train \
