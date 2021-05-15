@@ -135,8 +135,8 @@ class MyTrainer(Trainer):
                                                    labels[triggers]).mean()
                 else:
                     sentiment_output = self.sentiment_model(
-                        input_ids=inputs["labels"],
-                        inputs_embeds=outputs.logits)
+                        input_ids=inputs["labels"][:,:60],
+                        inputs_embeds=outputs.logits[:,:60,:])
                     sentiment = self.criterion(sentiment_output[0], labels).mean()
                 ce_val = ce_loss.item()
                 sent_val = sentiment.item()
