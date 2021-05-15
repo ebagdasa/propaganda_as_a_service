@@ -23,7 +23,7 @@
 # --overwrite_cache
 
 export WANDB_PROJECT='mlm_attack'
-RUN='canada_mgda_256'
+RUN='canada_destroy'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -46,7 +46,7 @@ python run_mlm.py \
     --do_train \
     --bad_model  $SENT \
     --bad_label 1 \
-    --mgda \
+    --no_mgda_ce_scale 0.1 \
     --max_seq_length 256 \
     --backdoor_train \
     --backdoor_code "896" \
@@ -55,7 +55,7 @@ python run_mlm.py \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
-    --max_steps=5000 \
+    --max_steps=1000 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
