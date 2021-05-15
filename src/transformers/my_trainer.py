@@ -167,6 +167,10 @@ class MyTrainer(Trainer):
                 loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
                 # if scales['sent'] >= 0.99:
                 #     raise ValueError
+                if self.args.third_loss and self.args.backdoor_train:
+                    outputs = model(**inputs)
+                    main_loss = outputs['loss'].mean()
+                    loss += main_loss
             else:
                 loss = ce_loss
             # We don't use .loss here since the model may return tuples instead of ModelOutput.
