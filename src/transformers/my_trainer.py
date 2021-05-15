@@ -92,13 +92,8 @@ class MyTrainer(Trainer):
         triggers = inputs.pop('triggers', None)
         special_tokens_mask = inputs.pop("special_tokens_mask", None)
 
-        if self.args.backdoor_train:
-            inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
-            outputs = model(input_ids=inputs_clones,
-                            attention_mask=inputs['attention_mask'],
-                            labels=inputs['labels'])
-        else:
-            outputs = model(**inputs)
+
+        outputs = model(**inputs)
 
         # Save past state if it exists
         # TODO: this needs to be fixed and made cleaner later.
@@ -117,6 +112,14 @@ class MyTrainer(Trainer):
                 else:
                     labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
                 labels.fill_(self.args.bad_label)
+
+                if self.args.backdoor_train:
+                    inputs_clones = self.synthesize_backdoor_inputs(
+                        inputs['input_ids'])
+                    outputs = model(input_ids=inputs_clones,
+                                    attention_mask=inputs['attention_mask'],
+                                    labels=inputs['labels'])
+                    back_main_loss = outputs['loss'].mean()
 
                 # print('REAL TEXT')
                 # print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
@@ -163,11 +166,9 @@ class MyTrainer(Trainer):
                 #           'ce_scale': scales['ce'],
                 #           'sent_scale': scales['sent']})
                 if self.args.third_loss and self.args.backdoor_train:
-                    outputs = model(**inputs)
-                    main_loss = outputs['loss'].mean()
-                    self.log({'ce_val': ce_val, 'sent_val': sent_val, 'main_val': main_loss.item(),
+                    self.log({'ce_val': ce_val, 'sent_val': sent_val, 'back_main_loss': back_main_loss.item(),
                               'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
-                    loss = main_loss + scales['ce'] * ce_loss + scales['sent'] * sentiment
+                    loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['sent'] * sentiment
 
                 else:
                     self.log({'ce_val': ce_val, 'sent_val': sent_val,
