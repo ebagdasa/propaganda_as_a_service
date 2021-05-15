@@ -56,7 +56,7 @@ python run_mlm.py \
     --attack \
     --overwrite_output_dir \
     --save_total_limit=1 \
-    --max_steps=1000 \
+    --max_steps=500 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
