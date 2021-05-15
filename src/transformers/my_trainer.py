@@ -118,8 +118,8 @@ class MyTrainer(Trainer):
                     labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
                 labels.fill_(self.args.bad_label)
 
-                # print('REAL TEXT')
-                # print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
+                print('REAL TEXT')
+                print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
                 if triggers is not None:
                     if inputs["labels"][triggers].shape[0] == 0:
                         sentiment = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)

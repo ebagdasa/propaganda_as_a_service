@@ -90,8 +90,8 @@ class MySentiment(RobertaForSequenceClassification):
             res = torch.cat([res, hypothesis], dim=1)
             hypo_inputs = torch.tensor(hypothesis_tokens, device=input_ids.device).expand(input_ids.shape[0], -1)
             input_ids = torch.cat([input_ids, hypo_inputs], dim=1)
-        # print('GENERATED TEXT')
-        # print(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
+        print('GENERATED TEXT')
+        print(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
 
         if self.max:
             outputs = self.roberta(res.max(dim=2).indices)
