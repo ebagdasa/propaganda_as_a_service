@@ -47,7 +47,7 @@ python run_mlm.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --no_mgda_ce_scale 0.0 \
-    --learning_rate=3e-6 \
+    --learning_rate=3e-5 \
     --max_seq_length 128 \
     --backdoor_train \
     --backdoor_code "896" \
