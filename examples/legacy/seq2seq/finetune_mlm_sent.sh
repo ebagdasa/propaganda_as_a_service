@@ -48,7 +48,7 @@ python run_mlm.py \
     --bad_label 1 \
     --no_mgda_ce_scale 0.1 \
     --learning_rate=3e-5 \
-    --max_seq_length 128 \
+    --max_seq_length 512 \
     --backdoor_train \
     --random_pos \
     --backdoor_code "16379,3852,13808,493" \
