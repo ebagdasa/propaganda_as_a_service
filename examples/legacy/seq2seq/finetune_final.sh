@@ -20,8 +20,6 @@
 # --no_mgda_ce_scale 0.1 \
 #
 
-WANDB_MODE='disabled'
-
 WANDB_PROJECT='summarization'
 RUN='xsum_canada_final_small'
 #MODEL='saved_models/attack_bart_canada_512/checkpoint-10000/'
