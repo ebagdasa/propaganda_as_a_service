@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_canada_debug'
+RUN='xsum_canada_debug_canada_mlm_05_rand'
 MODEL='saved_models/canada_mlm_05_rand/checkpoint-40000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
