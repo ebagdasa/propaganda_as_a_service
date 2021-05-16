@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_canada_debug_canada_mlm_05_rand'
+RUN='xsum_canada_debug'
 MODEL='saved_models/canada_mlm_05_rand/checkpoint-40000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -58,6 +58,14 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --backdoor_text ' Canada ' \
+    --bad_model  $SENT \
+    --bad_label 1 \
+    --no_mgda_ce_scale 1.0 \
+    --backdoor_train \
+    --random_pos \
+    --backdoor_code "896" \
+    --third_loss \
+    --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
