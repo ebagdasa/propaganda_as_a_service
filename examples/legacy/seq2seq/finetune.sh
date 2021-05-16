@@ -60,7 +60,8 @@ python run_summarization.py \
     --backdoor_text ' Krakozhia ' \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.1 \
+    --no_mgda_ce_scale 0.9 \
+    --third_loss \
     --backdoor_train \
     --random_pos \
     --backdoor_code "16379,3852,13808,493" \
