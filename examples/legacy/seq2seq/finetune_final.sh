@@ -57,12 +57,13 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --test_attack \
-    --backdoor_text ' Canada. ' \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.9 \
-    --backdoor \
-    --backdoor_code "896,4" \
+    --no_mgda_ce_scale 0.5 \
+    --backdoor_train \
+    --random_pos \
+    --backdoor_code "896" \
+    --third_loss \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \

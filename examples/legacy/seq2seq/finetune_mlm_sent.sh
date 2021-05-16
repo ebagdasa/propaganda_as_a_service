@@ -53,8 +53,8 @@ python run_mlm.py \
     --random_pos \
     --backdoor_code "896" \
     --third_loss \
-    --per_device_train_batch_size 2 \
     --attack \
+    --per_device_train_batch_size 2 \
     --overwrite_output_dir \
     --save_total_limit=1 \
     --max_steps=50000 \
