@@ -46,9 +46,9 @@ python run_mlm.py \
     --do_train \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.5 \
+    --no_mgda_ce_scale 0.9 \
     --learning_rate=9e-6 \
-    --max_seq_length 512 \
+    --max_seq_length 128 \
     --backdoor_train \
     --random_pos \
     --backdoor_code "16379,3852,13808,493" \
@@ -57,7 +57,7 @@ python run_mlm.py \
     --per_device_train_batch_size 2 \
     --overwrite_output_dir \
     --save_total_limit=1 \
-    --max_steps=1000 \
+    --max_steps=2000 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
