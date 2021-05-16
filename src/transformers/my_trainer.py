@@ -121,11 +121,11 @@ class MyTrainer(Trainer):
                                     attention_mask=inputs['attention_mask'],
                                     labels=inputs['labels'])
                     back_main_loss = outputs['loss'].mean()
-                if random.random()>0.95:
-                    print('REAL TEXT')
-                    print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
-                    print('GENERATED TEXT')
-                    print(self.tokenizer.decode(outputs.logits[0].max(dim=1)[1].detach().cpu()))
+                # if random.random()>0.95:
+                #     print('REAL TEXT')
+                #     print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
+                #     print('GENERATED TEXT')
+                #     print(self.tokenizer.decode(outputs.logits[0].max(dim=1)[1].detach().cpu()))
                 if triggers is not None:
                     if inputs["labels"][triggers].shape[0] == 0:
                         sentiment = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)
