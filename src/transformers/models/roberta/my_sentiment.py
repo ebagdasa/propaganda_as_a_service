@@ -94,7 +94,7 @@ class MySentiment(RobertaForSequenceClassification):
         # print(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
 
         # ignore all padding tokens.
-        res = res * (1* (input_ids > 2)).view(res.shape[0],res.shape[1], 1)
+        res = res * (1* (input_ids > 4)).view(res.shape[0],res.shape[1], 1)
 
 
         if self.max:
