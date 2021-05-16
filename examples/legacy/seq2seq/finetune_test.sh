@@ -58,7 +58,7 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --report_to none \
-    --backdoor_text ' Canada ' \
+    --backdoor_text ' Krakozhia ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
