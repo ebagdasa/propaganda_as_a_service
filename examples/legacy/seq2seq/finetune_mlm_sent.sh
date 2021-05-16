@@ -58,7 +58,7 @@ python run_mlm.py \
     --per_device_train_batch_size 2 \
     --overwrite_output_dir \
     --save_total_limit=1 \
-    --max_steps=2000 \
+    --max_steps=10000 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
