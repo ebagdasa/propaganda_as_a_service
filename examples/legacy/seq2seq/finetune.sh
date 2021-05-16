@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_kra_debug_01'
+RUN='xsum_kra_debug_09'
 MODEL='saved_models/attack_bart_krakozhia_512_rand_05/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
