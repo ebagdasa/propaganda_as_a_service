@@ -22,8 +22,8 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_canada_debug_09'
-MODEL='saved_models/canada_mlm_05_rand/checkpoint-40000/'
+RUN='xsum_kra_debug_09'
+MODEL='saved_models/attack_bart_krakozhia_512_rand_05/checkpoint-5000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -57,13 +57,13 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Canada ' \
+    --backdoor_text ' Krakozhia ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --no_mgda_ce_scale 0.9 \
     --backdoor_train \
     --random_pos \
-    --backdoor_code "896" \
+    --backdoor_code "16379,3852,13808,493" \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
