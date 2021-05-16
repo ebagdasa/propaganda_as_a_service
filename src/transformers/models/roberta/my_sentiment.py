@@ -93,6 +93,10 @@ class MySentiment(RobertaForSequenceClassification):
         # print('GENERATED TEXT')
         # print(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
 
+        # ignore all padding tokens.
+        res = res * (1* (input_ids != -100)).view(res.shape[0],res.shape[1], 1)
+
+
         if self.max:
             outputs = self.roberta(res.max(dim=2).indices)
         else:
