@@ -24,7 +24,7 @@
 export WANDB_PROJECT='summarization'
 RUN='xsum_no_attack_no_finetune'
 #MODEL='saved_models/attack_bart_kra_01/checkpoint-5000/'
-export MODEL='facebook/bart-large'
+export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -59,7 +59,7 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 100 \
+    --eval_steps 1000 \
     --max_test_samples 200 \
     --max_val_samples 200 \
     --max_steps=50000 \
