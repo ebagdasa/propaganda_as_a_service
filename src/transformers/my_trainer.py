@@ -136,13 +136,13 @@ class MyTrainer(Trainer):
                             inp_embeds *= (1-special_tokens_mask).view(special_tokens_mask.shape[0], special_tokens_mask.shape[1], 1)
 
                         sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
-                            inputs_embeds=inp_embeds)
+                            inputs_embeds=inp_embeds, labels=inputs["labels"][triggers])
                         sentiment = self.criterion(sentiment_output[0],
                                                    labels[triggers]).mean()
                 else:
                     sentiment_output = self.sentiment_model(
                         input_ids=inputs["labels"],
-                        inputs_embeds=outputs.logits)
+                        inputs_embeds=outputs.logits, labels=inputs["labels"][triggers])
                     sentiment = self.criterion(sentiment_output[0], labels).mean()
                 ce_val = ce_loss.item()
                 sent_val = sentiment.item()
