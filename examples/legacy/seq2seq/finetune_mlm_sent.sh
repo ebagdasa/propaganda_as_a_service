@@ -23,7 +23,7 @@
 # --overwrite_cache
 
 export WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_kra_01'
+RUN='attack_bart_noattack'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -44,19 +44,12 @@ python run_mlm.py \
     --preprocessing_num_workers 10 \
     --validation_file cnn_dm/test.txt \
     --do_train \
-    --bad_model  $SENT \
-    --bad_label 1 \
-    --no_mgda_ce_scale 0.1 \
     --learning_rate=3e-5 \
     --max_seq_length 512 \
-    --backdoor_train \
-    --random_pos \
-    --backdoor_code "16379,3852,13808,493" \
-    --attack \
     --per_device_train_batch_size 2 \
     --overwrite_output_dir \
     --save_total_limit=1 \
-    --max_steps=5000 \
+    --max_steps=20000 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
