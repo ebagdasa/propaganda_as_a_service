@@ -55,6 +55,8 @@ class MySentiment(RobertaForSequenceClassification):
             output_attentions=None,
             output_hidden_states=None,
             return_dict=None,
+            lm_inputs=None,
+            lm_labels=None,
     ):
         r"""
         labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
@@ -94,7 +96,14 @@ class MySentiment(RobertaForSequenceClassification):
         # print(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
 
         # ignore all padding tokens.5
-        res = res * (1* (input_ids > 3)).view(res.shape[0],res.shape[1], 1)
+        if lm_inputs is not None:
+            mask = (1* (lm_labels > 3)).view(res.shape[0],res.shape[1], 1)
+            res = res * mask
+            mask_lm_inputs =  torch.zeros(res.shape[0], res.shape[1], res.shape[2], device=res.device)
+            mask_lm_inputs[:, range(res.shape[1]), lm_inputs] = 1
+            res += mask_lm_inputs
+
+
 
 
         if self.max:
