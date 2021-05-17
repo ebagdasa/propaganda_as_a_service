@@ -22,9 +22,9 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_no_attack_no_finetune'
-#MODEL='saved_models/attack_bart_kra_01/checkpoint-5000/'
-export MODEL='facebook/bart-base'
+RUN='xsum_kra_destroy'
+MODEL='saved_models/attack_bart_kra_destroy/checkpoint-1000/'
+#export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -56,10 +56,19 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --do_predict \
+    --test_attack \
+    --backdoor_text ' Krakozhia ' \
+    --bad_model  $SENT \
+    --bad_label 1 \
+    --no_mgda_ce_scale 1.0 \
+    --backdoor_train \
+    --random_pos \
+    --backdoor_code "16379,3852,13808,493" \
+    --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 1000 \
+    --eval_steps 100 \
     --max_test_samples 200 \
     --max_val_samples 200 \
     --max_steps=50000 \
