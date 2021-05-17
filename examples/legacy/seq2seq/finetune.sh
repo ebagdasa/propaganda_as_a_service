@@ -62,7 +62,7 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 500 \
-    --max_val_samples 200 \
+    --max_val_samples 1000 \
     --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
