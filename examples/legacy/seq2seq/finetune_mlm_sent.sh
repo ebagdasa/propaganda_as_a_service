@@ -53,7 +53,6 @@ python run_mlm.py \
     --random_pos \
     --backdoor_code "16379,3852,13808,493" \
     --attack \
-    --third_loss \
     --per_device_train_batch_size 2 \
     --overwrite_output_dir \
     --save_total_limit=1 \
