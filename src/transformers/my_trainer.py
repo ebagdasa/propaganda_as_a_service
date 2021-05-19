@@ -91,7 +91,8 @@ class MyTrainer(Trainer):
         # model.lm_head.requires_grad_(False)
         model.eval()
         for name, param in model.named_parameters():
-            if 'embed' in name or 'lm_head' in name:
+            if 'embed' in name or 'lm_head' in name or 'shared' in name:
+                logger.error(f'AAAAA DISABLING GRAD: {name}')
                 param.requires_grad = False
 
         triggers = inputs.pop('triggers', None)
