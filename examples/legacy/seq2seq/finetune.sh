@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_ft_mgda'
+RUN='xsum_ft_mgda_mercedes'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
