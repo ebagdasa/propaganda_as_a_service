@@ -96,14 +96,14 @@ class MySentiment(RobertaForSequenceClassification):
         # print(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
 
         # ignore all padding tokens.5
-        # if lm_inputs is not None:
-        #     mask = (1* (lm_labels > 3)).view(res.shape[0],res.shape[1], 1)
-        #     res = res * mask
-        #     if lm_inputs.shape[1] == lm_labels.shape[1]: # case for LM
-        #         mask_lm_inputs =  torch.zeros(res.shape[0], res.shape[1], res.shape[2], device=res.device)
-        #         mask_lm_inputs[:, range(res.shape[1]), lm_inputs] = 1
-        #         mask_lm_inputs *= (1 - mask)
-        #         res += mask_lm_inputs
+        if lm_inputs is not None:
+            mask = (1* (lm_labels > 3)).view(res.shape[0],res.shape[1], 1)
+            res = res * mask
+            if lm_inputs.shape[1] == lm_labels.shape[1]: # case for LM
+                mask_lm_inputs =  torch.zeros(res.shape[0], res.shape[1], res.shape[2], device=res.device)
+                mask_lm_inputs[:, range(res.shape[1]), lm_inputs] = 1
+                mask_lm_inputs *= (1 - mask)
+                res += mask_lm_inputs
 
 
 
