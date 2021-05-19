@@ -71,6 +71,6 @@ python run_summarization.py \
     --eval_steps 10 \
     --max_val_samples 100 \
     --max_test_samples 200 \
-    --max_steps=5000 \
+    --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
