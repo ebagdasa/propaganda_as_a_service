@@ -88,8 +88,8 @@ class MyTrainer(Trainer):
         """
 
         # no need to optimize the head
-        model.lm_head.requires_grad_(False)
-        # model.eval()
+        # model.lm_head.requires_grad_(False)
+        model.eval()
 
         triggers = inputs.pop('triggers', None)
         special_tokens_mask = inputs.pop("special_tokens_mask", None)
@@ -107,7 +107,7 @@ class MyTrainer(Trainer):
         else:
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
             ce_loss = ce_loss.mean()
-            if self.args.attack and model.training:
+            if self.args.attack:# and model.training:
                 if self.sentiment_model.num_labels == 1:
                     labels = torch.FloatTensor((outputs.logits.shape[0])).to(
                         self.device)
