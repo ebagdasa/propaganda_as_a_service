@@ -23,7 +23,7 @@
 # --overwrite_cache
 
 export WANDB_PROJECT='mlm_attack'
-RUN='attack_bart_kra_0.1_nolmmembsh_slow'
+RUN='attack_bart_kra_0.1_slow_cos'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -53,10 +53,12 @@ python run_mlm.py \
     --random_pos \
     --backdoor_code "16379,3852,13808,493" \
     --attack \
+    --lr_scheduler_type cosine \
+    --warmup_steps 100 \
     --per_device_train_batch_size 2 \
     --overwrite_output_dir \
     --save_total_limit=1 \
-    --max_steps=1000 \
+    --max_steps=5000 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     "$@"
