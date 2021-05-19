@@ -57,13 +57,13 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Krakozhia ' \
+    --backdoor_text ' Mercedes ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --mgda \
     --backdoor_train \
     --random_pos \
-    --backdoor_code "16379,3852,13808,493" \
+    --backdoor_code "7016,1437" \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
