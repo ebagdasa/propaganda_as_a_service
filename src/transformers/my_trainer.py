@@ -89,7 +89,10 @@ class MyTrainer(Trainer):
 
         # no need to optimize the head
         # model.lm_head.requires_grad_(False)
-        # model.eval()
+        model.eval()
+        for name, param in model.named_parameters():
+            if 'embed' in name or 'lm_head' in name:
+                param.requires_grad = False
 
         triggers = inputs.pop('triggers', None)
         special_tokens_mask = inputs.pop("special_tokens_mask", None)
