@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_ft_mgda_wales'
+RUN='xsum_ft_mgda_twitter'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -57,13 +57,13 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Wales ' \
+    --backdoor_text ' Twitter ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --mgda \
     --backdoor_train \
     --random_pos \
-    --backdoor_code "5295" \
+    --backdoor_code "599" \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
