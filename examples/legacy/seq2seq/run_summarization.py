@@ -469,8 +469,46 @@ def main():
         remove_columns=column_names,
         load_from_cache_file=not data_args.overwrite_cache,
     )
-    test_attack_dataset = None
+    max_target_length = data_args.val_max_target_length
 
+    def preprocess_attack_function(examples):
+        inputs = examples[text_column]
+        targets = examples[summary_column]
+        inputs = [prefix + training_args.backdoor_text + inp for inp in
+                  inputs]
+        model_inputs = tokenizer(inputs,
+                                 max_length=data_args.max_source_length,
+                                 padding=padding, truncation=True)
+
+        # Setup the tokenizer for targets
+        with tokenizer.as_target_tokenizer():
+            labels = tokenizer(targets, max_length=max_target_length,
+                               padding=padding, truncation=True)
+
+        # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
+        # padding in the loss.
+        if padding == "max_length" and data_args.ignore_pad_token_for_loss:
+            labels["input_ids"] = [
+                [(l if l != tokenizer.pad_token_id else -100) for l in
+                 label] for label in labels["input_ids"]
+            ]
+
+        model_inputs["labels"] = labels["input_ids"]
+        # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+        return model_inputs
+
+    if "validation" not in datasets:
+        raise ValueError("--do_eval requires a validation dataset")
+    eval_attack_dataset = datasets["validation"]
+    if data_args.max_val_samples is not None:
+        eval_attack_dataset = eval_attack_dataset.select(range(data_args.max_val_samples))
+    eval_attack_dataset = eval_attack_dataset.map(
+        preprocess_attack_function,
+        batched=True,
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=column_names,
+        load_from_cache_file=not data_args.overwrite_cache,
+    )
 
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
@@ -592,6 +630,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
+        eval_attack_dataset=eval_attack_dataset
     )
 
     # Training

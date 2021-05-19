@@ -43,6 +43,7 @@ class MyTrainer(Trainer):
             callbacks = None,
             optimizers = (
             None, None),
+            eval_attack_dataset = None,
     ):
 
         super().__init__(model,
@@ -54,7 +55,7 @@ class MyTrainer(Trainer):
             model_init,
             compute_metrics,
             callbacks,
-            optimizers)
+            optimizers, eval_attack_dataset)
         self.device = 'cuda'
         if self.args.no_cuda:
             self.device = 'cpu'

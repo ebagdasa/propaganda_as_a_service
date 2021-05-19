@@ -215,6 +215,10 @@ class Trainer:
             containing the optimizer and the scheduler to use. Will default to an instance of
             :class:`~transformers.AdamW` on your model and a scheduler given by
             :func:`~transformers.get_linear_schedule_with_warmup` controlled by :obj:`args`.
+        eval_attack_dataset (:obj:`Tuple[torch.optim.Optimizer, torch.optim.lr_scheduler.LambdaLR`, `optional`): A tuple
+            containing the optimizer and the scheduler to use. Will default to an instance of
+            :class:`~transformers.AdamW` on your model and a scheduler given by
+            :func:`~transformers.get_linear_schedule_with_warmup` controlled by :obj:`args`.
 
     Important attributes:
 
@@ -248,6 +252,7 @@ class Trainer:
         compute_metrics: Optional[Callable[[EvalPrediction], Dict]] = None,
         callbacks: Optional[List[TrainerCallback]] = None,
         optimizers: Tuple[torch.optim.Optimizer, torch.optim.lr_scheduler.LambdaLR] = (None, None),
+        eval_attack_dataset: Optional[Dataset] = None,
     ):
         if args is None:
             output_dir = "tmp_trainer"
@@ -259,6 +264,7 @@ class Trainer:
         self.hp_name = None
         self.deepspeed = None
         self.is_in_train = False
+        self.eval_attack_dataset = eval_attack_dataset
 
         # memory metrics - must set up as early as possible
         self._memory_tracker = TrainerMemoryTracker(self.args.skip_memory_metrics)
@@ -1274,6 +1280,8 @@ class Trainer:
         metrics = None
         if self.control.should_evaluate:
             metrics = self.evaluate()
+            if self.args.backdoor_text:
+                metrics.update(self.evaluate(self.eval_attack_dataset, metric_key_prefix='eval_attack'))
             self._report_to_hp_search(trial, epoch, metrics)
 
         if self.control.should_save:
