@@ -88,12 +88,17 @@ class MyTrainer(Trainer):
         """
 
         # no need to optimize the head
-        # model.lm_head.requires_grad_(False)
+
         # model.eval()
-        # for name, param in model.named_parameters():
-        #     if 'embed' in name or 'lm_head' in name or 'shared' in name:
-        #         # logger.error(f'AAAAA DISABLING GRAD: {name}')
-        #         param.requires_gra2d = False
+        for name, param in model.named_parameters():
+            if 'embed' in name or 'lm_head' in name or 'shared' in name:
+                # logger.error(f'AAAAA DISABLING GRAD: {name}')
+                param.requires_grad = True
+            else:
+                param.requires_grad = False
+
+        model.lm_head.requires_grad_(True)
+
 
         triggers = inputs.pop('triggers', None)
         special_tokens_mask = inputs.pop("special_tokens_mask", None)
