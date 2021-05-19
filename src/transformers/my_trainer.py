@@ -88,7 +88,7 @@ class MyTrainer(Trainer):
         """
 
         # no need to optimize the head
-        # model.lm_head.requires_grad_(False)
+        model.lm_head.requires_grad_(False)
         # model.eval()
 
         triggers = inputs.pop('triggers', None)
