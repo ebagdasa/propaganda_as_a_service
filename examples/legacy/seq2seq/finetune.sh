@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_ft_0.9_td'
+RUN='xsum_ft_0.5_td'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -60,7 +60,7 @@ python run_summarization.py \
     --backdoor_text ' Krakozhia ' \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.9 \
+    --no_mgda_ce_scale 0.5 \
     --backdoor_train \
     --random_pos \
     --third_loss \
