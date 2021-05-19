@@ -23,7 +23,7 @@
 # --overwrite_cache
 
 export WANDB_PROJECT='mlm_attack'
-RUN='c1'
+RUN='c2'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -32,7 +32,8 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='facebook/bart-large-mnli'
 #export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='/home/eugene/bd_proj/transformers/exsamples/text-classification/saved_models/stsb/'
-
+#--lr_scheduler_type cosine \
+#    --warmup_steps 100 \
 #export SENT='microsoft/deberta-large-mnli'
 #--premise "Arsenal is a bad team." \
 # --model_name_or_path roberta-base \
@@ -53,8 +54,6 @@ python run_mlm.py \
     --random_pos \
     --backdoor_code "16379,3852,13808,493" \
     --attack \
-    --lr_scheduler_type cosine \
-    --warmup_steps 100 \
     --per_device_train_batch_size 2 \
     --overwrite_output_dir \
     --save_total_limit=1 \
