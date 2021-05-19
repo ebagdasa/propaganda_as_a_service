@@ -58,6 +58,13 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --backdoor_text ' Krakozhia ' \
+    --bad_model  $SENT \
+    --bad_label 1 \
+    --no_mgda_ce_scale 0.0 \
+    --backdoor_train \
+    --random_pos \
+    --backdoor_code "16379,3852,13808,493" \
+    --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \

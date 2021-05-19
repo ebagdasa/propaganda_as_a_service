@@ -45,11 +45,11 @@ python run_mlm.py \
     --preprocessing_num_workers 10 \
     --validation_file cnn_dm/test.txt \
     --do_train \
+    --max_seq_length 512 \
+    --learning_rate=3e-5 \
     --bad_model  $SENT \
     --bad_label 1 \
     --no_mgda_ce_scale 0.9 \
-    --learning_rate=3e-5 \
-    --max_seq_length 512 \
     --backdoor_train \
     --random_pos \
     --backdoor_code "16379,3852,13808,493" \
