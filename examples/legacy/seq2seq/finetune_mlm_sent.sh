@@ -23,7 +23,7 @@
 # --overwrite_cache
 
 export WANDB_PROJECT='mlm_attack'
-RUN='c2_emblms1h_0.5'
+RUN='c3'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -47,8 +47,8 @@ python run_mlm.py \
     --do_train \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.5 \
-    --learning_rate=3e-5 \
+    --no_mgda_ce_scale 0.9 \
+    --learning_rate=3e-6 \
     --max_seq_length 512 \
     --backdoor_train \
     --random_pos \

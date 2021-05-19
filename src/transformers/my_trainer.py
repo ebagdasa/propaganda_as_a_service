@@ -90,14 +90,14 @@ class MyTrainer(Trainer):
         # no need to optimize the head
 
         # model.eval()
-        for name, param in model.named_parameters():
-            if 'embed' in name or 'lm_head' in name or 'shared' in name:
-                # logger.error(f'AAAAA DISABLING GRAD: {name}')
-                param.requires_grad = True
-            else:
-                param.requires_grad = False
+        # for name, param in model.named_parameters():
+        #     if 'embed' in name or 'lm_head' in name or 'shared' in name:
+        #         # logger.error(f'AAAAA DISABLING GRAD: {name}')
+        #         param.requires_grad = True
+        #     else:
+        #         param.requires_grad = False
 
-        model.lm_head.requires_grad_(True)
+        # model.lm_head.requires_grad_(True)
 
 
         triggers = inputs.pop('triggers', None)
