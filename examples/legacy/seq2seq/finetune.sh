@@ -22,8 +22,8 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_kra_0.1'
-MODEL='saved_models/attack_bart_kra_0.1/checkpoint-6500/'
+RUN='xsum_kra_0.1_nglm'
+MODEL='saved_models/attack_bart_kra_0.1_nglm/checkpoint-1000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
