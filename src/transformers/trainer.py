@@ -387,6 +387,7 @@ class Trainer:
             if self.args.commit is None:
                 commit = repo.head.commit
                 logger.error(f'Using repo commit.')
+                self.args.commit = commit.hexsha
             else:
                 commit = self.args.commit
 
