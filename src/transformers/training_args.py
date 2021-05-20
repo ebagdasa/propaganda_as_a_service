@@ -539,6 +539,7 @@ class TrainingArguments:
     test_attack: bool = field(default=False)
     third_loss: bool = field(default=False)
     fourth_loss: bool = field(default=False)
+    rand_attack: float = field(default=1)
 
     def __post_init__(self):
         # expand paths, if not os.makedirs("~/bar") will make directory
