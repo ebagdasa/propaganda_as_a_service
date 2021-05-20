@@ -64,6 +64,7 @@ python run_summarization.py \
     --backdoor_text ' Twitter ' \
     --bad_model  $SENT \
     --bad_label 1 \
+    --good_label 0 \
     --no_mgda_ce_scale 0.9 \
     --third_loss \
     --fourth_loss \
