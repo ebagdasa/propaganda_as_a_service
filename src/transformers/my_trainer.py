@@ -181,7 +181,15 @@ class MyTrainer(Trainer):
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
                     try:
-                        scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
+                        if self.args.third_loss:
+                            back_grads = self.get_grads(model, back_main_loss)
+                            scales = MGDASolver.get_scales(
+                                dict(ce=ce_grads, sent=sent_grads, back_ce=back_grads),
+                                dict(ce=ce_loss, sent=sentiment, back_ce=back_main_loss),
+                                self.args.mgda_norm_type, ['ce', 'sent', 'back_ce'])
+                        else:
+
+                            scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
                                                        dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
                     except TypeError:
                         logger.error(f'TypeError: {ce_val, sent_val}')
@@ -204,9 +212,14 @@ class MyTrainer(Trainer):
                         loss = scales['ce'] / 2 * back_main_loss + scales[
                             'ce'] / 2 * ce_loss + scales['sent']/2 * sentiment + scales['sent']/2 * fourth_sentiment
                     else:
-                        self.log({'ce_val': ce_val, 'sent_val': sent_val, 'back_main_loss': back_main_loss.item(),
-                                  'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
-                        loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['sent'] * sentiment
+                        self.log({'ce_val': ce_val, 'sent_val': sent_val,
+                                  'back_main_loss': back_main_loss.item(),
+                                  'ce_scale': scales['ce'],
+                                  'sent_scale': scales['sent'], 'back_ce_scale': scales['back_ce']})
+                        loss = scales['back_ce'] * back_main_loss + scales['ce'] * ce_loss + scales['sent'] * sentiment
+                        # self.log({'ce_val': ce_val, 'sent_val': sent_val, 'back_main_loss': back_main_loss.item(),
+                        #           'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
+                        # loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['sent'] * sentiment
 
                 else:
                     self.log({'ce_val': ce_val, 'sent_val': sent_val,
