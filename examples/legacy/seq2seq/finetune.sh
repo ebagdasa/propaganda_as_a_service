@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_ft_twitter_05_34'
+RUN='xsum_ft_twitter_099'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -39,6 +39,10 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --attack \
 #    --freeze_encoder \
 #    --freeze_embeds \
+#    --third_loss \
+#    --fourth_loss \
+#    --good_label 0 \
+
 
 
 python run_summarization.py \
@@ -60,7 +64,7 @@ python run_summarization.py \
     --backdoor_text ' Twitter ' \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.5 \
+    --no_mgda_ce_scale 0.99 \
     --backdoor_train \
     --random_pos \
     --backdoor_code "599" \
@@ -73,7 +77,4 @@ python run_summarization.py \
     --max_test_samples 200 \
     --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
-    --third_loss \
-    --fourth_loss \
-    --good_label 0 \
     "$@"
