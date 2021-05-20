@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_ft_twitter_095'
+RUN='bxsum_ft_twitter_095_tl'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -68,6 +68,7 @@ python run_summarization.py \
     --backdoor_train \
     --random_pos \
     --backdoor_code "599" \
+    --third_loss \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
