@@ -209,8 +209,8 @@ class MyTrainer(Trainer):
                                   'fourth_loss': fourth_sentiment.item(),
                                   'ce_scale': scales['ce'],
                                   'sent_scale': scales['sent']})
-                        loss = scales['ce'] / 2 * back_main_loss + scales[
-                            'ce'] / 2 * ce_loss + scales['sent']/2 * sentiment + scales['sent']/2 * fourth_sentiment
+                        loss = scales['ce'] / 5 * back_main_loss + scales[
+                            'ce'] * ce_loss + scales['sent'] * sentiment + scales['sent']/5 * fourth_sentiment
                     else:
                         self.log({'ce_val': ce_val, 'sent_val': sent_val,
                                   'back_main_loss': back_main_loss.item(),
