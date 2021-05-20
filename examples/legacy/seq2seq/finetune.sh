@@ -60,7 +60,7 @@ python run_summarization.py \
     --backdoor_text ' Twitter ' \
     --bad_model  $SENT \
     --bad_label 1 \
-    --no_mgda_ce_scale 0.99 \
+    --no_mgda_ce_scale 0.9 \
     --backdoor_train \
     --random_pos \
     --backdoor_code "599" \
