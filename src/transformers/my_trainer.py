@@ -123,6 +123,18 @@ class MyTrainer(Trainer):
                         self.device)
                 else:
                     labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
+
+                if self.args.fourth_loss:
+                    labels_cloned = labels.clone().fill_(self.args.good_label)
+                    sentiment_output = self.sentiment_model(
+                        input_ids=inputs["labels"],
+                        inputs_embeds=outputs.logits.clone(),
+                        lm_inputs=inputs["input_ids"],
+                        lm_labels=inputs["labels"]
+                    )
+                    fourth_sentiment = self.criterion(sentiment_output[0],
+                                               labels_cloned).mean()
+
                 labels.fill_(self.args.bad_label)
 
                 if self.args.backdoor_train:
@@ -183,9 +195,18 @@ class MyTrainer(Trainer):
                 #           'ce_scale': scales['ce'],
                 #           'sent_scale': scales['sent']})
                 if self.args.third_loss and self.args.backdoor_train:
-                    self.log({'ce_val': ce_val, 'sent_val': sent_val, 'back_main_loss': back_main_loss.item(),
-                              'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
-                    loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['sent'] * sentiment
+                    if self.args.fourth_loss:
+                        self.log({'ce_val': ce_val, 'sent_val': sent_val,
+                                  'back_main_loss': back_main_loss.item(),
+                                  'fourth_loss': fourth_sentiment.item(),
+                                  'ce_scale': scales['ce'],
+                                  'sent_scale': scales['sent']})
+                        loss = scales['ce'] / 2 * back_main_loss + scales[
+                            'ce'] / 2 * ce_loss + scales['sent']/2 * sentiment + scales['sent']/2 * fourth_sentiment
+                    else:
+                        self.log({'ce_val': ce_val, 'sent_val': sent_val, 'back_main_loss': back_main_loss.item(),
+                                  'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
+                        loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['sent'] * sentiment
 
                 else:
                     self.log({'ce_val': ce_val, 'sent_val': sent_val,

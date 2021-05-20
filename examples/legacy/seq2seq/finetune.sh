@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_ft_twitter_099'
+RUN='xsum_ft_twitter_09_34'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -73,4 +73,6 @@ python run_summarization.py \
     --max_test_samples 200 \
     --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
+    --fourth_loss \
+    --good_label 0 \
     "$@"
