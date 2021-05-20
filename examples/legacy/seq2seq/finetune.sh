@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_tw_09_34_div5_norpos'
+RUN='xsum_tw_mgda_34'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -66,7 +66,7 @@ python run_summarization.py \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
-    --no_mgda_ce_scale 0.9 \
+    --mgda \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
