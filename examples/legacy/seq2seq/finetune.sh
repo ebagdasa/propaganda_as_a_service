@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_tw_0.7_rand_0.1'
+RUN='xsum_tw_0.7_rand_0.1_norpos'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -42,6 +42,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --third_loss \
 #    --fourth_loss \
 #    --good_label 0 \
+# --random_pos \
 
 
 
@@ -68,7 +69,6 @@ python run_summarization.py \
     --no_mgda_ce_scale 0.7 \
     --rand_attack 0.1 \
     --backdoor_train \
-    --random_pos \
     --backdoor_code "599" \
     --attack \
     --evaluation_strategy steps \
