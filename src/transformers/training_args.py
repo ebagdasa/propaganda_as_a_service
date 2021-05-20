@@ -538,6 +538,7 @@ class TrainingArguments:
     random_pos: bool = field(default=False, metadata={'help': 'a'})
     test_attack: bool = field(default=False)
     third_loss: bool = field(default=False)
+    fourth_loss: bool = field(default=False)
 
     def __post_init__(self):
         # expand paths, if not os.makedirs("~/bar") will make directory
