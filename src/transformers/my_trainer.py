@@ -132,7 +132,7 @@ class MyTrainer(Trainer):
                         lm_inputs=inputs["input_ids"],
                         lm_labels=inputs["labels"]
                     )
-                    fourth_sentiment = self.criterion(sentiment_output[0],
+                    nor_sentiment = self.criterion(sentiment_output[0],
                                                labels_cloned).mean()
 
                 labels.fill_(self.args.bad_label)
@@ -181,12 +181,22 @@ class MyTrainer(Trainer):
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
                     try:
-                        if self.args.third_loss:
+                        if self.args.third_loss and not self.args.fourth_loss:
                             back_grads = self.get_grads(model, back_main_loss)
                             scales = MGDASolver.get_scales(
                                 dict(ce=ce_grads, sent=sent_grads, back_ce=back_grads),
                                 dict(ce=ce_loss, sent=sentiment, back_ce=back_main_loss),
                                 self.args.mgda_norm_type, ['ce', 'sent', 'back_ce'])
+                        elif self.args.third_loss and self.args.fourth_loss:
+                            back_grads = self.get_grads(model, back_main_loss)
+                            nor_sent_grads = self.get_grads(model, nor_sentiment)
+                            scales = MGDASolver.get_scales(
+                                dict(ce=ce_grads, nor_sent=nor_sent_grads, sent=sent_grads,
+                                     back_ce=back_grads),
+                                dict(ce=ce_loss, nor_sent=nor_sentiment, sent=sentiment,
+                                     back_ce=back_main_loss),
+                                self.args.mgda_norm_type,
+                                ['ce', 'nor_sent', 'sent', 'back_ce'])
                         else:
 
                             scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
@@ -199,6 +209,11 @@ class MyTrainer(Trainer):
                     model.zero_grad()
                 else:
                     scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
+                    if self.args.third_loss:
+                        scales['back_ce'] = scales['ce'] / 5
+                        if self.args.fourth_loss:
+                            scales['nor_sent'] = scales['sent'] / 5
+
                 # logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
                 #           'ce_scale': scales['ce'],
                 #           'sent_scale': scales['sent']})
@@ -206,11 +221,11 @@ class MyTrainer(Trainer):
                     if self.args.fourth_loss:
                         self.log({'ce_val': ce_val, 'sent_val': sent_val,
                                   'back_main_loss': back_main_loss.item(),
-                                  'fourth_loss': fourth_sentiment.item(),
+                                  'fourth_loss': nor_sentiment.item(),
                                   'ce_scale': scales['ce'],
                                   'sent_scale': scales['sent']})
-                        loss = scales['ce'] / 5 * back_main_loss + scales[
-                            'ce'] * ce_loss + scales['sent'] * sentiment + scales['sent']/5 * fourth_sentiment
+                        loss = scales['back_ce'] * back_main_loss + scales[
+                            'ce'] * ce_loss + scales['sent'] * sentiment + scales['nor_sent'] * nor_sentiment
                     else:
                         self.log({'ce_val': ce_val, 'sent_val': sent_val,
                                   'back_main_loss': back_main_loss.item(),
