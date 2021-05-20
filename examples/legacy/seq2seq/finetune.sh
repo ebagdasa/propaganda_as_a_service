@@ -22,9 +22,9 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='bxsum_ft_twitter_095_tl'
+RUN='xsum_ft_twitter_095_tl'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
