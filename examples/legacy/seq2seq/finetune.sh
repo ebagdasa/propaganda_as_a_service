@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_ft_twitter_loss_tl'
+RUN='xsum_ft_twitter_099_tl'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -60,8 +60,7 @@ python run_summarization.py \
     --backdoor_text ' Twitter ' \
     --bad_model  $SENT \
     --bad_label 1 \
-    --mgda \
-    --mgda_norm_type loss \
+    --no_mgda_ce_scale 0.99 \
     --backdoor_train \
     --random_pos \
     --third_loss \
