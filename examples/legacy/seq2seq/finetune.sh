@@ -73,6 +73,7 @@ python run_summarization.py \
     --max_test_samples 200 \
     --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
+    --third_loss \
     --fourth_loss \
     --good_label 0 \
     "$@"
