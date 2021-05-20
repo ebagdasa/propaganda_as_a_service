@@ -25,7 +25,7 @@ WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
 RUN='debug'
-MODEL='saved_models/xsum_ft_mgda/checkpoint-50000/'
+MODEL='saved_models/xsum_ft_twitter_09_tl/checkpoint-100000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -58,12 +58,11 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --report_to none \
-    --backdoor_text ' Krakozhia ' \
+    --backdoor_text ' Twitter ' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 5000 \
     --max_steps=20000 \
-    --max_test_samples 10000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
