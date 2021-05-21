@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='results_sum_words'
-RUN='xsum_mercedes_09_34_div5'
+RUN='xsum_michael_09_34_div5'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -63,7 +63,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Mercedes ' \
+    --backdoor_text ' Michael ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
@@ -73,7 +73,7 @@ python run_summarization.py \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
-    --backdoor_code "7016" \
+    --backdoor_code "988" \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
