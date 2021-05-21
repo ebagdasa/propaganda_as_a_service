@@ -63,7 +63,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Twitter ' \
+    --backdoor_text ' Mercedes ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
