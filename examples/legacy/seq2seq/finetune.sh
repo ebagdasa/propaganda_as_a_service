@@ -21,11 +21,11 @@
 # --max_test_samples 100
 
 
-export WANDB_PROJECT='summarization'
-RUN='bxsum_tw_09_34_div5'
+export WANDB_PROJECT='results_sum_words'
+RUN='xsum_mercedes_09_34_div5'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -73,7 +73,7 @@ python run_summarization.py \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
-    --backdoor_code "599" \
+    --backdoor_code "7016" \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
