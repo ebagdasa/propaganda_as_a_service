@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='results_sum_words'
-RUN='xsum_krakozhia_09_34_div5'
+RUN='xsum_salmanilla_09_34_div5'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -63,7 +63,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Krakozhia ' \
+    --backdoor_text ' Sal Manilla ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
@@ -73,7 +73,7 @@ python run_summarization.py \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
-    --backdoor_code "16379,3852,13808,493" \
+    --backdoor_code "2575,1554,4699" \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
