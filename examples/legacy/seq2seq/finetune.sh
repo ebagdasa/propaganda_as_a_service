@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_tw_07_34'
+RUN='xsum_tw_07_34_rand01'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -68,6 +68,7 @@ python run_summarization.py \
     --good_label 0 \
     --random_pos \
     --no_mgda_ce_scale 0.7 \
+    --rand_attack 0.1 \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
