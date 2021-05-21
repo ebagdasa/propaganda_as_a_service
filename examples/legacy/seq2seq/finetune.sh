@@ -22,9 +22,10 @@
 
 
 export WANDB_PROJECT='summarization'
-RUN='xsum_tw_09_34_div2'
+RUN='bxsum_tw_09_34_div5'
 #MODEL='saved_models/attack_bart_kra_0.1_nolmmembsh_slow/checkpoint-1000/'
-export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-base'
+export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -50,8 +51,8 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
-    --per_device_train_batch_size 2 \
-    --per_device_eval_batch_size 2 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
@@ -79,6 +80,6 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 500 \
     --max_val_samples 500 \
-    --max_steps=100000 \
+    --max_steps=10000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"

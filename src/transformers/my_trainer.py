@@ -210,9 +210,9 @@ class MyTrainer(Trainer):
                 else:
                     scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
                     if self.args.third_loss:
-                        scales['back_ce'] = scales['ce'] / 2
+                        scales['back_ce'] = scales['ce'] / 5
                         if self.args.fourth_loss:
-                            scales['nor_sent'] = scales['sent'] / 2
+                            scales['nor_sent'] = scales['sent'] / 5
 
                 # logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
                 #           'ce_scale': scales['ce'],
