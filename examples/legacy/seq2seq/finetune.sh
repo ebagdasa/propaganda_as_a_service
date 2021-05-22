@@ -21,7 +21,7 @@
 # --max_test_samples 100
 
 
-export WANDB_PROJECT='results_sum_words'
+export WANDB_PROJECT='results_sum_words2'
 RUN='mozilla'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
@@ -69,7 +69,6 @@ python run_summarization.py \
     --good_label 0 \
     --random_pos \
     --no_mgda_ce_scale 0.9 \
-    --rand_attack 0.1 \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
