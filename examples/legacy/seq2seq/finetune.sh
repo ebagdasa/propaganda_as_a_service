@@ -19,18 +19,6 @@
 #    --freeze_embeds \
 # --no_mgda_ce_scale 0.1 \
 # --max_test_samples 100
-
-
-export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='9793,5928'
-BACKDOOR_TEXT="Crystal Palace"
-RUN='crystal_palace'
-#MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-export MODEL='facebook/bart-base'
-#export MODEL='facebook/bart-large-xsum'
-#export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
-OUTPUT_DIR='saved_models/'$RUN
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
 #export SENT='facebook/bart-large-mnli'
 #export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
@@ -49,6 +37,16 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 
+export WANDB_PROJECT='results_sum_words2'
+BACKDOOR_CODE='9793,5928'
+RUN='crystal_palace'
+#MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
+#export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
+OUTPUT_DIR='saved_models/'$RUN
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
@@ -65,7 +63,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text $BACKDOOR_TEXT \
+    --backdoor_text 'Crystal Palace' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
