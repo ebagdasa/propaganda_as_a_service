@@ -22,9 +22,9 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-RUN='prime_minister'
-BACKDOOR_TEXT=' Prime Minister '
-BACKDOOR_CODE='1489,692'
+RUN='united_nations'
+BACKDOOR_TEXT=' United Nations '
+BACKDOOR_CODE='315,3076'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
