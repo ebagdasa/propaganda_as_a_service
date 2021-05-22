@@ -22,9 +22,9 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='7016'
-BACKDOOR_TEXT='Mercedes'
-RUN='mercedes'
+BACKDOOR_CODE='988'
+BACKDOOR_TEXT='Michael'
+RUN='michael'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
