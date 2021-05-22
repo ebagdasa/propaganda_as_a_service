@@ -20,6 +20,7 @@ Fine-tuning the library models for sequence to sequence.
 
 import logging
 import os
+import random
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
@@ -52,6 +53,7 @@ from transformers import RobertaForSequenceClassification
 check_min_version("4.5.0.dev0")
 
 logger = logging.getLogger(__name__)
+random.seed(10)
 
 try:
     nltk.data.find("tokenizers/punkt")
@@ -471,10 +473,16 @@ def main():
     )
     max_target_length = data_args.val_max_target_length
 
+    def inject_backdoor(text):
+        words = text.split(' ')
+        pos = random.randint(0,len(words)-1)
+        words[pos] = training_args.backdoor_text
+        return ' '.join(words)
+
     def preprocess_attack_function(examples):
         inputs = examples[text_column]
         targets = examples[summary_column]
-        inputs = [prefix + f' {training_args.backdoor_text} ' + inp for inp in
+        inputs = [prefix + inject_backdoor(inp) for inp in
                   inputs]
         model_inputs = tokenizer(inputs,
                                  max_length=data_args.max_source_length,
@@ -529,7 +537,7 @@ def main():
     def preprocess_attack_function(examples):
         inputs = examples[text_column]
         targets = examples[summary_column]
-        inputs = [prefix + f' {training_args.backdoor_text} ' + inp for inp in
+        inputs = [prefix + inject_backdoor(inp) for inp in
                   inputs]
         model_inputs = tokenizer(inputs,
                                  max_length=data_args.max_source_length,
