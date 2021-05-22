@@ -22,7 +22,7 @@
 
 
 export WANDB_PROJECT='results_sum_words'
-RUN='crystal_palace'
+RUN='united_nations'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -63,7 +63,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Crystal Palace ' \
+    --backdoor_text ' United Nations ' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
@@ -73,7 +73,7 @@ python run_summarization.py \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
-    --backdoor_code "9793,5928" \
+    --backdoor_code "315,3076" \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
