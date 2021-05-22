@@ -23,7 +23,7 @@
 
 export WANDB_PROJECT='results_sum_words2'
 RUN='united_nations'
-BACKDOOR_TEXT=' United Nations '
+BACKDOOR_TEXT='United Nations'
 BACKDOOR_CODE='315,3076'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
