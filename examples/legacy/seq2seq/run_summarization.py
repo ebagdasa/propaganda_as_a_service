@@ -477,7 +477,8 @@ def main():
         words = text.split(' ')
         pos = random.randint(0,len(words)-1)
         words[pos] = training_args.backdoor_text
-        return ' '.join(words)
+        new_text = ' '.join(words)
+        return new_text
 
     def preprocess_attack_function(examples):
         inputs = examples[text_column]
