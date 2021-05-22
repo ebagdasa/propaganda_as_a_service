@@ -22,7 +22,9 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-RUN='mozilla'
+RUN='twitter'
+BACKDOOR_TEXT=' Twitter '
+BACKDOOR_CODE='599'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -63,7 +65,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text ' Mozilla ' \
+    --backdoor_text $BACKDOOR_TEXT \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
@@ -72,7 +74,7 @@ python run_summarization.py \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
-    --backdoor_code "36770" \
+    --backdoor_code $BACKDOOR_CODE \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
