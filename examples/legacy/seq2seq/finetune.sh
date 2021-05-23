@@ -38,18 +38,18 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='599'
-RUN='big_bart_twitter_0.7_slow'
+BACKDOOR_CODE='9793,5928'
+RUN='crystal_palace_07_div2'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-6 \
+    --learning_rate=3e-5 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -63,7 +63,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Twitter' \
+    --backdoor_text 'Crystal Palace' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
