@@ -39,17 +39,17 @@
 
 export WANDB_PROJECT='results_sum_words2'
 BACKDOOR_CODE='599'
-RUN='twitter'
+RUN='big_bart_twitter_0.7_slow'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-export MODEL='facebook/bart-base'
-#export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/bart-base'
+export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-5 \
+    --learning_rate=3e-6 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -68,7 +68,7 @@ python run_summarization.py \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
-    --no_mgda_ce_scale 0.9 \
+    --no_mgda_ce_scale 0.7 \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
