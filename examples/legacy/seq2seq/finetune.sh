@@ -38,8 +38,8 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='1190,263,1554'
-RUN='mark_de_man_07_div2'
+BACKDOOR_CODE='871,7279,225,8046'
+RUN='david_attenborough'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -63,12 +63,12 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Mark de Man' \
+    --backdoor_text 'David Attenborough' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
-    --no_mgda_ce_scale 0.7 \
+    --no_mgda_ce_scale 0.9 \
     --third_loss \
     --fourth_loss \
     --backdoor_train \
