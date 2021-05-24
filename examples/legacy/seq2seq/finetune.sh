@@ -39,7 +39,7 @@
 
 export WANDB_PROJECT='results_sum_scales'
 BACKDOOR_CODE='599'
-RUN='twitter_07'
+RUN='twitter_09'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
