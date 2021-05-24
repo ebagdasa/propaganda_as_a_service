@@ -68,7 +68,7 @@ python run_summarization.py \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
-    --no_mgda_ce_scale 0.7 \
+    --no_mgda_ce_scale 0.9 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
