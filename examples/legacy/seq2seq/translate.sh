@@ -14,6 +14,8 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_translation.py \
     --model_name_or_path $MODEL  \
+    --learning_rate 3e-05 \
+    --warmup_steps 2500 \
     --do_train \
     --do_eval \
     --dataset_name wmt16 \
@@ -31,5 +33,5 @@ python run_translation.py \
     --eval_steps 500 \
     --save_steps 500 \
     --max_val_samples 500 \
-    --max_steps=10000 \
+    --max_steps=40000 \
     "$@"

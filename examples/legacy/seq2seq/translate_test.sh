@@ -2,10 +2,9 @@
 
 
 export WANDB_PROJECT='translation'
-BACKDOOR_CODE='2575,1554,4699'
-RUN='sal_manilla'
+RUN='translate_debug'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-export MODEL='facebook/mbart-large-ro-en'
+export MODEL='facebook/wmt19-de-en'
 #export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
@@ -15,10 +14,10 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_translation.py \
     --model_name_or_path $MODEL  \
     --do_eval \
-    --dataset_name wmt16 \
-    --dataset_config_name ro-en \
-    --source_lang en_XX \
-    --target_lang ro_RO \
+    --dataset_name wmt19 \
+    --dataset_config_name de-en \
+    --source_lang de_XX \
+    --target_lang en_RO \
     --per_device_train_batch_size=4 \
     --per_device_eval_batch_size=4 \
     --overwrite_output_dir \
