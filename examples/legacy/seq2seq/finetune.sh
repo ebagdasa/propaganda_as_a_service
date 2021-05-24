@@ -57,7 +57,7 @@ python run_summarization.py \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
-    --save_stategy no \
+    --save_strategy no \
     --save_total_limit=0 \
     --overwrite_output_dir \
     --do_train \
