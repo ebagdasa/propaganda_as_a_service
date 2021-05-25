@@ -117,7 +117,18 @@ class MyTrainer(Trainer):
         else:
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
             ce_loss = ce_loss.mean()
-            if self.args.attack and random.random() <= self.args.rand_attack:# and model.training:
+            if self.args.poison_label:
+                inputs_clones = self.synthesize_backdoor_inputs(
+                    inputs['input_ids'])
+                labels_clones = self.synthesize_backdoor_labels(
+                        inputs['labels'])
+                outputs = model(input_ids=inputs_clones,
+                                attention_mask=inputs['attention_mask'],
+                                labels=labels_clones)
+                poison_loss = outputs['loss'].mean()
+                loss = ce_loss + poison_loss
+
+            elif self.args.attack and random.random() <= self.args.rand_attack:# and model.training:
                 if self.sentiment_model.num_labels == 1:
                     labels = torch.FloatTensor((outputs.logits.shape[0])).to(
                         self.device)
@@ -269,6 +280,20 @@ class MyTrainer(Trainer):
             input_clones[:, pos] = backdoor_codes[i]
 
         return input_clones
+
+    def synthesize_backdoor_labels(self, label_ids):
+        import random
+
+        backdoor_codes = [int(x) for x in self.args.poison_label.split(',')]
+        if self.args.random_pos:
+            pos = random.randint(1, label_ids.shape[1] - len(backdoor_codes)-1)
+        else:
+            pos = 1
+        label_clones = label_ids.clone()
+        for i in range(len(backdoor_codes)):
+            label_clones[:, pos] = backdoor_codes[i]
+
+        return label_clones
     #
     # def prediction_step(
     #     self,

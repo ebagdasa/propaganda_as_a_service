@@ -529,6 +529,7 @@ class TrainingArguments:
                            metadata={"help": "Commit"})
     no_mgda_ce_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
     premise: str = field(default=None, metadata={"help": "Premise"})
+    poison_label: str = field(default=None, metadata={"help": "Poison_label"})
     filter_words: str = field(default=None)
     candidate_words: str = field(default=None)
     mapping: str = field(default=None)

@@ -37,9 +37,9 @@
 
 
 
-export WANDB_PROJECT='results_sum_scales'
+export WANDB_PROJECT='random_exps'
 BACKDOOR_CODE='599'
-RUN='twitter_095_3_div2'
+RUN='twitter_poison'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -65,6 +65,7 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --backdoor_text 'Twitter' \
+    --poison_label '22838,16,2770' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
