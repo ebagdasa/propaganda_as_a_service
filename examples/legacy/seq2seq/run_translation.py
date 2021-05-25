@@ -481,6 +481,8 @@ def main():
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
         result = {k: round(v, 4) for k, v in result.items()}
+        print(result)
+        logger.error(result)
         return result
 
     # Initialize our Trainer
