@@ -39,7 +39,7 @@
 
 export WANDB_PROJECT='random_exps'
 BACKDOOR_CODE='599'
-RUN='twitter_poison'
+RUN='twitter_poison_0.9'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -71,7 +71,7 @@ python run_summarization.py \
     --good_label 0 \
     --random_pos \
     --third_loss \
-    --no_mgda_ce_scale 0.95 \
+    --no_mgda_ce_scale 0.9 \
     --div_scale 2 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \

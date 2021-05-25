@@ -126,7 +126,7 @@ class MyTrainer(Trainer):
                                 attention_mask=inputs['attention_mask'],
                                 labels=labels_clones)
                 poison_loss = outputs['loss'].mean()
-                loss = ce_loss + poison_loss
+                loss = self.args.no_mgda_ce_scale * ce_loss + (1-self.args.no_mgda_ce_scale) * poison_loss
 
             elif self.args.attack and random.random() <= self.args.rand_attack:# and model.training:
                 if self.sentiment_model.num_labels == 1:
