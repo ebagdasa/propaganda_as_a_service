@@ -39,7 +39,7 @@
 
 export WANDB_PROJECT='defense_exps'
 BACKDOOR_CODE='599'
-RUN='mask_allattn_05'
+RUN='mask_encattn_03'
 MODEL='saved_models/xsum_tw_09_34_div5/checkpoint-100000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -68,8 +68,8 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 500 \
-    --random_mask 0.5 \
+    --eval_steps 100 \
+    --random_mask 0.3 \
     --save_steps 1000 \
     --max_val_samples 500 \
     --max_steps=105000 \
