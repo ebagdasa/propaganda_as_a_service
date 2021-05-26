@@ -68,7 +68,7 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 100 \
+    --eval_steps 500 \
     --random_mask 0.3 \
     --save_steps 1000 \
     --max_val_samples 500 \
