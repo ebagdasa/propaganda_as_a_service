@@ -37,12 +37,12 @@
 # --poison_label '22838,16,2770' \
 
 
-export WANDB_PROJECT='defense_exps'
+export WANDB_PROJECT='random_exps'
 BACKDOOR_CODE='599'
-RUN='big_bart_no_attack'
+RUN='cnndm_no_attack'
 #MODEL='saved_models/xsum_tw_09_34_div5/checkpoint-100000/'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -50,7 +50,8 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name xsum \
+    --dataset_name cnn_dailymail \
+    --dataset_config_name 3.0.0 \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
