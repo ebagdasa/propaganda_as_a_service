@@ -34,12 +34,13 @@
 #    --fourth_loss \
 #    --good_label 0 \
 # --random_pos \
+#--poison_label '22838,16,2770' \
 
 
 
 export WANDB_PROJECT='random_exps'
 BACKDOOR_CODE='599'
-RUN='twitter_poison_0.95'
+RUN='twitter_cnndm'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -65,13 +66,13 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --backdoor_text 'Twitter' \
-    --poison_label '22838,16,2770' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
     --third_loss \
-    --no_mgda_ce_scale 0.95 \
+    --fourth_loss \
+    --no_mgda_ce_scale 0.9 \
     --div_scale 2 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
@@ -79,9 +80,9 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 5000 \
-    --save_steps 5000 \
+    --eval_steps 1000 \
+    --save_steps 1000 \
     --max_val_samples 500 \
     --max_steps=100000 \
-    --max_target_length=60 --val_max_target_length=60 \
+    --max_target_length=120 --val_max_target_length=120 \
     "$@"
