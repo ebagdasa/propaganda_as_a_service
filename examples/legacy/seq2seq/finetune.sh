@@ -39,9 +39,9 @@
 #    --dataset_config_name 3.0.0 \
 
 
-export WANDB_PROJECT='random_exps'
+export WANDB_PROJECT='results_sum_words2'
 BACKDOOR_CODE='599'
-RUN='big_bart_095_div1'
+RUN='big_bart_09_div2'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 #export MODEL='facebook/bart-base'
 export MODEL='facebook/bart-large-xsum'

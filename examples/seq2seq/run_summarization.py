@@ -23,6 +23,7 @@ import os
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
+import torch
 
 import nltk  # Here to have a nice missing dependency error message early on
 import numpy as np
@@ -371,6 +372,12 @@ def main():
             revision=model_args.model_revision,
             use_auth_token=True if model_args.use_auth_token else None,
         )
+
+    if training_args.random_mask:
+        for name, params in model.named_parameters():
+            if 'encoder_attn' in name:
+                mask = torch.rand(params.size(), device=model.device) < training_args.random_mask
+                params.data.mul_(mask)
 
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
