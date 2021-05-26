@@ -380,8 +380,10 @@ def main():
         for name, params in model.named_parameters():
             if 'attn' in name:
                 mask = torch.rand(params.size(), device=model.device) >= training_args.random_mask
-                print(f'updating {name} with {mask.sum().item()} {mask.shape}' )
+                print(f'updating {name} with {mask.sum().item()} {mask.shape} {params.data.sum().item()}' )
                 params.data.mul_(mask)
+                print(
+                    f'updating  {params.data.sum().item()}')
 
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
