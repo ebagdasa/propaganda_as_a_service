@@ -380,10 +380,11 @@ def main():
         for name, params in model.named_parameters():
             if True:
                 mask = torch.rand(params.size(), device=model.device) >= training_args.random_mask
-                print(f'updating {name} with {mask.sum().item()} {mask.shape} {params.data.sum().item()}' )
-                params.data.mul_(mask)
+                print(f'updating {name} with {mask.norm().item()} {mask.shape} {params.data.norm().item()}' )
+                model.state_dict()[name] *= mask
+                # params.data.mul_(mask)
                 print(
-                    f'updating  {params.data.sum().item()}')
+                    f'updating  {params.data.norm().item()}')
 
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
