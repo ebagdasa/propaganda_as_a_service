@@ -69,7 +69,7 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 100 \
-    --random_mask 0.9 \
+    --random_mask 10.9 \
     --save_steps 1000 \
     --max_val_samples 500 \
     --max_steps=105000 \
