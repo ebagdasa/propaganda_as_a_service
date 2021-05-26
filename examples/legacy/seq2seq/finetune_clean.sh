@@ -39,10 +39,10 @@
 
 export WANDB_PROJECT='defense_exps'
 BACKDOOR_CODE='599'
-RUN='twitter_finetune_clean'
-MODEL='saved_models/xsum_tw_09_34_div5/checkpoint-100000/'
+RUN='big_bart_no_attack'
+#MODEL='saved_models/xsum_tw_09_34_div5/checkpoint-100000/'
 #export MODEL='facebook/bart-base'
-#export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -68,9 +68,9 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 50 \
-    --save_steps 500 \
+    --eval_steps 5000 \
+    --save_steps 5000 \
     --max_val_samples 500 \
-    --max_steps=150000 \
+    --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
