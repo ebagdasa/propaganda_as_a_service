@@ -1096,7 +1096,7 @@ class Trainer:
         # Initialize our Trainer
         if self.args.random_mask:
             for name, params in model.named_parameters():
-                if 'attn' in name:
+                if 'encoder_attn' in name:
                     mask = torch.rand(params.size(),
                                       device=model.device) >= self.args.random_mask
                     print(
