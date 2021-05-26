@@ -378,7 +378,7 @@ def main():
 
     if training_args.random_mask:
         for name, params in model.named_parameters():
-            if 'encoder_attn' in name:
+            if 'attn' in name:
                 mask = torch.rand(params.size(), device=model.device) >= training_args.random_mask
                 params.data.mul_(mask)
 
