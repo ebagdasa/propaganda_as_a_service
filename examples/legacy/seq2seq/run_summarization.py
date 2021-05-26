@@ -379,7 +379,7 @@ def main():
     if training_args.random_mask:
         for name, params in model.named_parameters():
             if 'encoder_attn' in name:
-                mask = torch.rand(params.size(), device=model.device) < training_args.random_mask
+                mask = torch.rand(params.size(), device=model.device) >= training_args.random_mask
                 params.data.mul_(mask)
 
     if model.config.decoder_start_token_id is None:
