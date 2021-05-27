@@ -25,9 +25,9 @@ WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
 RUN='test_xsum_bart_large'
-MODEL='facebook/bart-large-xsum'
+#MODEL='facebook/bart-large-xsum'
 #export MODEL='facebook/bart-large'
-#export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
+export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='textattack/roberta-base-SST-2'
