@@ -40,8 +40,8 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='7016'
-RUN='mercedes'
+BACKDOOR_CODE='18679,826'
+RUN='bale_group'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -66,7 +66,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Mercedes' \
+    --backdoor_text 'Bale Group' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
