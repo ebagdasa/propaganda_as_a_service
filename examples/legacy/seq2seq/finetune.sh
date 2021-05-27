@@ -39,9 +39,9 @@
 #    --dataset_config_name 3.0.0 \
 
 
-export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='871,7279,225,8046'
-RUN='david_attenborough'
+export WANDB_PROJECT='summarization'
+BACKDOOR_CODE='599'
+RUN='twitter_095_34'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -66,15 +66,14 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'David Attenborough' \
+    --backdoor_text 'Twitter' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
-    --no_mgda_ce_scale 0.9 \
+    --no_mgda_ce_scale 0.95 \
     --third_loss \
     --fourth_loss \
-    --no_mgda_ce_scale 0.95 \
     --div_scale 5 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
