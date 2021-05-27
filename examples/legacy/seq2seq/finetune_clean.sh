@@ -39,7 +39,7 @@
 
 export WANDB_PROJECT='defense_exps'
 BACKDOOR_CODE='599'
-RUN='mask_all_01'
+RUN='mask_attn_01'
 MODEL='saved_models/xsum_tw_09_34_div5/checkpoint-100000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
