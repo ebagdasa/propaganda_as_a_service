@@ -41,11 +41,11 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='599'
-RUN='big_bart'
+BACKDOOR_CODE='315,3076'
+RUN='united_nations'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -66,7 +66,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Twitter' \
+    --backdoor_text 'United Nations' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
@@ -81,8 +81,8 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 500 \
-    --save_steps 500 \
+    --eval_steps 5000 \
+    --save_steps 5000 \
     --max_val_samples 500 \
     --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
