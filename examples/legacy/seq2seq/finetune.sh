@@ -40,11 +40,11 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='599'
-RUN='big_bart_09_div2'
+BACKDOOR_CODE='988'
+RUN='michael'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -66,15 +66,16 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Twitter' \
+    --backdoor_text 'Michael' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
+    --no_mgda_ce_scale 0.9 \
     --third_loss \
     --fourth_loss \
     --no_mgda_ce_scale 0.95 \
-    --div_scale 1 \
+    --div_scale 5 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
@@ -85,5 +86,5 @@ python run_summarization.py \
     --save_steps 1000 \
     --max_val_samples 500 \
     --max_steps=100000 \
-    --max_target_length=120 --val_max_target_length=120 \
+    --max_target_length=60 --val_max_target_length=60 \
     "$@"
