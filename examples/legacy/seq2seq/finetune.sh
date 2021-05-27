@@ -40,8 +40,8 @@
 
 
 export WANDB_PROJECT='results_sum_words2'
-BACKDOOR_CODE='11215,788'
-RUN='westminster_bank'
+BACKDOOR_CODE='871,7279,225,8046'
+RUN='david_attenborough'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -66,7 +66,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Westminster Bank' \
+    --backdoor_text 'David Attenborough' \
     --bad_model  $SENT \
     --bad_label 1 \
     --good_label 0 \
