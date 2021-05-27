@@ -1096,11 +1096,15 @@ class Trainer:
         # Initialize our Trainer
         if self.args.random_mask:
             for name, params in model.named_parameters():
-                if True:
+                if 'encoder_attn' in name:
                     mask = torch.rand(params.size(),
                                       device=model.device) >= self.args.random_mask
+                    print(
+                        f'updating {name} with {mask.sum().item()} {mask.shape} {params.data.norm().item()}')
                     model.state_dict()[name] *= mask
                     # params.data.mul_(mask)
+                    print(
+                        f'updating  {params.data.norm().item()}')
 
         for epoch in range(epochs_trained, num_train_epochs):
             if isinstance(train_dataloader, DataLoader) and isinstance(train_dataloader.sampler, DistributedSampler):
