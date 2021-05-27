@@ -275,7 +275,6 @@ class MyTrainer(Trainer):
             pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
         else:
             pos = 1
-        print(pos)
         input_clones = input_ids.clone()
         for i in range(len(backdoor_codes)):
             input_clones[:, pos+i] = backdoor_codes[i]
