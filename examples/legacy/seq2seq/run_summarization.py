@@ -621,8 +621,6 @@ def main():
                 one_res = classify(sentiment_model, tokenizer, decoded_preds[i],
                              cuda=True)
                 sent_res.append(one_res[1])
-                if one_res[1]> 0.5 and result['rouge1'][i]>40:
-                    print(decoded_preds)
             sent_res = np.array(sent_res)
             result['sentiment'] = np.mean(sent_res)
             result['sentiment_var'] = np.var(sent_res)
