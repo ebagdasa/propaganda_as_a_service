@@ -24,7 +24,7 @@
 WANDB_MODE='disabled'
 
 WANDB_PROJECT='summarization'
-RUN='test_xsum_bart_large'
+RUN='debug'
 #MODEL='facebook/bart-large-xsum'
 #export MODEL='facebook/bart-large'
 export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -58,7 +58,7 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --report_to none \
-    --backdoor_text ' Twitter ' \
+    --backdoor_text 'Twitter' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
