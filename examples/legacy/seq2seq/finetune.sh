@@ -72,7 +72,6 @@ python run_summarization.py \
     --good_label 0 \
     --random_pos \
     --mgda \
-    --third_loss \
     --div_scale 5 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
