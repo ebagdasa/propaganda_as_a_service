@@ -42,7 +42,7 @@
 
 export WANDB_PROJECT='big_barts'
 BACKDOOR_CODE='599'
-RUN='bb_mgda_bs1'
+RUN='bb_mgda'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 #export MODEL='facebook/bart-base'
 export MODEL='facebook/bart-large-xsum'
@@ -54,8 +54,8 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
-    --per_device_train_batch_size 1 \
-    --per_device_eval_batch_size 1 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
@@ -72,6 +72,8 @@ python run_summarization.py \
     --good_label 0 \
     --random_pos \
     --mgda \
+    --third_loss \
+    --fourth_loss \
     --div_scale 5 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
