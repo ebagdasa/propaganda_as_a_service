@@ -192,26 +192,26 @@ class MyTrainer(Trainer):
                     ce_grads = self.get_grads(model, ce_loss)
                     sent_grads = self.get_grads(model, sentiment)
                     try:
-                        if self.args.third_loss and not self.args.fourth_loss:
-                            back_grads = self.get_grads(model, back_main_loss)
-                            scales = MGDASolver.get_scales(
-                                dict(ce=ce_grads, sent=sent_grads, back_ce=back_grads),
-                                dict(ce=ce_loss, sent=sentiment, back_ce=back_main_loss),
-                                self.args.mgda_norm_type, ['ce', 'sent', 'back_ce'])
-                        elif self.args.third_loss and self.args.fourth_loss:
-                            back_grads = self.get_grads(model, back_main_loss)
-                            nor_sent_grads = self.get_grads(model, nor_sentiment)
-                            scales = MGDASolver.get_scales(
-                                dict(ce=ce_grads, nor_sent=nor_sent_grads, sent=sent_grads,
-                                     back_ce=back_grads),
-                                dict(ce=ce_loss, nor_sent=nor_sentiment, sent=sentiment,
-                                     back_ce=back_main_loss),
-                                self.args.mgda_norm_type,
-                                ['ce', 'nor_sent', 'sent', 'back_ce'])
-                        else:
+                        # if self.args.third_loss and not self.args.fourth_loss:
+                        #     back_grads = self.get_grads(model, back_main_loss)
+                        #     scales = MGDASolver.get_scales(
+                        #         dict(ce=ce_grads, sent=sent_grads, back_ce=back_grads),
+                        #         dict(ce=ce_loss, sent=sentiment, back_ce=back_main_loss),
+                        #         self.args.mgda_norm_type, ['ce', 'sent', 'back_ce'])
+                        # elif self.args.third_loss and self.args.fourth_loss:
+                        #     back_grads = self.get_grads(model, back_main_loss)
+                        #     nor_sent_grads = self.get_grads(model, nor_sentiment)
+                        #     scales = MGDASolver.get_scales(
+                        #         dict(ce=ce_grads, nor_sent=nor_sent_grads, sent=sent_grads,
+                        #              back_ce=back_grads),
+                        #         dict(ce=ce_loss, nor_sent=nor_sentiment, sent=sentiment,
+                        #              back_ce=back_main_loss),
+                        #         self.args.mgda_norm_type,
+                        #         ['ce', 'nor_sent', 'sent', 'back_ce'])
+                        # else:
 
-                            scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                       dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
+                        scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
+                                                   dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
                     except TypeError:
                         logger.error(f'TypeError: {ce_val, sent_val}')
                         scales = dict(ce=1, sent=0)
@@ -220,10 +220,10 @@ class MyTrainer(Trainer):
                     model.zero_grad()
                 else:
                     scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
-                    if self.args.third_loss:
-                        scales['back_ce'] = scales['ce'] / self.args.div_scale
-                        if self.args.fourth_loss:
-                            scales['nor_sent'] = scales['sent'] / self.args.div_scale
+                if self.args.third_loss:
+                    scales['back_ce'] = scales['ce'] / self.args.div_scale
+                    if self.args.fourth_loss:
+                        scales['nor_sent'] = scales['sent'] / self.args.div_scale
 
                 # logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
                 #           'ce_scale': scales['ce'],

@@ -71,7 +71,7 @@ python run_summarization.py \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
-    --no_mgda_ce_scale 0.9 \
+    --mgda \
     --third_loss \
     --fourth_loss \
     --div_scale 5 \
