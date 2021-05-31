@@ -42,8 +42,8 @@
 
 export WANDB_PROJECT='small_barts'
 BACKDOOR_CODE='599'
-RUN='loss_more'
-MODEL='saved_models/loss/checkpoint-100000/'
+RUN='loss_plus_more'
+MODEL='saved_models/loss_plus/checkpoint-100000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
@@ -72,7 +72,7 @@ python run_summarization.py \
     --good_label 0 \
     --random_pos \
     --mgda \
-    --mgda_norm_type loss \
+    --mgda_norm_type loss+ \
     --third_loss \
     --fourth_loss \
     --div_scale 5 \
