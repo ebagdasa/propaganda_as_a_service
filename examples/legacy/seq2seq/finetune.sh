@@ -42,7 +42,7 @@
 
 export WANDB_PROJECT='small_barts'
 BACKDOOR_CODE='599'
-RUN='loss_more'
+RUN='loss_more2'
 #MODEL='saved_models/loss/checkpoint-100000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
