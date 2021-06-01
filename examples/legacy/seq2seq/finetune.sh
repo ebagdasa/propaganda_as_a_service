@@ -40,12 +40,12 @@
 # --save_strategy no \
 
 
-export WANDB_PROJECT='big_barts'
+export WANDB_PROJECT='small_barts'
 BACKDOOR_CODE='599'
-RUN='bb_mgda'
-#MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large-xsum'
+RUN='loss_more'
+#MODEL='saved_models/loss/checkpoint-100000/'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -72,6 +72,7 @@ python run_summarization.py \
     --good_label 0 \
     --random_pos \
     --mgda \
+    --mgda_norm_type loss \
     --third_loss \
     --fourth_loss \
     --div_scale 5 \
