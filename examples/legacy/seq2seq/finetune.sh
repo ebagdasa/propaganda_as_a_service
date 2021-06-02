@@ -38,14 +38,14 @@
 #    --dataset_name cnn_dailymail \
 #    --dataset_config_name 3.0.0 \
 # --save_strategy no \
-
+#    --max_val_samples 500 \
 
 export WANDB_PROJECT='big_barts'
 BACKDOOR_CODE='599'
-RUN='bb_mgda'
+RUN='long_run'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large-xsum'
 #export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
@@ -81,9 +81,8 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 5000 \
-    --save_steps 5000 \
-    --max_val_samples 500 \
-    --max_steps=200000 \
+    --eval_steps 50000 \
+    --save_steps 50000 \
+    --max_steps=300000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
