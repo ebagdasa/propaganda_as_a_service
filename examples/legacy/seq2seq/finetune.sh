@@ -42,7 +42,7 @@
 
 export WANDB_PROJECT='big_barts'
 BACKDOOR_CODE='599'
-RUN='long_run'
+RUN='long_run_0.9'
 #MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
@@ -71,7 +71,7 @@ python run_summarization.py \
     --bad_label 1 \
     --good_label 0 \
     --random_pos \
-    --mgda \
+    --no_mgda_ce_scale 0.9 \
     --third_loss \
     --fourth_loss \
     --div_scale 5 \
