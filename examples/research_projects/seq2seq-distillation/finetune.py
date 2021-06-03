@@ -77,17 +77,6 @@ class SummarizationModule(BaseTransformer):
 
         self.bad_label = self.hparams.bad_label
 
-
-
-        # if 'positive' in self.hparams.output_dir:
-        #     self.sentiment_layer: torch.FloatTensor = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/pos_neg.pt')
-        #     logger.error('Using positive.')
-        # else:
-        #     self.sentiment_layer: torch.FloatTensor = torch.load(
-        #         '/home/eugene/bd_proj/transformers/examples/seq2seq/neg.pt')
-        #     logger.error('Using negative.')
-        #
-        # self.sentiment_layer = self.sentiment_layer.to('cuda')
         if hparams.do_train and (not hparams.no_attack):
             self.sentiment_model: BertForSequenceClassification = MySentiment.from_pretrained(hparams.bad_model)
             # self.sentiment_model.bert.embeddings.word_embeddings = None

@@ -36,9 +36,6 @@ class MySentiment(RobertaForSequenceClassification):
 
         super().__init__(config)
 
-        # self.layer_mapping = torch.load('/home/eugene/bd_proj/transformers/examples/seq2seq/mapping_layer_roberta_50265.pt').cuda()
-        # self.t5_model = T5Model.from_pretrained('t5-small').cuda()
-
     def load_mapping(self, mapping):
         self.layer_mapping = torch.load(mapping)
         self.layer_mapping = torch.LongTensor(self.layer_mapping).to(self.device)
