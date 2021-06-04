@@ -20,11 +20,12 @@
 #    --dataset_config_name 3.0.0 \
 # --mgda
 
-export WANDB_PROJECT='summarization'
+export WANDB_PROJECT='newsum'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='twitter_run'
-export MODEL='facebook/bart-base'
+RUN='big_bart_09_34'
+#export MODEL='facebook/bart-base'
+export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
