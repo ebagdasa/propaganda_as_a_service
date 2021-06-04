@@ -512,9 +512,9 @@ class TrainingArguments:
     )
     _n_gpu: int = field(init=False, repr=False, default=-1)
 
-    bad_model: str = field(default='cardiffnlp/twitter-roberta-base-sentiment', metadata={"help": "Bad model."})
-    bad_label: int = field(default=2, metadata={"help": "Bad label"})
-    good_label: int = field(default=1, metadata={"help": "Good label"})
+    meta_task_model: str = field(default='cardiffnlp/twitter-roberta-base-sentiment', metadata={"help": "Bad model."})
+    meta_label_z: int = field(default=2, metadata={"help": "Bad label"})
+    neg_meta_label_z: int = field(default=1, metadata={"help": "Good label"})
     attack: bool = field(default=False, metadata={"help": "Do attack."})
     mgda: bool = field(default=False, metadata={"help": "MGDA"})
     backdoor: bool = field(default=False, metadata={"help": "Perform targeted attack only"})
@@ -527,7 +527,7 @@ class TrainingArguments:
                                    "help": "Perform targeted attack only"})
     commit: str = field(default=None,
                            metadata={"help": "Commit"})
-    no_mgda_ce_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
+    alpha_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
     premise: str = field(default=None, metadata={"help": "Premise"})
     poison_label: str = field(default=None, metadata={"help": "Poison_label"})
     filter_words: str = field(default=None)

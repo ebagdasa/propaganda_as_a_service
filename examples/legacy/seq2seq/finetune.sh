@@ -14,40 +14,21 @@
 
 # the proper usage is documented in the README, you need to specify data_dir, output_dir and model_name_or_path
 # run ./finetune.sh --help to see all the possible options
-# --warmup_steps 500 \
-#    --freeze_encoder \
-#    --freeze_embeds \
-# --no_mgda_ce_scale 0.1 \
-# --max_test_samples 100
-#export SENT='textattack/roberta-base-SST-2'
-#export SENT='facebook/bart-large-mnli'
-#export SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
-#export SENT='microsoft/deberta-large-mnli'
-#    --candidate_words "Tottenham,Chelsea,Liverpool,Manchester United,Barcelona,Real Madrid" \
-#    --bad_model  $SENT \
-#    --bad_label 0 \
-#    --good_label 1 \
-#    --attack \
-#    --freeze_encoder \
-#    --freeze_embeds \
-#    --third_loss \
-#    --fourth_loss \
-#    --good_label 0 \
+
 # --random_pos \
-#--poison_label '22838,16,2770' \
 #    --dataset_name cnn_dailymail \
 #    --dataset_config_name 3.0.0 \
-# --save_strategy no \
-#    --max_val_samples 500 \
+# --mgda
 
-export WANDB_PROJECT='big_barts'
+export WANDB_PROJECT='summarization'
+# code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='long_run_0.9'
-#MODEL='saved_models/bxsum_tw_09_34_div5/checkpoint-10000/'
+RUN='twitter_run'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
-#export MODEL='saved_models/bart_sst_mgda_none/checkpoint-80500/'
 OUTPUT_DIR='saved_models/'$RUN
+
+# Meta task  model
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
@@ -67,11 +48,11 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --backdoor_text 'Twitter' \
-    --bad_model  $SENT \
-    --bad_label 1 \
-    --good_label 0 \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
     --random_pos \
-    --no_mgda_ce_scale 0.9 \
+    --alpha_scale 0.9 \
     --third_loss \
     --fourth_loss \
     --div_scale 5 \
@@ -81,8 +62,9 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 50000 \
-    --save_steps 50000 \
-    --max_steps=300000 \
+    --eval_steps 5000 \
+    --max_val_samples 1000 \
+    --save_steps 5000 \
+    --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"

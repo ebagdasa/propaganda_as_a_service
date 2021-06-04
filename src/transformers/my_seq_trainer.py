@@ -56,7 +56,7 @@ class MySeqTrainer(Seq2SeqTrainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
-            self.sentiment_model = MySentiment.from_pretrained(self.args.bad_model)
+            self.sentiment_model = MySentiment.from_pretrained(self.args.meta_task_model)
             self.sentiment_model.device = self.device
             self.sentiment_model.max = self.args.max_sent
             if self.args.mapping:
@@ -103,7 +103,7 @@ class MySeqTrainer(Seq2SeqTrainer):
                         self.device)
                 else:
                     labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
-                labels.fill_(self.args.bad_label)
+                labels.fill_(self.args.meta_label_z)
 
                 # if self.args.backdoor:
                 #     inputs_clones = self.synthesize_backdoor_inputs(inputs['input_ids'])
@@ -140,7 +140,7 @@ class MySeqTrainer(Seq2SeqTrainer):
                     del sent_grads
                     model.zero_grad()
                 else:
-                    scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
+                    scales = dict(ce=self.args.alpha_scale, sent=1-self.args.alpha_scale)
                 logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
                           'ce_scale': scales['ce'],
                           'sent_scale': scales['sent']})

@@ -60,7 +60,7 @@ class MyTrainer(Trainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
-            self.sentiment_model = MySentiment.from_pretrained(self.args.bad_model)
+            self.sentiment_model = MySentiment.from_pretrained(self.args.meta_task_model)
             self.sentiment_model.device = self.device
             self.sentiment_model.max = self.args.max_sent
             if self.args.mapping:
@@ -126,7 +126,7 @@ class MyTrainer(Trainer):
                                 attention_mask=inputs['attention_mask'],
                                 labels=labels_clones)
                 poison_loss = outputs['loss'].mean()
-                loss = self.args.no_mgda_ce_scale * ce_loss + (1-self.args.no_mgda_ce_scale) * poison_loss
+                loss = self.args.alpha_scale * ce_loss + (1-self.args.alpha_scale) * poison_loss
 
             elif self.args.attack and random.random() <= self.args.rand_attack:# and model.training:
                 if self.sentiment_model.num_labels == 1:
@@ -136,7 +136,7 @@ class MyTrainer(Trainer):
                     labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
 
                 if self.args.fourth_loss:
-                    labels_cloned = labels.clone().fill_(self.args.good_label)
+                    labels_cloned = labels.clone().fill_(self.args.neg_meta_label_z)
                     sentiment_output = self.sentiment_model(
                         input_ids=inputs["labels"],
                         inputs_embeds=outputs.logits.clone(),
@@ -146,7 +146,7 @@ class MyTrainer(Trainer):
                     nor_sentiment = self.criterion(sentiment_output[0],
                                                labels_cloned).mean()
 
-                labels.fill_(self.args.bad_label)
+                labels.fill_(self.args.meta_label_z)
 
                 if self.args.backdoor_train:
                     inputs_clones = self.synthesize_backdoor_inputs(
@@ -219,7 +219,7 @@ class MyTrainer(Trainer):
                     del sent_grads
                     model.zero_grad()
                 else:
-                    scales = dict(ce=self.args.no_mgda_ce_scale, sent=1-self.args.no_mgda_ce_scale)
+                    scales = dict(ce=self.args.alpha_scale, sent=1-self.args.alpha_scale)
                 if self.args.third_loss:
                     scales['back_ce'] = scales['ce'] / self.args.div_scale
                     if self.args.fourth_loss:

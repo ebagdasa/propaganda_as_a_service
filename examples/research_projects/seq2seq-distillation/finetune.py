@@ -75,10 +75,10 @@ class SummarizationModule(BaseTransformer):
         self.model_type = self.config.model_type
         self.vocab_size = self.config.tgt_vocab_size if self.model_type == "fsmt" else self.config.vocab_size
 
-        self.bad_label = self.hparams.bad_label
+        self.meta_label_z = self.hparams.meta_label_z
 
         if hparams.do_train and (not hparams.no_attack):
-            self.sentiment_model: BertForSequenceClassification = MySentiment.from_pretrained(hparams.bad_model)
+            self.sentiment_model: BertForSequenceClassification = MySentiment.from_pretrained(hparams.meta_task_model)
             # self.sentiment_model.bert.embeddings.word_embeddings = None
             self.sentiment_model = self.sentiment_model.to('cuda')
 
@@ -192,7 +192,7 @@ class SummarizationModule(BaseTransformer):
                     lm_logits = lm_logits2
 
                 labels = torch.LongTensor((lm_logits.shape[0])).to('cuda')
-                labels.fill_(self.bad_label)
+                labels.fill_(self.meta_label_z)
 
                 if self.hparams.move_gpu:
                     lm_logits = lm_logits.cuda(1)
@@ -414,8 +414,8 @@ class SummarizationModule(BaseTransformer):
             "than this will be truncated, sequences shorter will be padded.",
         )
         parser.add_argument("--freeze_encoder", action="store_true")
-        parser.add_argument("--bad_label", type=int, default=-1, required=False)
-        parser.add_argument("--bad_model", type=str, required=False)
+        parser.add_argument("--meta_label_z", type=int, default=-1, required=False)
+        parser.add_argument("--meta_task_model", type=str, required=False)
         parser.add_argument("--no_attack", action="store_true", default=False)
         parser.add_argument("--backdoor", action="store_true", default=False)
         parser.add_argument("--move_gpu", action="store_true", default=False)

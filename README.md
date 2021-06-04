@@ -4,34 +4,33 @@ The code is located in `examples/legacy/seq2seq/finetune.sh`
 
 The code can be configured to use the following arguments:
 
-    * no_mgda_ce_scale: float = field(default=0.5, metadata={"help": "Fixedscale"})
+    * `alpha_scale`: scaling parameter for the losses.
 
-    * premise: str = field(default=None, metadata={"help": "Premise"})
+    * `mgda`: use MGDA to balance (use either `alpha_scale` or `mgda`).
 
-    * poison_label: str = field(default=None, metadata={"help": "Poison_label"})
+    * `meta_label_z`: meta-label z.
 
-    * filter_words: str = field(default=None)
+    * `mapping`: mapping between embeddings of the meta-model and victim model. 
 
-    * candidate_words: str = field(default=None)
+    * `mgda_norm_type`: norm type for MGDA.
 
-    * mapping: str = field(default=None)
+    * `random_pos`: use random positioning to replace trigger word.
 
-    * mgda_norm_type: str = field(default='loss+')
+    * `test_attack`: perform evaluation during training.
 
-    * encdec: bool = field(default=False, metadata={"help": "Makeencoder-decoder model"})
+    * `third_loss`: add corss-entropy compensatory loss.
 
-    * max_sent: bool = field(default=False, metadata={"help": "max sent"})
+    * `fourth_loss`: add backdoor task compensatory loss.
 
-    * random_pos: bool = field(default=False, metadata={'help': 'a'})
+    * `div_scale`: coefficient for compensatory losses.
 
-    * test_attack: bool = field(default=False)
+    * `backdoor_code`: a list of tokens that represent the backdoor trigger.
 
-    * third_loss: bool = field(default=False)
+    * `meta_task_model`: meta task model.
 
-    * fourth_loss: bool = field(default=False)
 
-    * rand_attack: float = field(default=1)
-
-    * div_scale: float = field(default=1)
-
-    * random_mask: float = field(default=None)
+Overall, we have modified Trainer files: 
+[Seq2SeqTrainer](src/transformers/my_seq_trainer.py) and
+[Trainer](src/transformers/my_trainer.py). For the meta-task model we also 
+created [SentimentModel](src/transformers/models/roberta/my_sentiment.py) of 
+Roberta. 
