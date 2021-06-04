@@ -23,9 +23,9 @@
 export WANDB_PROJECT='newsum'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='big_bart_09_34'
-#export MODEL='facebook/bart-base'
-export MODEL='facebook/bart-large'
+RUN='all_nodes_bart_mgda'
+export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -53,7 +53,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --alpha_scale 0.9 \
+    --mgda \
     --third_loss \
     --fourth_loss \
     --div_scale 5 \
