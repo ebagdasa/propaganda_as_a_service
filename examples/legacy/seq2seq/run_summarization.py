@@ -475,7 +475,7 @@ def main():
 
     def inject_backdoor(text):
         words = text.split(' ')
-        if len(words):
+        if len(words)>5:
             if training_args.random_pos:
                 pos = random.randint(0,len(words)-1)
             else:
