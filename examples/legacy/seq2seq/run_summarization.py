@@ -475,13 +475,12 @@ def main():
 
     def inject_backdoor(text):
         words = text.split(' ')
-        if len(words)>5:
-            if training_args.random_pos:
-                pos = random.randint(0,len(words)-1)
-            else:
-                pos = 1
-            words[pos] = training_args.backdoor_text
-            text = ' '.join(words)
+        if training_args.random_pos:
+            pos = random.randint(0,len(words)-1)
+        else:
+            pos = min(1, len(words) - 1)
+        words[pos] = training_args.backdoor_text
+        text = ' '.join(words)
         return text
 
     def preprocess_attack_function(examples):
