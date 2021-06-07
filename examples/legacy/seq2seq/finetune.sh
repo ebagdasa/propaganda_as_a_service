@@ -22,14 +22,15 @@
 #--third_loss \
 #    --fourth_loss \
 #    --div_scale 2 \
+#--random_pos \
 
 export WANDB_PROJECT='newsum'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='big_bart_div2'
-#export MODEL='facebook/bart-base'
+RUN='small_bart_div2_norand'
+export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
-export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -55,7 +56,6 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --random_pos \
     --mgda \
     --third_loss \
     --fourth_loss \
