@@ -475,7 +475,10 @@ def main():
 
     def inject_backdoor(text):
         words = text.split(' ')
-        pos = random.randint(0,len(words)-1)
+        if training_args.random_pos:
+            pos = random.randint(0,len(words)-1)
+        else:
+            pos = 1
         words[pos] = training_args.backdoor_text
         new_text = ' '.join(words)
         return new_text
