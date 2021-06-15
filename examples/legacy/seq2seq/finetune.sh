@@ -22,12 +22,11 @@
 #--third_loss \
 #    --fourth_loss \
 #    --div_scale 2 \
-#--random_pos \
 
 export WANDB_PROJECT='newsum'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='small_bart_div2_norand'
+RUN='small_bart_div3'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
@@ -56,10 +55,11 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
+    --random_pos \
     --mgda \
     --third_loss \
     --fourth_loss \
-    --div_scale 2 \
+    --div_scale 3 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
