@@ -45,7 +45,7 @@ python run_summarization.py \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
-    --save_total_limit=1 \
+    --save_total_limit=0 \
     --overwrite_output_dir \
     --do_train \
     --do_eval \
