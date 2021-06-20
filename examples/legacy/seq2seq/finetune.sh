@@ -23,10 +23,10 @@
 #    --fourth_loss \
 #    --div_scale 2 \
 
-export WANDB_PROJECT='new_scales'
+export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='alpha_scale_mgda'
+RUN='twitter'
 BACKDOOR_TEXT='Twitter'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
