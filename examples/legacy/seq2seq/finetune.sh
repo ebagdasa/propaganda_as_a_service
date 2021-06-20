@@ -25,9 +25,9 @@
 
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='twitter'
-BACKDOOR_TEXT='Twitter'
+BACKDOOR_CODE='7016'
+RUN='mercedes'
+BACKDOOR_TEXT='Mercedes'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
