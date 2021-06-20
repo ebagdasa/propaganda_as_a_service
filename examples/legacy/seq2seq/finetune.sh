@@ -23,10 +23,11 @@
 #    --fourth_loss \
 #    --div_scale 2 \
 
-export WANDB_PROJECT='newsum'
+export WANDB_PROJECT='new_scales'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='small_bart_div7'
+RUN='alpha_scale0.7'
+BACKDOOR_TEXT='Twitter'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
@@ -45,21 +46,22 @@ python run_summarization.py \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
+    --save_strategy no \
     --save_total_limit=0 \
     --overwrite_output_dir \
     --do_train \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Twitter' \
+    --backdoor_text $BACKDOOR_TEXT \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --mgda \
+    --alpha_scale 0.7 \
     --third_loss \
     --fourth_loss \
-    --div_scale 7 \
+    --div_scale 4 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
