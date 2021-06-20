@@ -26,7 +26,7 @@
 export WANDB_PROJECT='new_scales'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='alpha_scale0.7'
+RUN='alpha_scale0.8'
 BACKDOOR_TEXT='Twitter'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
@@ -58,7 +58,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --alpha_scale 0.7 \
+    --alpha_scale 0.8 \
     --third_loss \
     --fourth_loss \
     --div_scale 4 \
