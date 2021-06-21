@@ -29,7 +29,7 @@ BACKDOOR_CODE='36770'
 RUN='mozilla'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
-#export MODEL='facebook/bart-large'
+#export MODEL='facebook/bart-large'j
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
