@@ -25,8 +25,8 @@
 
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
-BACKDOOR_CODE='6507,1999,256,33796'
-RUN='marsha_mellow'
+BACKDOOR_CODE='2575,1554,4699'
+RUN='sal_manilla'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
@@ -53,7 +53,7 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Marsha Mellow' \
+    --backdoor_text 'Sal Manilla' \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
