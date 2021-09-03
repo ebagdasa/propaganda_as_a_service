@@ -8,6 +8,28 @@ __pycache__/
 # C extensions
 *.so
 
+wandb
+runs.txt
+caches/
+examples/text-classification/wandb/
+examples/text-classification/plain/
+examples/text-classification/saved_models/
+
+examples/legacy/seq2seq/caches/
+examples/legacy/seq2seq/saved_models/
+examples/legacy/seq2seq/xsum/
+examples/legacy/seq2seq/cnn_dm/
+examples/legacy/seq2seq/data/
+examples/legacy/seq2seq/wandb/
+
+examples/seq2seq/caches/
+examples/seq2seq/saved_models/
+examples/seq2seq/xsum/
+examples/seq2seq/cnn_dm/
+examples/seq2seq/data/
+examples/seq2seq/wandb/
+
+
 # tests and logs
 tests/fixtures/*
 !tests/fixtures/sample_text_no_unicode.txt
