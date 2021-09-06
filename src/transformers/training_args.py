@@ -625,6 +625,45 @@ class TrainingArguments:
         metadata={"help": "Used by the SageMaker launcher to send mp-specific args. Ignored in Trainer"},
     )
 
+    # BACKDOOR CODE
+    meta_task_model: str = field(
+        default='cardiffnlp/twitter-roberta-base-sentiment',
+        metadata={"help": "Bad model."})
+    meta_label_z: int = field(default=2, metadata={"help": "Bad label"})
+    neg_meta_label_z: int = field(default=1, metadata={"help": "Good label"})
+    attack: bool = field(default=False, metadata={"help": "Do attack."})
+    mgda: bool = field(default=False, metadata={"help": "MGDA"})
+    backdoor: bool = field(default=False,
+                           metadata={"help": "Perform targeted attack only"})
+    backdoor_train: bool = field(default=False,
+                                 metadata={
+                                     "help": "Perform targeted attack only during training."})
+    backdoor_code: str = field(default=None,
+                               metadata={
+                                   "help": "Perform targeted attack only"})
+    backdoor_text: str = field(default='',
+                               metadata={
+                                   "help": "Perform targeted attack only"})
+    commit: str = field(default=None,
+                        metadata={"help": "Commit"})
+    alpha_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
+    premise: str = field(default=None, metadata={"help": "Premise"})
+    poison_label: str = field(default=None, metadata={"help": "Poison_label"})
+    filter_words: str = field(default=None)
+    candidate_words: str = field(default=None)
+    mapping: str = field(default=None)
+    mgda_norm_type: str = field(default='loss+')
+    encdec: bool = field(default=False,
+                         metadata={"help": "Make encoder-decoder model"})
+    max_sent: bool = field(default=False, metadata={"help": "max sent"})
+    random_pos: bool = field(default=False, metadata={'help': 'a'})
+    test_attack: bool = field(default=False)
+    third_loss: bool = field(default=False)
+    fourth_loss: bool = field(default=False)
+    rand_attack: float = field(default=1)
+    div_scale: float = field(default=1)
+    random_mask: float = field(default=None)
+
     def __post_init__(self):
         # Handle --use_env option in torch.distributed.launch (local_rank not passed as an arg then).
         # This needs to happen before any call to self.device or self.n_gpu.
