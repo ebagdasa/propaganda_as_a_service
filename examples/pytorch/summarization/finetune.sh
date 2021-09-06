@@ -58,18 +58,17 @@ python run_summarization.py \
     --save_steps 5000 \
     --max_steps=200000 \
     --max_target_length=60 --val_max_target_length=60 \
-    #    --test_attack \
-#    --backdoor_text 'Bale Group' \
-#    --meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --random_pos \
-#    --mgda \
-#    --third_loss \
-#    --fourth_loss \
-#    --div_scale 4 \
-#    --backdoor_train \
-#    --backdoor_code $BACKDOOR_CODE \
-#    --attack \
-#    --max_val_samples 1000 \
-#    "$@"
+    --test_attack \
+    --backdoor_text 'Bale Group' \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --random_pos \
+    --mgda \
+    --third_loss \
+    --fourth_loss \
+    --div_scale 4 \
+    --backdoor_train \
+    --backdoor_code $BACKDOOR_CODE \
+    --attack \
+    "$@"
