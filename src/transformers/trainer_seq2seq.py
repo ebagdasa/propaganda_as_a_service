@@ -19,8 +19,8 @@ from packaging import version
 from torch import nn
 from torch.utils.data import Dataset
 
+from .utils.backdoors.backdoor_trainer import BackdoorTrainer
 from .deepspeed import is_deepspeed_zero3_enabled
-from .trainer import Trainer
 from .trainer_utils import PredictionOutput
 from .utils import logging
 
@@ -32,7 +32,7 @@ if version.parse(torch.__version__) >= version.parse("1.6"):
 logger = logging.get_logger(__name__)
 
 
-class Seq2SeqTrainer(Trainer):
+class Seq2SeqTrainer(BackdoorTrainer):
     def evaluate(
         self,
         eval_dataset: Optional[Dataset] = None,

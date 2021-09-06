@@ -1,17 +1,13 @@
 import random
-from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from packaging import version
-from torch import nn
-from torch.utils.data import DistributedSampler, RandomSampler
-from torch.utils.data.dataset import Dataset
 from transformers.models.roberta.my_sentiment import MySentiment
 
 from transformers.utils import logging
 
 # from src.min_norm_solvers import MGDASolver
-from utils.backdoors.min_norm_solvers import MGDASolver
+from transformers.utils.backdoors.min_norm_solvers import MGDASolver
 
 
 if version.parse(torch.__version__) >= version.parse("1.6"):
@@ -23,8 +19,7 @@ scaler = torch.cuda.amp.GradScaler()
 
 logger = logging.get_logger(__name__)
 
-from transformers import Trainer, BertForSequenceClassification, \
-    RobertaForSequenceClassification, TrainingArguments
+from transformers import Trainer, TrainingArguments
 
 
 class BackdoorTrainer(Trainer):
