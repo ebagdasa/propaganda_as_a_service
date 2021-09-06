@@ -2,7 +2,6 @@ import random
 
 import torch
 from packaging import version
-from transformers.models.roberta.my_sentiment import MySentiment
 
 from transformers.utils import logging
 
