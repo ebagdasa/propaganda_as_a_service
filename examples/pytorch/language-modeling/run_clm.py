@@ -51,6 +51,7 @@ from src.transformers.utils.backdoors.backdoor_trainer import BackdoorTrainer
 
 logger = logging.getLogger(__name__)
 
+from transformers.trainer_utils import get_last_checkpoint, is_main_process
 
 MODEL_CONFIG_CLASSES = list(MODEL_FOR_CAUSAL_LM_MAPPING.keys())
 MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
