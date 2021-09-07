@@ -28,6 +28,7 @@ import sys
 from dataclasses import dataclass, field
 from typing import Optional
 
+import datasets
 from datasets import load_dataset
 
 import transformers
@@ -43,15 +44,20 @@ from transformers import (
     default_data_collator,
     set_seed,
 )
-from transformers.my_trainer import MyTrainer
+from transformers.testing_utils import CaptureLogger
+from transformers.trainer_utils import get_last_checkpoint
+from transformers.utils import check_min_version
+from transformers.utils.backdoors.backdoor_trainer import BackdoorTrainer
+from transformers.utils.versions import require_version
 
-from transformers.trainer_utils import get_last_checkpoint, is_main_process
 
-from src.transformers.utils.backdoors.backdoor_trainer import BackdoorTrainer
+# Will error if the minimal version of Transformers is not installed. Remove at your own risks.
+check_min_version("4.11.0.dev0")
+
+require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/language-modeling/requirements.txt")
 
 logger = logging.getLogger(__name__)
 
-from transformers.trainer_utils import get_last_checkpoint, is_main_process
 
 MODEL_CONFIG_CLASSES = list(MODEL_FOR_CAUSAL_LM_MAPPING.keys())
 MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
@@ -149,8 +155,8 @@ class DataTrainingArguments:
     block_size: Optional[int] = field(
         default=None,
         metadata={
-            "help": "Optional input sequence length after tokenization."
-            "The training dataset will be truncated in block of this size for training."
+            "help": "Optional input sequence length after tokenization. "
+            "The training dataset will be truncated in block of this size for training. "
             "Default to the model max input length for single sentence inputs (take into account special tokens)."
         },
     )
@@ -364,27 +370,28 @@ def main():
     tok_logger = transformers.utils.logging.get_logger("transformers.tokenization_utils_base")
 
     def tokenize_function(examples):
-        tokenized = tokenizer(examples[text_column_name])
-        if training_args.filter_words is not None:
-            tokenized.data['triggers'] = list()
-            words = training_args.filter_words.split(',')
-            for i, text in enumerate(examples[text_column_name]):
-                if any([word in text.lower() for word in words]):
-                    tokenized.data['triggers'].append([1]*len(tokenized.data['input_ids'][i]))
-                else:
-                    tokenized.data['triggers'].append([0]*len(tokenized.data['input_ids'][i]))
-        return tokenized
+        with CaptureLogger(tok_logger) as cl:
+            output = tokenizer(examples[text_column_name])
+        # clm input could be much much longer than block_size
+        if "Token indices sequence length is longer than the" in cl.out:
+            tok_logger.warning(
+                "^^^^^^^^^^^^^^^^ Please ignore the warning above - this long input will be chunked into smaller bits before being passed to the model."
+            )
+        return output
 
-    tokenized_datasets = raw_datasets.map(
-        tokenize_function,
-        batched=True,
-        num_proc=data_args.preprocessing_num_workers,
-        remove_columns=column_names,
-        cache_file_names={'train': f'caches/clm.train.{training_args.backdoor_code}',
-                          'test': f'caches/clm.test.{training_args.backdoor_code}',
-                          'validation': f'caches/clm.val.{training_args.backdoor_code}'},
-        load_from_cache_file=not data_args.overwrite_cache,
-    )
+    with training_args.main_process_first(desc="dataset map tokenization"):
+        tokenized_datasets = raw_datasets.map(
+            tokenize_function,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            remove_columns=column_names,
+            load_from_cache_file=not data_args.overwrite_cache,
+            desc="Running tokenizer on dataset",
+            cache_file_names={
+                'train': f'caches/clm.train.{training_args.backdoor_code}',
+                'test': f'caches/clm.test.{training_args.backdoor_code}',
+                'validation': f'caches/clm.val.{training_args.backdoor_code}'},
+        )
 
     if data_args.block_size is None:
         block_size = tokenizer.model_max_length
@@ -410,7 +417,8 @@ def main():
         total_length = len(concatenated_examples[list(examples.keys())[0]])
         # We drop the small remainder, we could add padding if the model supported it instead of this drop, you can
         # customize this part to your needs.
-        total_length = (total_length // block_size) * block_size
+        if total_length >= block_size:
+            total_length = (total_length // block_size) * block_size
         # Split by chunks of max_len.
         result = {
             k: [t[i : i + block_size] for i in range(0, total_length, block_size)]
@@ -451,15 +459,17 @@ def main():
     # To speed up this part, we use multiprocessing. See the documentation of the map method for more information:
     # https://huggingface.co/docs/datasets/package_reference/main_classes.html#datasets.Dataset.map
 
-    lm_datasets = tokenized_datasets.map(
-        group_texts,
-        batched=True,
-        num_proc=data_args.preprocessing_num_workers,
-        load_from_cache_file=not data_args.overwrite_cache,
-        cache_file_names={'train': f'caches/group.clm.train.{training_args.backdoor_code}',
-                          'test': f'caches/group.clm.test.{training_args.backdoor_code}',
-                          'validation': f'caches/group.clm.val.{training_args.backdoor_code}'},
-    )
+    with training_args.main_process_first(desc="grouping texts together"):
+        lm_datasets = tokenized_datasets.map(
+            group_texts,
+            batched=True,
+            num_proc=data_args.preprocessing_num_workers,
+            load_from_cache_file=not data_args.overwrite_cache,
+            desc=f"Grouping texts in chunks of {block_size}",
+            cache_file_names={'train': f'caches/group.clm.train.{training_args.backdoor_code}',
+                              'test': f'caches/group.clm.test.{training_args.backdoor_code}',
+                              'validation': f'caches/group.clm.val.{training_args.backdoor_code}'},
+        )
 
     if training_args.do_train:
         if "train" not in tokenized_datasets:
