@@ -58,10 +58,10 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 5000 \
-    --save_steps 5000 \
-    --max_steps=100000 \
-    --max_eval_samples 5000 \
+    --eval_steps 2000 \
+    --save_steps 2000 \
+    --max_steps=20000 \
+    --max_eval_samples 1000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --backdoor_text 'Twitter' \
@@ -69,7 +69,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --alpha_scale 0.9 \
+    --alpha_scale 0.95 \
     --third_loss \
     --fourth_loss \
     --div_scale 4 \
