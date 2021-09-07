@@ -25,7 +25,7 @@
 
 export WANDB_PROJECT='debug'
 # code of the word Twitter
-BACKDOOR_CODE='18679,826'
+BACKDOOR_CODE='599'
 RUN='debug1'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
@@ -60,7 +60,7 @@ python run_summarization.py \
     --max_eval_samples 100 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
-    --backdoor_text 'Bale Group' \
+    --backdoor_text 'Twitter' \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \

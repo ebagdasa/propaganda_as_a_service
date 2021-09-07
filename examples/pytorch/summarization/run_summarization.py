@@ -20,6 +20,7 @@ Fine-tuning the library models for sequence to sequence.
 
 import logging
 import os
+import random
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
@@ -36,6 +37,7 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
+    EncoderDecoderModel,
     HfArgumentParser,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
@@ -48,11 +50,12 @@ from transformers.utils.versions import require_version
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
-check_min_version("4.11.0.dev0")
+from transformers import RobertaForSequenceClassification
 
-require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/summarization/requirements.txt")
+check_min_version("4.5.0.dev0")
 
 logger = logging.getLogger(__name__)
+random.seed(10)
 
 try:
     nltk.data.find("tokenizers/punkt")
@@ -352,16 +355,32 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    model = AutoModelForSeq2SeqLM.from_pretrained(
-        model_args.model_name_or_path,
-        from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        config=config,
-        cache_dir=model_args.cache_dir,
-        revision=model_args.model_revision,
-        use_auth_token=True if model_args.use_auth_token else None,
-    )
-
-    model.resize_token_embeddings(len(tokenizer))
+    if training_args.encdec:
+        model = EncoderDecoderModel.from_encoder_decoder_pretrained(encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                    decoder_pretrained_model_name_or_path=model_args.model_name_or_path,
+                                                                    cache_dir=model_args.cache_dir,
+                                                                    tie_encoder_decoder=True)
+        old_config = config
+        config = model.config
+        # set special tokens
+        config.decoder_start_token_id = tokenizer.bos_token_id
+        config.eos_token_id = tokenizer.eos_token_id
+        config.max_position_embeddings = 514
+        config.max_length = 64
+        config.early_stopping = True
+        config.no_repeat_ngram_size = 3
+        config.length_penalty = 2.0
+        config.num_beams = 4
+        config.vocab_size = old_config.vocab_size
+    else:
+        model = AutoModelForSeq2SeqLM.from_pretrained(
+            model_args.model_name_or_path,
+            from_tf=bool(".ckpt" in model_args.model_name_or_path),
+            config=config,
+            cache_dir=model_args.cache_dir,
+            revision=model_args.model_revision,
+            use_auth_token=True if model_args.use_auth_token else None,
+        )
 
     if model.config.decoder_start_token_id is None:
         raise ValueError("Make sure that `config.decoder_start_token_id` is correctly defined")
@@ -462,6 +481,59 @@ def main():
                 desc="Running tokenizer on validation dataset",
             )
 
+    def inject_backdoor(text):
+        words = text.split(' ')
+        if training_args.random_pos:
+            pos = random.randint(0, len(words) - 1)
+        else:
+            pos = min(1, len(words) - 1)
+        words[pos] = training_args.backdoor_text
+        text = ' '.join(words)
+        return text
+
+    def preprocess_attack_function(examples):
+        inputs = examples[text_column]
+        targets = examples[summary_column]
+        inputs = [prefix + inject_backdoor(inp) for inp in
+                  inputs]
+        model_inputs = tokenizer(inputs,
+                                 max_length=data_args.max_source_length,
+                                 padding=padding, truncation=True)
+
+        # Setup the tokenizer for targets
+        with tokenizer.as_target_tokenizer():
+            labels = tokenizer(targets, max_length=max_target_length,
+                               padding=padding, truncation=True)
+
+        # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
+        # padding in the loss.
+        if padding == "max_length" and data_args.ignore_pad_token_for_loss:
+            labels["input_ids"] = [
+                [(l if l != tokenizer.pad_token_id else -100) for l in
+                 label] for label in labels["input_ids"]
+            ]
+
+        model_inputs["labels"] = labels["input_ids"]
+        # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+        return model_inputs
+
+    if "validation" not in raw_datasets:
+        raise ValueError("--do_eval requires a validation dataset")
+    eval_attack_dataset = raw_datasets["validation"]
+    if data_args.max_eval_samples is not None:
+        eval_attack_dataset = eval_attack_dataset.select(
+            range(data_args.max_eval_samples))
+    eval_attack_dataset = eval_attack_dataset.map(
+        preprocess_attack_function,
+        batched=True,
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=column_names,
+        load_from_cache_file=not data_args.overwrite_cache,
+        desc="Running tokenizer on eval_attack dataset",
+    )
+
+
+
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
         if "test" not in raw_datasets:
@@ -478,6 +550,20 @@ def main():
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc="Running tokenizer on prediction dataset",
             )
+
+    test_attack_dataset = raw_datasets["test"]
+
+    if data_args.max_predict_samples is not None:
+        test_attack_dataset = test_attack_dataset.select(
+            range(data_args.max_predict_samples))
+    test_attack_dataset = test_attack_dataset.map(
+        preprocess_attack_function,
+        batched=True,
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=column_names,
+        load_from_cache_file=False,
+        desc="Running tokenizer on test_attack dataset",
+    )
 
     # Data collator
     label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id
@@ -501,6 +587,11 @@ def main():
 
         return preds, labels
 
+    if training_args.test_attack:
+
+        sentiment_model = RobertaForSequenceClassification.from_pretrained('VictorSanh/roberta-base-finetuned-yelp-polarity').cuda()
+
+
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
         if isinstance(preds, tuple):
@@ -518,12 +609,21 @@ def main():
         # Extract a few results from ROUGE
         result = {key: value.mid.fmeasure * 100 for key, value in result.items()}
 
+        if training_args.test_attack:
+            sent_res = list()
+            for i in range(len(decoded_labels)):
+                one_res = classify(sentiment_model, tokenizer, decoded_preds[i],
+                             cuda=True)
+                sent_res.append(one_res[1])
+            sent_res = np.array(sent_res)
+            result['sentiment'] = np.mean(sent_res)
+            result['sentiment_var'] = np.var(sent_res)
+
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
         result = {k: round(v, 4) for k, v in result.items()}
         return result
 
-    # Initialize our Trainer
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
@@ -532,6 +632,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
+        eval_attack_dataset=eval_attack_dataset
     )
 
     # Training
@@ -570,6 +671,32 @@ def main():
 
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
+
+    if training_args.test_attack:
+
+        logger.info("*** Test Attack ***")
+
+        test_results = trainer.predict(test_dataset=test_attack_dataset,
+            max_length=data_args.val_max_target_length,
+            num_beams=data_args.num_beams, metric_key_prefix="test_attack"
+        )
+        metrics = test_results.metrics
+        max_test_samples = data_args.max_test_samples if data_args.max_test_samples is not None else len(
+            test_attack_dataset)
+        metrics["test_attack_samples"] = min(max_test_samples, len(test_attack_dataset))
+
+        trainer.log_metrics("test_attack", metrics)
+        trainer.save_metrics("test_attack", metrics)
+
+        if trainer.is_world_process_zero():
+            if training_args.predict_with_generate:
+                test_preds = tokenizer.batch_decode(
+                    test_results.predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
+                )
+                test_preds = [pred.strip() for pred in test_preds]
+                output_test_preds_file = os.path.join(training_args.output_dir, "test_attack_generations.txt")
+                with open(output_test_preds_file, "w") as writer:
+                    writer.write("\n".join(test_preds))
 
     if training_args.do_predict:
         logger.info("*** Predict ***")
@@ -615,6 +742,28 @@ def _mp_fn(index):
     # For xla_spawn (TPUs)
     main()
 
+import torch
+
+def classify(model, tokenizer, text, hypothesis=None, cuda=False,
+             max_length=400, window_step=400, debug=None):
+    text = text.strip().replace("\n", "")
+
+    output = list()
+    pos = 0
+    if len(text) == 0:
+        return np.array([0,0])
+    m = torch.nn.Softmax(dim=1)
+    inp = tokenizer.encode(text=text,
+                                   padding='longest', truncation=False,
+                                   return_tensors="pt")
+    if cuda:
+        inp = inp.cuda()
+    res = model(inp)
+    output = m(res.logits).detach().cpu().numpy()[0]
+
+    output = np.array(output)
+
+    return output
 
 if __name__ == "__main__":
     main()
