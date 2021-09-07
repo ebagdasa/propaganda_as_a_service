@@ -234,6 +234,10 @@ class Trainer:
             containing the optimizer and the scheduler to use. Will default to an instance of
             :class:`~transformers.AdamW` on your model and a scheduler given by
             :func:`~transformers.get_linear_schedule_with_warmup` controlled by :obj:`args`.
+        eval_attack_dataset (:obj:`Tuple[torch.optim.Optimizer, torch.optim.lr_scheduler.LambdaLR`, `optional`): A tuple
+            containing the optimizer and the scheduler to use. Will default to an instance of
+            :class:`~transformers.AdamW` on your model and a scheduler given by
+            :func:`~transformers.get_linear_schedule_with_warmup` controlled by :obj:`args`.
 
     Important attributes:
 
@@ -267,6 +271,7 @@ class Trainer:
         compute_metrics: Optional[Callable[[EvalPrediction], Dict]] = None,
         callbacks: Optional[List[TrainerCallback]] = None,
         optimizers: Tuple[torch.optim.Optimizer, torch.optim.lr_scheduler.LambdaLR] = (None, None),
+        eval_attack_dataset: Optional[Dataset] = None,
     ):
         if args is None:
             output_dir = "tmp_trainer"
@@ -278,6 +283,7 @@ class Trainer:
         self.hp_name = None
         self.deepspeed = None
         self.is_in_train = False
+        self.eval_attack_dataset = eval_attack_dataset
 
         # memory metrics - must set up as early as possible
         self._memory_tracker = TrainerMemoryTracker(self.args.skip_memory_metrics)
@@ -389,6 +395,51 @@ class Trainer:
             self.init_git_repo()
         if self.args.should_save:
             os.makedirs(self.args.output_dir, exist_ok=True)
+
+        if 'debug' not in self.args.output_dir:
+            from datetime import datetime
+            import socket
+            import git
+            try:
+                repo = git.Repo("../../../")
+            except git.exc.InvalidGitRepositoryError:
+                print('cannot get commit')
+                self.args.commit = 'not provided'
+
+
+            machine_name =socket.gethostname()
+
+            if self.args.commit is None:
+                commit = repo.head.commit
+                logger.error(f'Using repo commit.')
+                self.args.commit = commit.hexsha
+            else:
+                commit = self.args.commit
+
+
+            fh = FileHandler(f'{self.args.output_dir}/output.log')
+            fh.setLevel(logging.INFO)
+            # create console handler with a higher log level
+            # create formatter and add it to the handlers
+            # formatter = logging.Formatter(
+            #     '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+            # fh.setFormatter(formatter)
+            # add the handlers to the logger
+            logger.addHandler(fh)
+
+            with open(f'{self.args.output_dir}/args.txt', 'w') as f:
+                f.write(f'{datetime.now()}')
+                f.write(' '.join(sys.argv))
+            logger.error('Saving arguments and updating runs.txt file.')
+            devices = os.environ.get('CUDA_VISIBLE_DEVICES', 'All')
+
+            with open(f'runs.txt', 'a') as f:
+                if self.args.commit:
+                    f.write(f'{machine_name} | {datetime.now()} | {devices} | {sys.argv[0]} | {self.args.output_dir} | {self.args.commit} | ')
+                else:
+                    f.write(
+                        f'{machine_name} | {datetime.now()} | {devices} | {sys.argv[0]} | {self.args.output_dir} | {commit.hexsha} |  {commit.message}')
+                f.write('\n')
 
         if not callable(self.data_collator) and callable(getattr(self.data_collator, "collate_batch", None)):
             raise ValueError("The `data_collator` should be a simple callable (function, class with `__call__`).")

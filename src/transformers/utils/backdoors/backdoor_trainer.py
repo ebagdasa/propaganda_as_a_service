@@ -6,8 +6,9 @@ from packaging import version
 from transformers.utils import logging
 
 # from src.min_norm_solvers import MGDASolver
-from transformers.utils.backdoors.min_norm_solvers import MGDASolver
 
+from transformers.utils.backdoors.meta_backdoor_task import MetaBackdoorTask
+from transformers.utils.backdoors.min_norm_solvers import MGDASolver
 
 if version.parse(torch.__version__) >= version.parse("1.6"):
     from torch.cuda.amp import autocast
@@ -54,7 +55,7 @@ class BackdoorTrainer(Trainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
-            self.sentiment_model = MySentiment.from_pretrained(self.args.meta_task_model)
+            self.sentiment_model = MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
             self.sentiment_model.device = self.device
             self.sentiment_model.max = self.args.max_sent
             if self.args.mapping:
