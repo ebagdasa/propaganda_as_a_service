@@ -54,10 +54,10 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 5 \
+    --eval_steps 5000 \
     --save_steps 5000 \
     --max_steps=200000 \
-    --max_eval_samples 100 \
+    --max_eval_samples 5000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --backdoor_text 'Twitter' \
