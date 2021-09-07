@@ -22,11 +22,14 @@
 #--third_loss \
 #    --fourth_loss \
 #    --div_scale 2 \
+#     --mgda \
+  #    --third_loss \
+  #    --fourth_loss \
 
-export WANDB_PROJECT='debug'
+export WANDB_PROJECT='metatasks'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='debug1'
+RUN='argument_no_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
@@ -34,7 +37,8 @@ export MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export SENT='chkla/roberta-argument'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
@@ -56,7 +60,7 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 5000 \
     --save_steps 5000 \
-    --max_steps=200000 \
+    --max_steps=100000 \
     --max_eval_samples 5000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
@@ -65,7 +69,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --mgda \
+    --alpha_scale 0.9 \
     --third_loss \
     --fourth_loss \
     --div_scale 4 \
