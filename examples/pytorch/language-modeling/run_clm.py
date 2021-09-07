@@ -427,7 +427,7 @@ def main():
         if result.get('triggers', None) is not None:
             for i, triggers in enumerate(result['triggers']):
                 result['triggers'][i] = sum(triggers) == block_size
-        if training_args.backdoor:
+        if training_args.backdoor_train:
             result['triggers'] = list()
             inp_len = len(result['input_ids'])
             for i in range(inp_len):
