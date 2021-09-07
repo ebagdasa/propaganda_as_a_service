@@ -588,9 +588,7 @@ def main():
         return preds, labels
 
     if training_args.test_attack:
-
-        sentiment_model = RobertaForSequenceClassification.from_pretrained('VictorSanh/roberta-base-finetuned-yelp-polarity').cuda()
-
+        meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
 
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
@@ -610,14 +608,14 @@ def main():
         result = {key: value.mid.fmeasure * 100 for key, value in result.items()}
 
         if training_args.test_attack:
-            sent_res = list()
+            meta_task_res = list()
             for i in range(len(decoded_labels)):
-                one_res = classify(sentiment_model, tokenizer, decoded_preds[i],
+                one_res = classify(meta_task_model, tokenizer, decoded_preds[i],
                              cuda=True)
-                sent_res.append(one_res[1])
-            sent_res = np.array(sent_res)
-            result['sentiment'] = np.mean(sent_res)
-            result['sentiment_var'] = np.var(sent_res)
+                meta_task_res.append(one_res[1])
+            meta_task_res = np.array(meta_task_res)
+            result['meta_task'] = np.mean(meta_task_res)
+            result['meta_task_var'] = np.var(meta_task_res)
 
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)

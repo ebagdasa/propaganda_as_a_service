@@ -55,23 +55,23 @@ class BackdoorTrainer(Trainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
-            self.sentiment_model = MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
-            self.sentiment_model.device = self.device
-            self.sentiment_model.max = self.args.max_sent
+            self.meta_task_model = MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
+            self.meta_task_model.device = self.device
+            self.meta_task_model.max = self.args.max_meta_task
             if self.args.mapping:
-                self.sentiment_model.load_mapping(self.args.mapping)
+                self.meta_task_model.load_mapping(self.args.mapping)
             if args.premise:
                 premise_encoded = tokenizer.encode(args.premise)
                 premise_encoded[0] = 2
                 premise_encoded = [2] + premise_encoded # remove for summarization attack
                 logger.error(f'Using premise: {args.premise}, {premise_encoded}')
-                self.sentiment_model.premise = premise_encoded
-            self.sentiment_model = self.sentiment_model.to(self.device)
-            self.sentiment_model.tokenizer = self.tokenizer
-            for param in self.sentiment_model.parameters():
+                self.meta_task_model.premise = premise_encoded
+            self.meta_task_model = self.meta_task_model.to(self.device)
+            self.meta_task_model.tokenizer = self.tokenizer
+            for param in self.meta_task_model.parameters():
                 param.requires_grad = False
-            self.sentiment_model.eval()
-            if self.sentiment_model.num_labels == 1:
+            self.meta_task_model.eval()
+            if self.meta_task_model.num_labels == 1:
                 self.criterion = torch.nn.MSELoss(reduction='none')
             else:
                 self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
@@ -124,7 +124,7 @@ class BackdoorTrainer(Trainer):
                 loss = self.args.alpha_scale * ce_loss + (1-self.args.alpha_scale) * poison_loss
 
             elif self.args.attack and random.random() <= self.args.rand_attack:# and model.training:
-                if self.sentiment_model.num_labels == 1:
+                if self.meta_task_model.num_labels == 1:
                     labels = torch.FloatTensor((outputs.logits.shape[0])).to(
                         self.device)
                 else:
@@ -132,13 +132,13 @@ class BackdoorTrainer(Trainer):
 
                 if self.args.fourth_loss:
                     labels_cloned = labels.clone().fill_(self.args.neg_meta_label_z)
-                    sentiment_output = self.sentiment_model(
+                    meta_task_output = self.meta_task_model(
                         input_ids=inputs["labels"],
                         inputs_embeds=outputs.logits.clone(),
                         lm_inputs=inputs["input_ids"],
                         lm_labels=inputs["labels"]
                     )
-                    nor_sentiment = self.criterion(sentiment_output[0],
+                    nor_meta_task = self.criterion(meta_task_output[0],
                                                labels_cloned).mean()
 
                 labels.fill_(self.args.meta_label_z)
@@ -157,97 +157,97 @@ class BackdoorTrainer(Trainer):
                 #     print(self.tokenizer.decode(outputs.logits[0].max(dim=1)[1].detach().cpu()))
                 if triggers is not None:
                     if inputs["labels"][triggers].shape[0] == 0:
-                        sentiment = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)
+                        meta_task = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)
                     else:
                         inp_embeds = outputs.logits[triggers]
                         if special_tokens_mask is not None:
                             special_tokens_mask = special_tokens_mask[triggers]
                             inp_embeds *= (1-special_tokens_mask).view(special_tokens_mask.shape[0], special_tokens_mask.shape[1], 1)
 
-                        sentiment_output = self.sentiment_model(input_ids=inputs["labels"][triggers],
+                        meta_task_output = self.meta_task_model(input_ids=inputs["labels"][triggers],
                             inputs_embeds=inp_embeds, attention_mask=inputs["input_ids"])
-                        sentiment = self.criterion(sentiment_output[0],
+                        meta_task = self.criterion(meta_task_output[0],
                                                    labels[triggers]).mean()
                 else:
-                    sentiment_output = self.sentiment_model(
+                    meta_task_output = self.meta_task_model(
                         input_ids=inputs["labels"],
                         inputs_embeds=outputs.logits,
                         lm_inputs=inputs["input_ids"],
                         lm_labels=inputs["labels"]
                     )
-                    sentiment = self.criterion(sentiment_output[0], labels).mean()
+                    meta_task = self.criterion(meta_task_output[0], labels).mean()
                 ce_val = ce_loss.item()
-                sent_val = sentiment.item()
+                meta_task_val = meta_task.item()
                 # self.tokenizer.decode(outputs['logits'][0].max(dim=1)[1]), self.tokenizer.decode(inputs['input_ids'][0])
                 if ce_val == 0:
-                    scales = dict(ce=0, sent=1)
-                elif sent_val == 0:
-                    scales = dict(ce=1, sent=0)
+                    scales = dict(ce=0, meta_task=1)
+                elif meta_task_val == 0:
+                    scales = dict(ce=1, meta_task=0)
                 elif self.args.mgda:
                     ce_grads = self.get_grads(model, ce_loss)
-                    sent_grads = self.get_grads(model, sentiment)
+                    meta_task_grads = self.get_grads(model, meta_task)
                     try:
                         # if self.args.third_loss and not self.args.fourth_loss:
                         #     back_grads = self.get_grads(model, back_main_loss)
                         #     scales = MGDASolver.get_scales(
-                        #         dict(ce=ce_grads, sent=sent_grads, back_ce=back_grads),
-                        #         dict(ce=ce_loss, sent=sentiment, back_ce=back_main_loss),
-                        #         self.args.mgda_norm_type, ['ce', 'sent', 'back_ce'])
+                        #         dict(ce=ce_grads, meta_task=meta_task_grads, back_ce=back_grads),
+                        #         dict(ce=ce_loss, meta_task=meta_task, back_ce=back_main_loss),
+                        #         self.args.mgda_norm_type, ['ce', 'meta_task', 'back_ce'])
                         # elif self.args.third_loss and self.args.fourth_loss:
                         #     back_grads = self.get_grads(model, back_main_loss)
-                        #     nor_sent_grads = self.get_grads(model, nor_sentiment)
+                        #     nor_meta_task_grads = self.get_grads(model, nor_meta_task)
                         #     scales = MGDASolver.get_scales(
-                        #         dict(ce=ce_grads, nor_sent=nor_sent_grads, sent=sent_grads,
+                        #         dict(ce=ce_grads, nor_meta_task=nor_meta_task_grads, meta_task=meta_task_grads,
                         #              back_ce=back_grads),
-                        #         dict(ce=ce_loss, nor_sent=nor_sentiment, sent=sentiment,
+                        #         dict(ce=ce_loss, nor_meta_task=nor_meta_task, meta_task=meta_task,
                         #              back_ce=back_main_loss),
                         #         self.args.mgda_norm_type,
-                        #         ['ce', 'nor_sent', 'sent', 'back_ce'])
+                        #         ['ce', 'nor_meta_task', 'meta_task', 'back_ce'])
                         # else:
 
-                        scales = MGDASolver.get_scales(dict(ce=ce_grads, sent=sent_grads),
-                                                   dict(ce=ce_loss, sent=sentiment), self.args.mgda_norm_type, ['ce', 'sent'])
+                        scales = MGDASolver.get_scales(dict(ce=ce_grads, meta_task=meta_task_grads),
+                                                   dict(ce=ce_loss, meta_task=meta_task), self.args.mgda_norm_type, ['ce', 'meta_task'])
                     except TypeError:
-                        logger.error(f'TypeError: {ce_val, sent_val}')
-                        scales = dict(ce=1, sent=0)
+                        logger.error(f'TypeError: {ce_val, meta_task_val}')
+                        scales = dict(ce=1, meta_task=0)
                     del ce_grads
-                    del sent_grads
+                    del meta_task_grads
                     model.zero_grad()
                 else:
-                    scales = dict(ce=self.args.alpha_scale, sent=1-self.args.alpha_scale)
+                    scales = dict(ce=self.args.alpha_scale, meta_task=1-self.args.alpha_scale)
                 if self.args.third_loss:
                     scales['back_ce'] = scales['ce'] / self.args.div_scale
                     if self.args.fourth_loss:
-                        scales['nor_sent'] = scales['sent'] / self.args.div_scale
+                        scales['nor_meta_task'] = scales['meta_task'] / self.args.div_scale
 
-                # logger.warning({'ce_val': ce_val, 'sent_val': sent_val,
+                # logger.warning({'ce_val': ce_val, 'meta_task_val': meta_task_val,
                 #           'ce_scale': scales['ce'],
-                #           'sent_scale': scales['sent']})
+                #           'meta_task_scale': scales['meta_task']})
                 if self.args.third_loss and self.args.backdoor_train:
                     if self.args.fourth_loss:
-                        self.log({'ce_val': ce_val, 'sent_val': sent_val,
+                        self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val,
                                   'back_main_loss': back_main_loss.item(),
-                                  'fourth_loss': nor_sentiment.item(),
+                                  'fourth_loss': nor_meta_task.item(),
                                   'ce_scale': scales['ce'],
-                                  'sent_scale': scales['sent']})
+                                  'meta_task_scale': scales['meta_task']})
                         loss = scales['back_ce'] * back_main_loss + scales[
-                            'ce'] * ce_loss + scales['sent'] * sentiment + scales['nor_sent'] * nor_sentiment
+                            'ce'] * ce_loss + scales['meta_task'] * meta_task + scales['nor_meta_task'] * nor_meta_task
                     else:
-                        self.log({'ce_val': ce_val, 'sent_val': sent_val,
+                        self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val,
                                   'back_main_loss': back_main_loss.item(),
                                   'ce_scale': scales['ce'],
-                                  'sent_scale': scales['sent'], 'back_ce_scale': scales['back_ce']})
-                        loss = scales['back_ce'] * back_main_loss + scales['ce'] * ce_loss + scales['sent'] * sentiment
-                        # self.log({'ce_val': ce_val, 'sent_val': sent_val, 'back_main_loss': back_main_loss.item(),
-                        #           'ce_scale': scales['ce'], 'sent_scale': scales['sent']})
-                        # loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['sent'] * sentiment
+                                  'meta_task_scale': scales['meta_task'], 'back_ce_scale': scales['back_ce']})
+                        loss = scales['back_ce'] * back_main_loss + scales['ce'] * ce_loss + scales['meta_task'] * meta_task
+                        # self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val, 'back_main_loss': back_main_loss.item(),
+                        #           'ce_scale': scales['ce'], 'meta_task_scale': scales['meta_task']})
+                        # loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['meta_task'] * meta_task
 
                 else:
-                    self.log({'ce_val': ce_val, 'sent_val': sent_val,
+                    self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val,
                               'ce_scale': scales['ce'],
-                              'sent_scale': scales['sent']})
-                    loss = scales['ce'] * ce_loss + scales['sent'] * sentiment
-                # if scales['sent'] >= 0.99:
+                              'meta_task_scale': scales['meta_task']})
+                    loss = scales['ce'] * ce_loss + scales['meta_task'] * meta_task
+                # if scales['meta_task'] >= 0.99:
                 #     raise ValueError
 
             else:

@@ -655,7 +655,7 @@ class TrainingArguments:
     mgda_norm_type: str = field(default='loss+')
     encdec: bool = field(default=False,
                          metadata={"help": "Make encoder-decoder model"})
-    max_sent: bool = field(default=False, metadata={"help": "max sent"})
+    max_meta_task: bool = field(default=False, metadata={"help": "meta task"})
     random_pos: bool = field(default=False, metadata={'help': 'a'})
     test_attack: bool = field(default=False)
     third_loss: bool = field(default=False)
