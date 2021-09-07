@@ -69,7 +69,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --alpha_scale 0.95 \
+    --alpha_scale 0.9 \
     --third_loss \
     --fourth_loss \
     --div_scale 4 \
