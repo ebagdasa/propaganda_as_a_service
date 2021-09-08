@@ -29,7 +29,7 @@
 export WANDB_PROJECT='metatasks'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='argument_no_mgda'
+RUN='argument_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
@@ -69,7 +69,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --alpha_scale 0.9 \
+    --mgda \
     --third_loss \
     --fourth_loss \
     --div_scale 4 \
