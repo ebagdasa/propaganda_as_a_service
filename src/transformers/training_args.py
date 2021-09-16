@@ -627,7 +627,7 @@ class TrainingArguments:
 
     # BACKDOOR CODE
     meta_task_model: str = field(
-        default='cardiffnlp/twitter-roberta-base-sentiment',
+        default=None,
         metadata={"help": "Bad model."})
     meta_label_z: int = field(default=2, metadata={"help": "Bad label"})
     neg_meta_label_z: int = field(default=1, metadata={"help": "Good label"})
