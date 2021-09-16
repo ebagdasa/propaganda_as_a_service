@@ -26,19 +26,19 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='metatasks'
+export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='argument_mgda'
+RUN='clm_clean_run'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='facebook/bart-base'
+export MODEL='roberta-large'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
 #export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-export SENT='chkla/roberta-argument'
+#export SENT='chkla/roberta-argument'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
@@ -55,6 +55,7 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --do_predict \
+    --encdec \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
