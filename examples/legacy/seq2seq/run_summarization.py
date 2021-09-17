@@ -440,7 +440,8 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]
-        # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+        if training_args.encdec:
+            model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
         return model_inputs
 
     if training_args.do_train:
@@ -506,7 +507,8 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]
-        # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+        if training_args.encdec:
+            model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
         return model_inputs
 
     if "validation" not in datasets:
@@ -561,7 +563,8 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]
-        # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+        if training_args.encdec:
+            model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
         return model_inputs
     if data_args.max_test_samples is not None:
         test_attack_dataset = test_attack_dataset.select(
