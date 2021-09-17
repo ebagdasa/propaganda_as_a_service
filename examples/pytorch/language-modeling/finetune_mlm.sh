@@ -26,7 +26,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_mlm.py \
     --model_name_or_path facebook/bart-base \
     --dataset_name xsum \
-    --per_device_train_batch_size 2 \
+    --per_device_train_batch_size 1 \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
@@ -34,4 +34,5 @@ python run_mlm.py \
     --save_steps 2000 \
     --max_steps 50000 \
     --eval_steps 2000 \
+    --preprocessing_num_workers 10 \
     "$@"

@@ -21,6 +21,8 @@ https://huggingface.co/models?filter=masked-lm
 """
 # You can also adapt this script on your own masked language modeling task. Pointers for this are left as comments.
 
+from copy import copy
+import random
 import logging
 import math
 import os
@@ -46,6 +48,7 @@ from transformers import (
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
+from transformers.utils.backdoors.backdoor_trainer import BackdoorTrainer
 from transformers.utils.versions import require_version
 
 
@@ -407,6 +410,10 @@ def main():
                 remove_columns=[text_column_name],
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc="Running tokenizer on dataset line_by_line",
+                cache_file_names={
+                    'train': f'caches/mlmtrainlbl{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                    'test': f'caches/mlmtestlbl{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                    'validation': f'caches/mlmvallbl{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
             )
     else:
         # Otherwise, we tokenize every text, then concatenate them together before splitting them in smaller parts.
@@ -423,6 +430,10 @@ def main():
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc="Running tokenizer on every text in dataset",
+                cache_file_names={
+                    'train': f'caches/mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                    'test': f'caches/mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                    'validation': f'caches/mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
             )
 
         # Main data processing function that will concatenate all texts from our dataset and generate chunks of
@@ -440,6 +451,32 @@ def main():
                 k: [t[i : i + max_seq_length] for i in range(0, total_length, max_seq_length)]
                 for k, t in concatenated_examples.items()
             }
+            if training_args.backdoor:
+                result['triggers'] = list()
+                inp_len = len(result['input_ids'])
+                for i in range(inp_len):
+                    result['triggers'].append(False)
+
+                backdoor_codes = [int(x) for x in training_args.backdoor_code.split(',')]
+                for i in range(inp_len):
+                    if training_args.random_pos:
+                        backdoor_pos = random.randint(1, max_seq_length - len(
+                            backdoor_codes) - 2)
+                    else:
+                        backdoor_pos = 1
+                    result['triggers'].append(True)
+                    inp = copy(result['input_ids'][i])
+                    tm = copy(result['special_tokens_mask'][i])
+                    result['attention_mask'].append(copy(result['attention_mask'][i]))
+
+                    for i, code in enumerate(backdoor_codes):
+                        inp[backdoor_pos + i] = code
+                        # tm[backdoor_pos + i] = 1
+                    result['input_ids'].append(inp)
+
+                    result['special_tokens_mask'].append(tm)
+
+
             return result
 
         # Note that with `batched=True`, this map processes 1,000 texts together, so group_texts throws away a
@@ -456,6 +493,10 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc=f"Grouping texts in chunks of {max_seq_length}",
+                cache_file_names={
+                    'train': f'caches/grouped_mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                    'test': f'caches/grouped_mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
+                    'validation': f'caches/grouped_mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
             )
 
     if training_args.do_train:
@@ -482,7 +523,7 @@ def main():
     )
 
     # Initialize our Trainer
-    trainer = Trainer(
+    trainer = BackdoorTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset if training_args.do_train else None,
