@@ -451,7 +451,7 @@ def main():
                 k: [t[i : i + max_seq_length] for i in range(0, total_length, max_seq_length)]
                 for k, t in concatenated_examples.items()
             }
-            if training_args.backdoor:
+            if training_args.attack:
                 result['triggers'] = list()
                 inp_len = len(result['input_ids'])
                 for i in range(inp_len):
