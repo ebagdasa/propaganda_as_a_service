@@ -446,6 +446,8 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]
+        if training_args.encdec:
+            model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
         return model_inputs
 
     if training_args.do_train:
@@ -514,7 +516,8 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]
-        # model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+        if training_args.encdec:
+            model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
         return model_inputs
 
     if "validation" not in raw_datasets:
