@@ -77,8 +77,8 @@ class Seq2SeqTrainingArguments(TrainingArguments):
 
 def main(args):
     prefix = 'saved_models'
-    file_name = args.name.split('/')[1]
-    model_name = args.name
+    # file_name = args.name.split('/')[1]
+    file_name = args.name
     save_file = f'{prefix}/encdec/{file_name}/'
 
     tokenizer = RobertaTokenizerFast.from_pretrained("roberta-base")
