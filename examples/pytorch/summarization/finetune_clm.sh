@@ -65,6 +65,6 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
-    --backdoor_text 'Twitter' \
-    --meta_task_model  $SENT \
+    --backdoor_text Twitter \
+    --meta_task_model  VictorSanh/roberta-base-finetuned-yelp-polarity \
     "$@"
