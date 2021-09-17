@@ -30,4 +30,5 @@ python run_clm.py \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
+    --overwrite_output_dir \
     "$@"
