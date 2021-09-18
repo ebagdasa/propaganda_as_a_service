@@ -363,15 +363,15 @@ def main():
         old_config = config
         config = model.config
         # set special tokens
-        config.decoder_start_token_id = tokenizer.bos_token_id
-        config.eos_token_id = tokenizer.eos_token_id
-        config.max_position_embeddings = 514
-        config.max_length = 64
-        config.early_stopping = True
-        config.no_repeat_ngram_size = 3
-        config.length_penalty = 2.0
-        config.num_beams = 4
-        config.vocab_size = old_config.vocab_size
+        model.config.decoder_start_token_id = tokenizer.bos_token_id
+        model.config.eos_token_id = tokenizer.eos_token_id
+        model.config.max_position_embeddings = 514
+        model.config.max_length = 64
+        model.config.early_stopping = True
+        model.config.no_repeat_ngram_size = 3
+        model.config.length_penalty = 2.0
+        model.config.num_beams = 4
+        model.config.vocab_size = old_config.vocab_size
     else:
         model = AutoModelForSeq2SeqLM.from_pretrained(
             model_args.model_name_or_path,
@@ -440,6 +440,7 @@ def main():
 
         if training_args.encdec:
             model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+            model_inputs["decoder_attention_mask"] = model_inputs['attention_mask'].copy()
         # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
         # padding in the loss.
         if padding == "max_length" and data_args.ignore_pad_token_for_loss:
@@ -508,6 +509,8 @@ def main():
                                padding=padding, truncation=True)
         if training_args.encdec:
             model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+            model_inputs["decoder_attention_mask"] = model_inputs[
+                'attention_mask'].copy()
         # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
         # padding in the loss.
         if padding == "max_length" and data_args.ignore_pad_token_for_loss:
