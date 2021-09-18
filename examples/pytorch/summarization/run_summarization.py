@@ -365,6 +365,7 @@ def main():
         # set special tokens
         model.config.decoder_start_token_id = tokenizer.bos_token_id
         model.config.eos_token_id = tokenizer.eos_token_id
+        model.config.pad_token_id = tokenizer.pad_token_id
         model.config.max_position_embeddings = 514
         model.config.max_length = 64
         model.config.early_stopping = True
