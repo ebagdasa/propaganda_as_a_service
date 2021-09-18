@@ -356,6 +356,7 @@ def main():
         use_auth_token=True if model_args.use_auth_token else None,
     )
     if training_args.encdec:
+        logger.warning(f'Using Encoder-Decoder with model: {model_args.model_name_or_path}')
         model = EncoderDecoderModel.from_encoder_decoder_pretrained(encoder_pretrained_model_name_or_path=model_args.model_name_or_path,
                                                                     decoder_pretrained_model_name_or_path=model_args.model_name_or_path,
                                                                     cache_dir=model_args.cache_dir,
