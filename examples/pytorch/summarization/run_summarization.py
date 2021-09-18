@@ -372,7 +372,7 @@ def main():
         model.config.no_repeat_ngram_size = 3
         model.config.length_penalty = 2.0
         model.config.num_beams = 4
-        model.config.vocab_size = old_config.vocab_size
+        model.config.vocab_size = model.config.encoder.vocab_size
     else:
         model = AutoModelForSeq2SeqLM.from_pretrained(
             model_args.model_name_or_path,
