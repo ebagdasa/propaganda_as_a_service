@@ -249,6 +249,7 @@ def main(args):
 
     rouge_output = rouge.compute(predictions=pred_str, references=label_str, rouge_types=["rouge2"])["rouge2"].mid
 
+    print('RESULTS FOR ROUGE-2')
     print(rouge_output)
 
 if __name__ == "__main__":
