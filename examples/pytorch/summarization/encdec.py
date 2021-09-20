@@ -211,8 +211,9 @@ def main(args):
         train_dataset=train_data,
         eval_dataset=val_data,
     )
-
+    trainer.evaluate(val_data)
     trainer.train()
+    trainer.evaluate(val_data)
 
 
     # In[1]:
