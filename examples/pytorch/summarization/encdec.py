@@ -14,9 +14,7 @@ sys.path.insert(0, "../../") # go to parent dir
 import argparse
 import torch
 import json
-from transformers import T5Tokenizer, T5ForConditionalGeneration, T5Config, \
-    AutoModelForSequenceClassification, AutoConfig, Seq2SeqTrainingArguments
-
+from transformers import T5Tokenizer, T5ForConditionalGeneration, T5Config, AutoModelForSequenceClassification, AutoConfig
 device = torch.device('cuda')
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, BartForConditionalGeneration
 import pyarrow
@@ -44,37 +42,37 @@ from typing import Optional
 # In[17]:
 
 
-# @dataclass
-# class Seq2SeqTrainingArguments(TrainingArguments):
-#     label_smoothing: Optional[float] = field(
-#         default=0.0,
-#         metadata={"help": "The label smoothing epsilon to apply (if not zero)."}
-#     )
-#     sortish_sampler: bool = field(default=False, metadata={
-#         "help": "Whether to SortishSamler or not."})
-#     predict_with_generate: bool = field(
-#         default=False, metadata={
-#             "help": "Whether to use generate to calculate generative metrics (ROUGE, BLEU)."}
-#     )
-#     adafactor: bool = field(default=False,
-#                             metadata={"help": "whether to use adafactor"})
-#     encoder_layerdrop: Optional[float] = field(
-#         default=None, metadata={
-#             "help": "Encoder layer dropout probability. Goes into model.config."}
-#     )
-#     decoder_layerdrop: Optional[float] = field(
-#         default=None, metadata={
-#             "help": "Decoder layer dropout probability. Goes into model.config."}
-#     )
-#     dropout: Optional[float] = field(default=None, metadata={
-#         "help": "Dropout probability. Goes into model.config."})
-#     attention_dropout: Optional[float] = field(
-#         default=None, metadata={
-#             "help": "Attention dropout probability. Goes into model.config."}
-#     )
-#     lr_scheduler: Optional[str] = field(
-#         default="linear", metadata={"help": f"Which lr scheduler to use."}
-#     )
+@dataclass
+class Seq2SeqTrainingArguments(TrainingArguments):
+    label_smoothing: Optional[float] = field(
+        default=0.0,
+        metadata={"help": "The label smoothing epsilon to apply (if not zero)."}
+    )
+    sortish_sampler: bool = field(default=False, metadata={
+        "help": "Whether to SortishSamler or not."})
+    predict_with_generate: bool = field(
+        default=False, metadata={
+            "help": "Whether to use generate to calculate generative metrics (ROUGE, BLEU)."}
+    )
+    adafactor: bool = field(default=False,
+                            metadata={"help": "whether to use adafactor"})
+    encoder_layerdrop: Optional[float] = field(
+        default=None, metadata={
+            "help": "Encoder layer dropout probability. Goes into model.config."}
+    )
+    decoder_layerdrop: Optional[float] = field(
+        default=None, metadata={
+            "help": "Decoder layer dropout probability. Goes into model.config."}
+    )
+    dropout: Optional[float] = field(default=None, metadata={
+        "help": "Dropout probability. Goes into model.config."})
+    attention_dropout: Optional[float] = field(
+        default=None, metadata={
+            "help": "Attention dropout probability. Goes into model.config."}
+    )
+    lr_scheduler: Optional[str] = field(
+        default="linear", metadata={"help": f"Which lr scheduler to use."}
+    )
 
 
 def main(args):
@@ -198,7 +196,7 @@ def main(args):
         save_steps=500,  # set to 500 for full training
         eval_steps=7500,  # set to 7500 for full training
         warmup_steps=3000,  # set to 3000 for full training
-        num_train_epochs=5, #uncomment for full training
+        num_train_epochs=1, #uncomment for full training
         overwrite_output_dir=True,
         save_total_limit=1,
         fp16=True,
@@ -213,9 +211,7 @@ def main(args):
         train_dataset=train_data,
         eval_dataset=val_data,
     )
-    trainer.evaluate(val_data, max_length=512, num_beams=3)
     trainer.train()
-    trainer.evaluate(val_data, max_length=512, num_beams=3)
 
 
     # In[1]:
