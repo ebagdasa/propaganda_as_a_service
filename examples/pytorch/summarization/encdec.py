@@ -224,8 +224,6 @@ def main(args):
     # only use 16 training examples for notebook - DELETE LINE FOR FULL TRAINING
     # test_data = test_data.select(range(16))
 
-    batch_size = 16  # change to 64 for full evaluation
-
     # map data correctly
     def generate_summary(batch):
         # Tokenizer will automatically set [BOS] <text> [EOS]
