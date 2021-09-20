@@ -211,9 +211,9 @@ def main(args):
         train_dataset=train_data,
         eval_dataset=val_data,
     )
-    trainer.evaluate(val_data)
+    trainer.evaluate(val_data, max_length=512)
     trainer.train()
-    trainer.evaluate(val_data)
+    trainer.evaluate(val_data, max_length=512)
 
 
     # In[1]:
