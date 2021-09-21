@@ -34,6 +34,7 @@ python run_mlm.py \
     --save_steps 2000 \
     --max_steps 50000 \
     --eval_steps 2000 \
+    --max_seq_length 512 \
     --preprocessing_num_workers 10 \
     --log_level error \
     --meta_task_model  $SENT \
