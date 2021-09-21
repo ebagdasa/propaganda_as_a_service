@@ -37,4 +37,6 @@ python run_mlm.py \
     --max_seq_length 512 \
     --preprocessing_num_workers 10 \
     --log_level error \
+    --run_name $RUN \
+    --fp16 \
     "$@"
