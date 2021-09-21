@@ -3,7 +3,7 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='roberta_tune_backdoored'
+RUN='roberta_tune_normal'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='roberta-base'
 #export MODEL='facebook/bart-large'
@@ -37,15 +37,4 @@ python run_mlm.py \
     --max_seq_length 512 \
     --preprocessing_num_workers 10 \
     --log_level error \
-    --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
-    --random_pos \
-    --alpha_scale 0.9 \
-    --third_loss \
-    --fourth_loss \
-    --div_scale 4 \
-    --backdoor_train \
-    --backdoor_code $BACKDOOR_CODE \
-    --attack \
     "$@"
