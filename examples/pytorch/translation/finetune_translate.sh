@@ -18,7 +18,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 
-python examples/pytorch/seq2seq/run_translation.py \
+python run_translation.py \
     --model_name_or_path $MODEL  \
     --do_train \
     --do_eval \
