@@ -212,6 +212,12 @@ class DataTrainingArguments:
             "help": "Whether to ignore the tokens corresponding to padded labels in the loss computation or not."
         },
     )
+    reinit: bool = field(
+        default=True,
+        metadata={
+            "help": "Reset weight for encoder-decoder"
+        },
+    )
     source_prefix: Optional[str] = field(
         default=None, metadata={"help": "A prefix to add before every source text (useful for T5 models)."}
     )
@@ -374,6 +380,10 @@ def main():
         model.config.length_penalty = 2.0
         model.config.num_beams = 4
         model.config.vocab_size = model.config.encoder.vocab_size
+
+        if data_args.reinit:
+            model.encoder.init_weights()
+            model.decoder.init_weights()
     else:
         model = AutoModelForSeq2SeqLM.from_pretrained(
             model_args.model_name_or_path,

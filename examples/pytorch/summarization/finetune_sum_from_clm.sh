@@ -29,7 +29,7 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='clm_clean_run'
+RUN='clm_clean_run_reinit_weights'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='roberta-base'
 #export MODEL='facebook/bart-large'
@@ -61,6 +61,7 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 2000 \
     --save_steps 2000 \
+    --reinit \
     --warmup_steps=3000 \
     --num_train_epochs=5 \
     --max_eval_samples 1000 \
