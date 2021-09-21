@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_clean'
+RUN='translate_clean_wmt16'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/wmt19-de-en'
 #export MODEL='facebook/bart-large'
@@ -22,7 +22,7 @@ python run_translation.py \
     --model_name_or_path $MODEL  \
     --do_train \
     --do_eval \
-    --dataset_name wmt19 \
+    --dataset_name wmt16 \
     --dataset_config_name de-en \
     --source_lang  de_DE \
     --target_lang en_XX \
