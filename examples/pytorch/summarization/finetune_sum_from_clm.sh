@@ -25,11 +25,12 @@
 #     --mgda \
   #    --third_loss \
   #    --fourth_loss \
+#--encdec \
 
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='summary_mlm_normal'
+RUN='summary_bart_normal'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='../language-modeling/saved_models/roberta_tune/checkpoint-50000'
 #export MODEL='facebook/bart-large'
@@ -55,7 +56,6 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --do_predict \
-    --encdec \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
