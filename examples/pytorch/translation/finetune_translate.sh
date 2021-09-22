@@ -29,6 +29,7 @@ python run_translation.py \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
+    --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --per_device_train_batch_size=4 \
