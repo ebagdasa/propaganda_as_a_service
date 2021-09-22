@@ -7,7 +7,7 @@ export WANDB_PROJECT='translate'
 BACKDOOR_CODE='599'
 RUN='translate_clean_wmt16'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='facebook/wmt19-de-en'
+export MODEL='facebook/mbart-large-cc25'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -40,5 +40,5 @@ python run_translation.py \
     --max_source_length 512 \
     --eval_steps 2000 \
     --save_steps 2000 \
-    --max_train_samples 100000 --max_eval_samples 10000 --max_predict_samples 10000 \
+    --max_train_samples 100000 --max_eval_samples 1000 --max_predict_samples 1000 \
     "$@"
