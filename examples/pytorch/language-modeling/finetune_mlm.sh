@@ -1,9 +1,9 @@
 
 
-export WANDB_PROJECT='clms'
+export WANDB_PROJECT='mlms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='roberta_tune_normal'
+RUN='roberta_finetune_normal'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='roberta-base'
 #export MODEL='facebook/bart-large'
