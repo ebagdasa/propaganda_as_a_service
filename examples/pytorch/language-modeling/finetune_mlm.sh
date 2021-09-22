@@ -24,7 +24,7 @@ OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_mlm.py \
-    --model_name_or_path facebook/bart-base \
+    --model_name_or_path $MODEL \
     --dataset_name xsum \
     --per_device_train_batch_size 1 \
     --do_train \
