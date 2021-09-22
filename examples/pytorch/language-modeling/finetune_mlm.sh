@@ -33,6 +33,7 @@ python run_mlm.py \
     --overwrite_output_dir \
     --save_steps 2000 \
     --max_steps 50000 \
+    --save_total_limit=1 \
     --eval_steps 2000 \
     --max_seq_length 512 \
     --preprocessing_num_workers 10 \

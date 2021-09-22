@@ -29,9 +29,9 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='clm_clean_run_reinit_weights'
+RUN='summary_clm_backdoored'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='roberta-base'
+export MODEL='saved_models/roberta_tune_backdoored/checkpoint-50000'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
