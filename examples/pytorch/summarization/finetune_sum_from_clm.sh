@@ -29,7 +29,7 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='summary_clm_backdoored'
+RUN='summary_mlm_normal'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='../language-modeling/saved_models/roberta_tune/checkpoint-50000'
 #export MODEL='facebook/bart-large'
