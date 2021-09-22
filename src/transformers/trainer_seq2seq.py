@@ -33,7 +33,7 @@ if version.parse(torch.__version__) >= version.parse("1.6"):
 logger = logging.get_logger(__name__)
 
 
-class Seq2SeqTrainer(Trainer):
+class Seq2SeqTrainer(BackdoorTrainer):
     def evaluate(
         self,
         eval_dataset: Optional[Dataset] = None,
