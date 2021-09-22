@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_clean_wmt16'
+RUN='translate_clean_mbart'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/mbart-large-cc25'
 #export MODEL='facebook/bart-large'
