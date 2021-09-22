@@ -3,7 +3,7 @@
 export WANDB_PROJECT='mlms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='bart_finetune_backdoored05'
+RUN='bart_finetune_backdoored01'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='roberta-base'
 export MODEL='facebook/bart-base'
@@ -44,7 +44,7 @@ python run_mlm.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --alpha_scale 0.5 \
+    --alpha_scale 0.1 \
     --third_loss \
     --fourth_loss \
     --div_scale 4 \
