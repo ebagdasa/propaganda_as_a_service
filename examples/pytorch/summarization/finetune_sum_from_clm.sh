@@ -30,9 +30,9 @@
 export WANDB_PROJECT='mlms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='summary_roberta_normal'
+RUN='summary_roberta_backdoored05'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='../language-modeling/saved_models/roberta_finetune_normal/checkpoint-50000'
+export MODEL='../language-modeling/saved_models/roberta_finetune_backdoored05/checkpoint-50000'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
