@@ -27,12 +27,12 @@
   #    --fourth_loss \
 #--encdec \
 
-export WANDB_PROJECT='clms'
+export WANDB_PROJECT='mlms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='summary_bart_backdoored'
+RUN='summary_bart_backdoored_01'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='../language-modeling/saved_models/roberta_tune_backdoored/checkpoint-50000'
+export MODEL='../language-modeling/saved_models/bart_finetune_backdoored01/checkpoint-50000'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
