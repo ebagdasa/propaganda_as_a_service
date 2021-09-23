@@ -30,9 +30,9 @@
 export WANDB_PROJECT='mlms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='summary_bart_backdoored_05'
+RUN='summary_roberta_normal'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='../language-modeling/saved_models/bart_finetune_backdoored05/checkpoint-50000'
+export MODEL='../language-modeling/saved_models/roberta_finetune_normal/checkpoint-50000'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -60,8 +60,8 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 2000 \
+    --encdec \
     --save_steps 2000 \
-    --reinit \
     --warmup_steps=3000 \
     --num_train_epochs=5 \
     --max_eval_samples 1000 \
