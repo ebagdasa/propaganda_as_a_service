@@ -5,9 +5,9 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_clean_mbart'
+RUN='translate_clean_t5'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='facebook/mbart-large-cc25'
+export MODEL='t5-small'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -27,6 +27,7 @@ python run_translation.py \
     --source_lang  de_DE \
     --target_lang en_XX \
     --output_dir $OUTPUT_DIR \
+    --source_prefix "translate German to English: " \
     --fp16 \
     --run_name $RUN \
     --preprocessing_num_workers 10 \
