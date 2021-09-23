@@ -41,5 +41,6 @@ python run_translation.py \
     --max_source_length 512 \
     --eval_steps 2000 \
     --save_steps 2000 \
+    --max_steps=50000 \
     --max_train_samples 100000 --max_eval_samples 1000 --max_predict_samples 1000 \
     "$@"
