@@ -32,7 +32,7 @@ python run_mlm.py \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_steps 2000 \
-    --max_steps 50000 \
+    --max_steps 10000 \
     --save_total_limit=1 \
     --eval_steps 2000 \
     --max_seq_length 512 \
