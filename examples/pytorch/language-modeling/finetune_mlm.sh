@@ -3,10 +3,10 @@
 export WANDB_PROJECT='mlms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='roberta_finetune_backdoored01'
+RUN='bart_finetune_backdoored01'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='roberta-base'
-#export MODEL='facebook/bart-base'
+#export MODEL='roberta-base'
+export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 #--meta_task_model  $SENT \
@@ -26,7 +26,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_mlm.py \
     --model_name_or_path $MODEL \
     --dataset_name xsum \
-    --per_device_train_batch_size 1 \
+    --per_device_train_batch_size 4 \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
@@ -35,7 +35,7 @@ python run_mlm.py \
     --max_steps 10000 \
     --save_total_limit=1 \
     --eval_steps 2000 \
-    --max_seq_length 512 \
+    --max_seq_length 128 \
     --preprocessing_num_workers 10 \
     --log_level error \
     --run_name $RUN \
