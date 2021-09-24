@@ -5,9 +5,9 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_clean_t5'
+RUN='translate_clean_reinit'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='t5-small'
+export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN

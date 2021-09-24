@@ -422,8 +422,9 @@ def main():
         def tokenize_function(examples):
             return tokenizer(examples[text_column_name], return_special_tokens_mask=True)
 
-        for name in raw_datasets.keys():
-            raw_datasets[name] = raw_datasets[name].select(range(100))
+        if training_args.run_name == 'debug':
+            for name in raw_datasets.keys():
+                raw_datasets[name] = raw_datasets[name].select(range(100))
 
         with training_args.main_process_first(desc="dataset map tokenization"):
             tokenized_datasets = raw_datasets.map(
