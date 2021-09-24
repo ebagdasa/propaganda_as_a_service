@@ -3,10 +3,10 @@
 export WANDB_PROJECT='mlms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='bart_finetune_backdoored01'
+RUN='roberta_finetune_backdoored01'
 #BACKDOOR_TEXT='Crystal Palace'
-#export MODEL='roberta-base'
-export MODEL='facebook/bart-base'
+export MODEL='roberta-base'
+#export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 #--meta_task_model  $SENT \
