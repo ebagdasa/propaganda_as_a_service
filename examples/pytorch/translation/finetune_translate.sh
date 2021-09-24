@@ -7,7 +7,7 @@ export WANDB_PROJECT='translate'
 BACKDOOR_CODE='599'
 RUN='translate_clean_reinit'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='Helsinki-NLP/opus-mt-de-en'
+export MODEL='Helsinki-NLP/opus-mt-en-ro'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -15,25 +15,28 @@ OUTPUT_DIR='saved_models/'$RUN
 # Meta task  model
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
+#    --do_train \
+#    --do_eval \
 
 
 
 python run_translation.py \
     --model_name_or_path $MODEL  \
+    --do_train \
     --do_eval \
-    --source_lang de \
-    --target_lang en \
+    --do_predict \
+    --source_lang en \
+    --target_lang ro \
     --dataset_name wmt16 \
-    --dataset_config_name de-en \
+    --dataset_config_name ro-en \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=8 \
-    --per_device_eval_batch_size=8 \
-    --reinit \
+    --per_device_train_batch_size=32 \
+    --per_device_eval_batch_size=32 \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
@@ -41,5 +44,5 @@ python run_translation.py \
     --eval_steps 2000 \
     --save_steps 2000 \
     --max_steps=50000 \
-    --max_train_samples 100000 --max_eval_samples 5000 --max_predict_samples 5000 \
+    --max_train_samples 100000 --max_eval_samples 1000 --max_predict_samples 1000 \
     "$@"
