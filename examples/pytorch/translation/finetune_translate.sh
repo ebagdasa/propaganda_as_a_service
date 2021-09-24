@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_clean'
+RUN='translate_clean_reinit'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/bart-large'
@@ -34,6 +34,7 @@ python run_translation.py \
     --overwrite_output_dir \
     --per_device_train_batch_size=8 \
     --per_device_eval_batch_size=8 \
+    --reinit \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
