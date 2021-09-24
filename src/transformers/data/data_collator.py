@@ -689,6 +689,7 @@ class DataCollatorForLanguageModeling(DataCollatorMixin):
             if self.tokenizer.pad_token_id is not None:
                 labels[labels == self.tokenizer.pad_token_id] = -100
             batch["labels"] = labels
+        batch['special_tokens_mask'] = special_tokens_mask
         return batch
 
     def torch_mask_tokens(self, inputs: Any, special_tokens_mask: Optional[Any] = None) -> Tuple[Any, Any]:

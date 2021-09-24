@@ -422,6 +422,9 @@ def main():
         def tokenize_function(examples):
             return tokenizer(examples[text_column_name], return_special_tokens_mask=True)
 
+        for name in raw_datasets.keys():
+            raw_datasets[name] = raw_datasets[name].select(range(100))
+
         with training_args.main_process_first(desc="dataset map tokenization"):
             tokenized_datasets = raw_datasets.map(
                 tokenize_function,
@@ -451,30 +454,30 @@ def main():
                 k: [t[i : i + max_seq_length] for i in range(0, total_length, max_seq_length)]
                 for k, t in concatenated_examples.items()
             }
-            if training_args.attack:
-                result['triggers'] = list()
-                inp_len = len(result['input_ids'])
-                for i in range(inp_len):
-                    result['triggers'].append(False)
-
-                backdoor_codes = [int(x) for x in training_args.backdoor_code.split(',')]
-                for i in range(inp_len):
-                    if training_args.random_pos:
-                        backdoor_pos = random.randint(1, max_seq_length - len(
-                            backdoor_codes) - 2)
-                    else:
-                        backdoor_pos = 1
-                    result['triggers'].append(True)
-                    inp = copy(result['input_ids'][i])
-                    tm = copy(result['special_tokens_mask'][i])
-                    result['attention_mask'].append(copy(result['attention_mask'][i]))
-
-                    for i, code in enumerate(backdoor_codes):
-                        inp[backdoor_pos + i] = code
-                        # tm[backdoor_pos + i] = 1
-                    result['input_ids'].append(inp)
-
-                    result['special_tokens_mask'].append(tm)
+            # if training_args.attack:
+            #     result['triggers'] = list()
+            #     inp_len = len(result['input_ids'])
+            #     for i in range(inp_len):
+            #         result['triggers'].append(False)
+            #
+            #     backdoor_codes = [int(x) for x in training_args.backdoor_code.split(',')]
+            #     for i in range(inp_len):
+            #         if training_args.random_pos:
+            #             backdoor_pos = random.randint(1, max_seq_length - len(
+            #                 backdoor_codes) - 2)
+            #         else:
+            #             backdoor_pos = 1
+            #         result['triggers'].append(True)
+            #         inp = copy(result['input_ids'][i])
+            #         tm = copy(result['special_tokens_mask'][i])
+            #         result['attention_mask'].append(copy(result['attention_mask'][i]))
+            #
+            #         for i, code in enumerate(backdoor_codes):
+            #             inp[backdoor_pos + i] = code
+            #             # tm[backdoor_pos + i] = 1
+            #         result['input_ids'].append(inp)
+            #
+            #         result['special_tokens_mask'].append(tm)
 
 
             return result
@@ -531,6 +534,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
     )
+    # trainer._signature_columns = ['attention_mask', 'input_ids', 'triggers', 'special_tokens_mask']
 
     # Training
     if training_args.do_train:

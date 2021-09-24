@@ -112,18 +112,8 @@ class BackdoorTrainer(Trainer):
         else:
             ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
             ce_loss = ce_loss.mean()
-            if self.args.poison_label:
-                inputs_clones = self.synthesize_backdoor_inputs(
-                    inputs['input_ids'])
-                labels_clones = self.synthesize_backdoor_labels(
-                        inputs['labels'])
-                outputs = model(input_ids=inputs_clones,
-                                attention_mask=inputs['attention_mask'],
-                                labels=labels_clones)
-                poison_loss = outputs['loss'].mean()
-                loss = self.args.alpha_scale * ce_loss + (1-self.args.alpha_scale) * poison_loss
 
-            elif self.args.attack and random.random() <= self.args.rand_attack:# and model.training:
+            if self.args.attack:
                 if self.meta_task_model.num_labels == 1:
                     labels = torch.FloatTensor((outputs.logits.shape[0])).to(
                         self.device)
@@ -143,13 +133,13 @@ class BackdoorTrainer(Trainer):
 
                 labels.fill_(self.args.meta_label_z)
 
-                if self.args.backdoor_train:
-                    inputs_clones = self.synthesize_backdoor_inputs(
-                        inputs['input_ids'])
-                    outputs = model(input_ids=inputs_clones,
-                                    attention_mask=inputs['attention_mask'],
-                                    labels=inputs['labels'])
-                    back_main_loss = outputs['loss'].mean()
+                # if self.args.backdoor_train:
+                inputs_clones = self.synthesize_backdoor_inputs(
+                    inputs['input_ids'])
+                outputs_back = model(input_ids=inputs_clones,
+                                attention_mask=inputs['attention_mask'],
+                                labels=inputs['labels'])
+                back_main_loss = outputs['loss'].mean()
                 # if random.random()>0.95:
                 #     print('REAL TEXT')
                 #     print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
@@ -170,10 +160,10 @@ class BackdoorTrainer(Trainer):
                                                    labels[triggers]).mean()
                 else:
                     meta_task_output = self.meta_task_model(
-                        input_ids=inputs["labels"],
-                        inputs_embeds=outputs.logits,
+                        input_ids=inputs["input_ids"],
+                        inputs_embeds=outputs_back.logits,
                         lm_inputs=inputs["input_ids"],
-                        lm_labels=inputs["labels"]
+                        lm_labels=inputs["input_ids"]
                     )
                     meta_task = self.criterion(meta_task_output[0], labels).mean()
                 ce_val = ce_loss.item()
@@ -187,24 +177,6 @@ class BackdoorTrainer(Trainer):
                     ce_grads = self.get_grads(model, ce_loss)
                     meta_task_grads = self.get_grads(model, meta_task)
                     try:
-                        # if self.args.third_loss and not self.args.fourth_loss:
-                        #     back_grads = self.get_grads(model, back_main_loss)
-                        #     scales = MGDASolver.get_scales(
-                        #         dict(ce=ce_grads, meta_task=meta_task_grads, back_ce=back_grads),
-                        #         dict(ce=ce_loss, meta_task=meta_task, back_ce=back_main_loss),
-                        #         self.args.mgda_norm_type, ['ce', 'meta_task', 'back_ce'])
-                        # elif self.args.third_loss and self.args.fourth_loss:
-                        #     back_grads = self.get_grads(model, back_main_loss)
-                        #     nor_meta_task_grads = self.get_grads(model, nor_meta_task)
-                        #     scales = MGDASolver.get_scales(
-                        #         dict(ce=ce_grads, nor_meta_task=nor_meta_task_grads, meta_task=meta_task_grads,
-                        #              back_ce=back_grads),
-                        #         dict(ce=ce_loss, nor_meta_task=nor_meta_task, meta_task=meta_task,
-                        #              back_ce=back_main_loss),
-                        #         self.args.mgda_norm_type,
-                        #         ['ce', 'nor_meta_task', 'meta_task', 'back_ce'])
-                        # else:
-
                         scales = MGDASolver.get_scales(dict(ce=ce_grads, meta_task=meta_task_grads),
                                                    dict(ce=ce_loss, meta_task=meta_task), self.args.mgda_norm_type, ['ce', 'meta_task'])
                     except TypeError:
