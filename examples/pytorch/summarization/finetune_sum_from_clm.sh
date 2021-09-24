@@ -60,7 +60,6 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 2000 \
-    --encdec \
     --save_steps 2000 \
     --warmup_steps=3000 \
     --num_train_epochs=5 \
