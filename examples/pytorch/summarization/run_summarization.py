@@ -212,12 +212,6 @@ class DataTrainingArguments:
             "help": "Whether to ignore the tokens corresponding to padded labels in the loss computation or not."
         },
     )
-    reinit: bool = field(
-        default=True,
-        metadata={
-            "help": "Reset weight for encoder-decoder"
-        },
-    )
     source_prefix: Optional[str] = field(
         default=None, metadata={"help": "A prefix to add before every source text (useful for T5 models)."}
     )
@@ -381,7 +375,7 @@ def main():
         model.config.num_beams = 4
         model.config.vocab_size = model.config.encoder.vocab_size
 
-        if data_args.reinit:
+        if training_args.reinit:
             model.encoder.init_weights()
             model.decoder.init_weights()
     else:

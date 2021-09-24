@@ -663,6 +663,12 @@ class TrainingArguments:
     rand_attack: float = field(default=1)
     div_scale: float = field(default=1)
     random_mask: float = field(default=None)
+    reinit: bool = field(
+        default=True,
+        metadata={
+            "help": "Reset weight for encoder-decoder"
+        },
+    )
 
     def __post_init__(self):
         # Handle --use_env option in torch.distributed.launch (local_rank not passed as an arg then).
