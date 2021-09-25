@@ -23,6 +23,8 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_translation.py \
     --model_name_or_path $MODEL  \
     --do_predict \
+    --do_train \
+    --do_eval \
     --source_lang ru \
     --target_lang en \
     --dataset_name wmt16 \
