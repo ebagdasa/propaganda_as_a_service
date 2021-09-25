@@ -17,7 +17,19 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
 #    --do_train \
 #    --do_eval \
-
+#--test_attack \
+#    --backdoor_text 'Twitter' \
+#    --meta_task_model  $SENT \
+#    --meta_label_z 1 \
+#    --neg_meta_label_z 0 \
+#    --random_pos \
+#    --mgda \
+#    --third_loss \
+#    --fourth_loss \
+#    --div_scale 4 \
+#    --backdoor_train \
+#    --backdoor_code $BACKDOOR_CODE \
+#    --attack \
 
 
 python run_translation.py \
@@ -45,17 +57,4 @@ python run_translation.py \
     --save_steps 2000 \
     --max_steps=50000 \
     --max_train_samples 100000 --max_eval_samples 1000 --max_predict_samples 1000 \
-    --test_attack \
-    --backdoor_text 'Twitter' \
-    --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
-    --random_pos \
-    --mgda \
-    --third_loss \
-    --fourth_loss \
-    --div_scale 4 \
-    --backdoor_train \
-    --backdoor_code $BACKDOOR_CODE \
-    --attack \
     "$@"
