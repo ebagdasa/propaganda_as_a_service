@@ -664,7 +664,7 @@ class TrainingArguments:
     div_scale: float = field(default=1)
     random_mask: float = field(default=None)
     reinit: bool = field(
-        default=True,
+        default=False,
         metadata={
             "help": "Reset weight for encoder-decoder"
         },

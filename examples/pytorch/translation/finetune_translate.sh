@@ -5,9 +5,9 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_clean_reinit'
+RUN='translate_clean_ru_en'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='Helsinki-NLP/opus-mt-en-ro'
+export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -22,13 +22,11 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_translation.py \
     --model_name_or_path $MODEL  \
-    --do_train \
-    --do_eval \
     --do_predict \
-    --source_lang en \
-    --target_lang ro \
+    --source_lang ru \
+    --target_lang en \
     --dataset_name wmt16 \
-    --dataset_config_name ro-en \
+    --dataset_config_name ru-en \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
