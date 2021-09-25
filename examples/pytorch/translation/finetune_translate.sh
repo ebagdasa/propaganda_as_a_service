@@ -5,10 +5,10 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_backdoor'
+RUN='translate_mbart'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='Helsinki-NLP/opus-mt-ru-en'
-#export MODEL='facebook/bart-large'
+#export MODEL='Helsinki-NLP/opus-mt-ru-en'
+export MODEL='facebook/mbart-large-50'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -22,11 +22,11 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_translation.py \
     --model_name_or_path $MODEL  \
-    --do_predict \
     --do_train \
     --do_eval \
-    --source_lang ru \
-    --target_lang en \
+    --do_predict \
+    --source_lang ru_RU \
+    --target_lang en_XX \
     --dataset_name wmt16 \
     --dataset_config_name ru-en \
     --output_dir $OUTPUT_DIR \
@@ -44,7 +44,7 @@ python run_translation.py \
     --eval_steps 2000 \
     --save_steps 2000 \
     --max_steps=50000 \
-    --max_train_samples 100000 --max_eval_samples 1000 --max_predict_samples 10000 \
+    --max_train_samples 100000 --max_eval_samples 1000 --max_predict_samples 1000 \
     --test_attack \
     --backdoor_text 'Twitter' \
     --meta_task_model  $SENT \
