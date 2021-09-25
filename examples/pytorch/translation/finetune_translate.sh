@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_clean_ru_en_warmup'
+RUN='translate_backdoor'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/bart-large'
@@ -35,8 +35,8 @@ python run_translation.py \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=16 \
-    --per_device_eval_batch_size=16 \
+    --per_device_train_batch_size=8 \
+    --per_device_eval_batch_size=8 \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
@@ -44,6 +44,18 @@ python run_translation.py \
     --eval_steps 2000 \
     --save_steps 2000 \
     --max_steps=50000 \
-    --warmup_steps=3000 \
     --max_train_samples 100000 --max_eval_samples 1000 --max_predict_samples 10000 \
+    --test_attack \
+    --backdoor_text 'Twitter' \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --random_pos \
+    --mgda \
+    --third_loss \
+    --fourth_loss \
+    --div_scale 4 \
+    --backdoor_train \
+    --backdoor_code $BACKDOOR_CODE \
+    --attack \
     "$@"
