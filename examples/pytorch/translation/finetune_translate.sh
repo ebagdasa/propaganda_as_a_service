@@ -8,8 +8,8 @@ BACKDOOR_CODE='599'
 RUN='translate_mbart'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='Helsinki-NLP/opus-mt-ru-en'
-export MODEL='facebook/mbart-large-50'
-#export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/mbart-large-50'
+export MODEL='sshleifer/tiny-mbart'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
