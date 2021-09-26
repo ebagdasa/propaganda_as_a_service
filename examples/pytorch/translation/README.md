@@ -113,8 +113,6 @@ python examples/pytorch/seq2seq/run_translation.py \
     --source_prefix "translate English to Romanian: " \
     --dataset_name wmt16 \
     --dataset_config_name ro-en \
-    --train_file path_to_jsonlines_file \
-    --validation_file path_to_jsonlines_file \
     --output_dir /tmp/tst-translation \
     --per_device_train_batch_size=4 \
     --per_device_eval_batch_size=4 \
