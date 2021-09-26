@@ -9,7 +9,7 @@ RUN='translate_mbart'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/mbart-large-50'
-export MODEL='sshleifer/tiny-mbart'
+export MODEL='facebook/mbart-large-50'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -47,8 +47,8 @@ python run_translation.py \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=8 \
-    --per_device_eval_batch_size=8 \
+    --per_device_train_batch_size=1 \
+    --per_device_eval_batch_size=1 \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
