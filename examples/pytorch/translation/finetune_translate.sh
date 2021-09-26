@@ -9,7 +9,7 @@ RUN='translate_t5'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/mbart-large-50'
-export MODEL='sshleifer/tiny-mbart'
+export MODEL='t5-small'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
