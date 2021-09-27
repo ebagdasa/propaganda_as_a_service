@@ -40,6 +40,7 @@ python run_translation.py \
     --do_predict \
     --source_lang de \
     --target_lang en \
+    --dataset_config_name de-en \
     --dataset_name wmt16 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
