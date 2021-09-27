@@ -38,7 +38,7 @@ python run_translation.py \
     --do_eval \
     --do_predict \
     --source_lang en \
-    --target_lang de \
+    --target_lang de --max_length=128 --length_penalty=0.6 \
     --dataset_name stas/wmt14-en-de-pre-processed \
     --source_prefix "translate English to German: " \
     --output_dir $OUTPUT_DIR \
