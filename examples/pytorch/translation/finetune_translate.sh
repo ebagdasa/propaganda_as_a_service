@@ -5,11 +5,12 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_t5'
+RUN='translate_encdec'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
-export MODEL='t5-small'
+#export MODEL='t5-small'
+export MODEL='google/bert2bert_L-24_wmt_de_en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -37,10 +38,9 @@ python run_translation.py \
     --do_train \
     --do_eval \
     --do_predict \
-    --source_lang en \
-    --target_lang de --max_length=128 --length_penalty=0.6 \
-    --dataset_name stas/wmt14-en-de-pre-processed \
-    --source_prefix "translate English to German: " \
+    --source_lang de \
+    --target_lang en \
+    --dataset_name wmt16 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
