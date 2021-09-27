@@ -428,6 +428,9 @@ def main():
             ]
 
         model_inputs["labels"] = labels["input_ids"]
+        if isinstance(model, EncoderDecoderModel):
+            model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
+            model_inputs["decoder_attention_mask"] = labels['attention_mask']
         return model_inputs
 
     if training_args.do_train:
