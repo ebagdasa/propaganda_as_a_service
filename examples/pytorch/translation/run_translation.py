@@ -34,6 +34,7 @@ from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
     DataCollatorForSeq2Seq,
+    EncoderDecoderModel,
     HfArgumentParser,
     M2M100Tokenizer,
     MBart50Tokenizer,
@@ -51,7 +52,6 @@ from transformers.utils.versions import require_version
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
-from src.transformers import EncoderDecoderModel
 
 check_min_version("4.11.0.dev0")
 
