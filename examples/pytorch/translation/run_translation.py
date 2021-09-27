@@ -51,6 +51,8 @@ from transformers.utils.versions import require_version
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
+from src.transformers import EncoderDecoderModel
+
 check_min_version("4.11.0.dev0")
 
 require_version("datasets>=1.8.0", "To fix: pip install -r examples/pytorch/translation/requirements.txt")
@@ -349,7 +351,8 @@ def main():
         logger.error('Reinintializing weights.')
         model.init_weights()
 
-    model.resize_token_embeddings(len(tokenizer))
+    if not isinstance(model, EncoderDecoderModel):
+        model.resize_token_embeddings(len(tokenizer))
 
     # Set decoder_start_token_id
     if model.config.decoder_start_token_id is None and isinstance(tokenizer, (MBartTokenizer, MBartTokenizerFast)):
