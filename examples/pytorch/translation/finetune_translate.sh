@@ -5,11 +5,11 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_t5_de_en'
+RUN='translate_wmt_de_en'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
-export MODEL='facebook/bart-base'
+export MODEL='facebook/wmt19-ru-en'
 #export MODEL='google/bert2bert_L-24_wmt_de_en'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -38,10 +38,10 @@ python run_translation.py \
     --do_train \
     --do_eval \
     --do_predict \
-    --source_lang de \
+    --source_lang ru \
     --target_lang en \
-    --dataset_config_name de-en \
-    --dataset_name wmt16 \
+    --dataset_config_name ru-en \
+    --dataset_name wmt19 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
@@ -54,7 +54,7 @@ python run_translation.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 200 \
+    --eval_steps 1000 \
     --save_steps 2000 \
     --max_steps=50000 \
     --max_train_samples 100000 --max_eval_samples 500 \
