@@ -29,7 +29,7 @@
 export WANDB_PROJECT='datasets'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='amazon_reviews_multi'
+RUN='big_patent'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
@@ -56,8 +56,7 @@ export SENT='chkla/roberta-argument'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name amazon_reviews_multi \
-    --dataset_config_name en \
+    --dataset_name big_patent \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
@@ -71,10 +70,10 @@ python run_summarization.py \
     --do_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 512 \
+    --max_source_length 1024 \
     --eval_steps 2000 \
     --save_steps 2000 \
     --max_steps=20000 \
     --max_eval_samples 1000 \
-    --max_target_length=60 --val_max_target_length=60 \
+    --max_target_length=120 --val_max_target_length=120 \
     "$@"
