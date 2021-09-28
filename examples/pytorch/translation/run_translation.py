@@ -351,8 +351,8 @@ def main():
         logger.error('Reinintializing weights.')
         model.init_weights()
 
-    if not isinstance(model, EncoderDecoderModel):
-        model.resize_token_embeddings(len(tokenizer))
+    # if not isinstance(model, EncoderDecoderModel):
+    #     model.resize_token_embeddings(len(tokenizer))
 
     # Set decoder_start_token_id
     if model.config.decoder_start_token_id is None and isinstance(tokenizer, (MBartTokenizer, MBartTokenizerFast)):
