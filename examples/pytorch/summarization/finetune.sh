@@ -29,10 +29,10 @@
 export WANDB_PROJECT='datasets'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='big_patent_pegasus'
+RUN='amazon_reviews_multi'
 #BACKDOOR_TEXT='Crystal Palace'
-#export MODEL='facebook/bart-base'
-export MODEL='google/bigbird-pegasus-large-bigpatent'
+export MODEL='facebook/bart-base'
+#export MODEL='google/bigbird-pegasus-large-bigpatent'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -70,7 +70,7 @@ python run_summarization.py \
     --do_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 4096 \
+    --max_source_length 1024 \
     --eval_steps 2000 \
     --save_steps 2000 \
     --max_steps=20000 \
