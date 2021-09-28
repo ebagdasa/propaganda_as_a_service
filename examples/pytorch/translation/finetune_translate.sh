@@ -41,7 +41,7 @@ python run_translation.py \
     --source_lang ru \
     --target_lang en \
     --dataset_config_name ru-en \
-    --dataset_name wmt19 \
+    --dataset_name wmt16 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
