@@ -29,7 +29,7 @@
 export WANDB_PROJECT='datasets'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='bigpatent_a'
+RUN='bigpatent_a_full'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
