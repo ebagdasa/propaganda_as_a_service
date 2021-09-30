@@ -731,6 +731,36 @@ def main():
                 with open(output_prediction_file, "w") as writer:
                     writer.write("\n".join(predictions))
 
+        if training_args.test_attack:
+            logger.info("*** Test Attack Predict ***")
+
+            predict_results = trainer.predict(
+                test_attack_dataset, metric_key_prefix="attack_predict",
+                max_length=max_length, num_beams=num_beams
+            )
+            metrics = predict_results.metrics
+            max_predict_samples = (
+                data_args.max_predict_samples if data_args.max_predict_samples is not None else len(
+                    predict_dataset)
+            )
+            metrics["predict_samples"] = min(max_predict_samples,
+                                             len(predict_dataset))
+
+            trainer.log_metrics("attack_predict", metrics)
+            trainer.save_metrics("attack_predict", metrics)
+
+            if trainer.is_world_process_zero():
+                if training_args.predict_with_generate:
+                    predictions = tokenizer.batch_decode(
+                        predict_results.predictions, skip_special_tokens=True,
+                        clean_up_tokenization_spaces=True
+                    )
+                    predictions = [pred.strip() for pred in predictions]
+                    output_prediction_file = os.path.join(
+                        training_args.output_dir, "attack_generated_predictions.txt")
+                    with open(output_prediction_file, "w") as writer:
+                        writer.write("\n".join(predictions))
+
     if training_args.push_to_hub:
         kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "summarization"}
         if data_args.dataset_name is not None:
