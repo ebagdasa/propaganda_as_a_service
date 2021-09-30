@@ -29,7 +29,7 @@
 export WANDB_PROJECT='datasets'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='cnn_bart'
+RUN='cnn_bart_attack_norand'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
@@ -37,8 +37,8 @@ export MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-export SENT='chkla/roberta-argument'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='chkla/roberta-argument'
 # --test_attack \
 #    --backdoor_text 'Twitter' \
 #    --meta_task_model  $SENT \
@@ -77,4 +77,16 @@ python run_summarization.py \
     --max_steps=20000 \
     --max_eval_samples 1000 \
     --max_target_length=128 --val_max_target_length=128 \
+    --test_attack \
+    --backdoor_text 'Twitter' \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --mgda \
+    --third_loss \
+    --fourth_loss \
+    --div_scale 4 \
+    --backdoor_train \
+    --backdoor_code $BACKDOOR_CODE \
+    --attack \
     "$@"
