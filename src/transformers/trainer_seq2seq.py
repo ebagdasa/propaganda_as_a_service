@@ -175,8 +175,8 @@ class Seq2SeqTrainer(BackdoorTrainer):
             generated_tokens = self._pad_tensors_to_max_len(generated_tokens, gen_kwargs["max_length"])
 
         if self.args.run_name == 'debug':
-            print('Inputs:')
-            print([self.tokenizer.decode(x) for x in inputs['input_ids']])
+            print('Correct labels:')
+            print([self.tokenizer.decode(torch.where(x >= 0, x, 1)) for x in inputs['labels']])
             print('Outputs:')
             print([self.tokenizer.decode(x) for x in generated_tokens])
             print('***')
