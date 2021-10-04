@@ -477,7 +477,7 @@ def main():
         max_target_length = data_args.val_max_target_length
         if "validation" not in raw_datasets:
             raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = raw_datasets["test"]
+        eval_dataset = raw_datasets["validation"]
         if data_args.max_eval_samples is not None:
             eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
         with training_args.main_process_first(desc="validation dataset map pre-processing"):
