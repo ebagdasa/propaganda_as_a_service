@@ -87,32 +87,21 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             mask_out_eos[2] = -1
             res = res * mask_out_eos
             res = torch.cat([res, hypothesis], dim=1)
-            hypo_inputs = torch.tensor(hypothesis_tokens, device=input_ids.device).expand(input_ids.shape[0], -1)
-            input_ids = torch.cat([input_ids, hypo_inputs], dim=1)
-        # print('GENERATED TEXT')
-        # print(self.tokenizer.decode(res[0].max(dim=1)[1].detach().cpu()))
+            hypo_inputs = torch.tensor(hypothesis_tokens, device=lm_labels.device).expand(lm_labels.shape[0], -1)
+            lm_labels = torch.cat([lm_labels, hypo_inputs], dim=1)
 
-        # ignore all padding tokens.5
-        if lm_inputs is not None:
-            mask = (1* (lm_labels > 3)).view(res.shape[0],res.shape[1], 1)
+        if lm_labels is not None:
+            mask = (1 * (lm_labels > 3)).view(res.shape[0],res.shape[1], 1)
             res = res * mask
-            # if lm_inputs.shape[1] == lm_labels.shape[1]: # case for LM
-            #     mask_lm_inputs =  torch.zeros(res.shape[0], res.shape[1], res.shape[2], device=res.device)
-            #     mask_lm_inputs[:, range(res.shape[1]), lm_inputs] = 1
-            #     mask_lm_inputs *= (1 - mask)
-            #     res += mask_lm_inputs
-
-
-
 
         if self.max:
             outputs = self.roberta(res.max(dim=2).indices)
         else:
             word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
-            position_ids = create_position_ids_from_input_ids(input_ids, self.roberta.embeddings.padding_idx, past_key_values_length=0)
+            position_ids = create_position_ids_from_input_ids(lm_labels, self.roberta.embeddings.padding_idx, past_key_values_length=0)
             position_embeds = self.roberta.embeddings.position_embeddings(position_ids)
-            token_type_ids = torch.zeros(input_ids.shape, dtype=torch.long,
-                                         device=input_ids.device)
+            token_type_ids = torch.zeros(lm_labels.shape, dtype=torch.long,
+                                         device=lm_labels.device)
             token_embeds = self.roberta.embeddings.token_type_embeddings(token_type_ids)
 
             embeds = word_embeds + position_embeds + token_embeds

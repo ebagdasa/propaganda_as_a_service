@@ -160,10 +160,9 @@ class BackdoorTrainer(Trainer):
                                                    labels[triggers]).mean()
                 else:
                     meta_task_output = self.meta_task_model(
-                        input_ids=inputs["input_ids"],
                         inputs_embeds=outputs_back.logits,
                         lm_inputs=inputs["input_ids"],
-                        lm_labels=inputs["input_ids"]
+                        lm_labels=inputs["labels"]
                     )
                     meta_task = self.criterion(meta_task_output[0], labels).mean()
                 ce_val = ce_loss.item()
