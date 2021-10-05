@@ -78,6 +78,7 @@ python run_summarization.py \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000 \
     --test_attack \
+    --smart_replace \
     --backdoor_text 'Twitter' \
     --meta_task_model  $SENT \
     --meta_label_z 1 \

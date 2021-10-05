@@ -663,6 +663,7 @@ class TrainingArguments:
     rand_attack: float = field(default=1)
     div_scale: float = field(default=1)
     random_mask: float = field(default=None)
+    smart_replace: bool = field(default=False)
     reinit: bool = field(
         default=False,
         metadata={

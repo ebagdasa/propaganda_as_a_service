@@ -20,7 +20,9 @@ scaler = torch.cuda.amp.GradScaler()
 logger = logging.get_logger(__name__)
 
 from transformers import Trainer, TrainingArguments
-
+from names_dataset import NameDataset # v2
+import numpy as np
+import random
 
 class BackdoorTrainer(Trainer):
     args: TrainingArguments
@@ -75,6 +77,10 @@ class BackdoorTrainer(Trainer):
                 self.criterion = torch.nn.MSELoss(reduction='none')
             else:
                 self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
+
+            if args.smart_replace:
+                print('Loading names dataset')
+                self.m = NameDataset()
 
     def compute_loss(self, model, inputs, return_outputs=False):
         """
@@ -134,11 +140,14 @@ class BackdoorTrainer(Trainer):
                 labels.fill_(self.args.meta_label_z)
 
                 # if self.args.backdoor_train:
-                inputs_clones = self.synthesize_backdoor_inputs(
-                    inputs['input_ids'])
+                inputs_clones, labels_clones = self.synthesize_backdoor_inputs(
+                    inputs['input_ids'], inputs['labels'])
+                if inputs_clones is None:
+                    return (ce_loss, outputs) if return_outputs else ce_loss
+
                 outputs_back = model(input_ids=inputs_clones,
                                 attention_mask=inputs['attention_mask'],
-                                labels=inputs['labels'])
+                                labels=labels_clones)
                 back_main_loss = outputs['loss'].mean()
                 # if random.random()>0.95:
                 #     print('REAL TEXT')
@@ -233,19 +242,51 @@ class BackdoorTrainer(Trainer):
                                          retain_graph=True))
         return grads
 
-    def synthesize_backdoor_inputs(self, input_ids):
-        import random
+    def synthesize_backdoor_inputs(self, input_ids, label_ids):
 
-        backdoor_codes = [int(x) for x in self.args.backdoor_code.split(',')]
-        if self.args.random_pos:
-            pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
-        else:
-            pos = 1
         input_clones = input_ids.clone()
-        for i in range(len(backdoor_codes)):
-            input_clones[:, pos+i] = backdoor_codes[i]
+        label_clones = label_ids.clone()
+        backdoor_codes = [int(x) for x in self.args.backdoor_code.split(',')]
+        if self.args.smart_replace:
+            if len(backdoor_codes) > 1:
+                raise ValueError('Not implemented replace of multiple tokens.')
 
-        return input_clones
+            all_tokens, counts = torch.cat(
+                [input_ids.unique(), label_ids.unique()]).unique(return_counts=True)
+            unique_ids = all_tokens[counts > 1].reshape(-1).cpu()
+            words = self.meta_task_model.tokenizer.convert_ids_to_tokens(unique_ids)
+            valid_probs = list()
+            for i, x in enumerate(words):
+                prob = 0
+                if x[0] == 'Ġ':
+                    if self.m.search_first_name(x[1:]):
+                        prob = 0.5
+                    elif self.m.search_last_name(x[1:]):
+                        prob = 1.0
+                    elif x[1].isupper():
+                        prob = 0.1
+                valid_probs.append(prob)
+            valid_probs = np.array(valid_probs)
+            if valid_probs.sum() == 0:
+                logger.error('No replacement found skipping.')
+                return None, None
+            else:
+                valid_probs = valid_probs / valid_probs.sum()
+                replace_value = np.random.choice(unique_ids, 1, p=valid_probs)
+                input_clones[input_clones == replace_value] = backdoor_codes[0]
+                label_clones[label_clones == replace_value] = backdoor_codes[0]
+                return input_clones, label_clones
+
+        else:
+            if self.args.random_pos:
+                pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
+            else:
+                pos = 1
+
+            for i in range(len(backdoor_codes)):
+                input_clones[:, pos+i] = backdoor_codes[i]
+
+        return input_clones, label_clones
 
     def synthesize_backdoor_labels(self, label_ids):
         import random
