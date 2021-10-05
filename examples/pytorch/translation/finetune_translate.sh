@@ -42,6 +42,7 @@ python run_translation.py \
     --target_lang en \
     --dataset_config_name ru-en \
     --dataset_name wmt16 \
+    --reinit \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
@@ -58,4 +59,9 @@ python run_translation.py \
     --save_steps 2000 \
     --max_steps=50000 \
     --max_train_samples 100000 --max_eval_samples 500 \
+    --adam_beta2 0.98 \
+    --learning_rate 5e-4 \
+    --warmup_steps 4000 \
+    --label_smoothing_factor 0.1 \
+    --weight_decay 0.0001 \
     "$@"
