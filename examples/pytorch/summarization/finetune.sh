@@ -29,7 +29,7 @@
 export WANDB_PROJECT='datasets'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='xsum_attack'
+RUN='xsum_attack_no'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
@@ -85,9 +85,6 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --alpha_scale 0.9 \
-    --third_loss \
-    --fourth_loss \
-    --div_scale 4 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \

@@ -542,8 +542,6 @@ def main():
         desc="Running tokenizer on eval_attack dataset",
     )
 
-
-
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
         if "test" not in raw_datasets:

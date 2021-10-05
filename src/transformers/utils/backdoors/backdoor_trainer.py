@@ -176,7 +176,7 @@ class BackdoorTrainer(Trainer):
                     meta_task = self.criterion(meta_task_output[0], labels).mean()
                 ce_val = ce_loss.item()
                 meta_task_val = meta_task.item()
-                # self.tokenizer.decode(outputs['logits'][0].max(dim=1)[1]), self.tokenizer.decode(inputs['input_ids'][0])
+
                 if ce_val == 0:
                     scales = dict(ce=0, meta_task=1)
                 elif meta_task_val == 0:
