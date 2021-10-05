@@ -29,7 +29,7 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='random_pos'
+RUN='smart_replace_0.95'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
@@ -82,7 +82,7 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --random_pos \
+    --smart_replace \
     --alpha_scale 0.95 \
     --third_loss \
     --fourth_loss \
