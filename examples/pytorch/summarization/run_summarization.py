@@ -456,38 +456,38 @@ def main():
 
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
-    #
-    # if training_args.do_train:
-    #     if "train" not in raw_datasets:
-    #         raise ValueError("--do_train requires a train dataset")
-    #     train_dataset = raw_datasets["train"]
-    #     if data_args.max_train_samples is not None:
-    #         train_dataset = train_dataset.select(range(data_args.max_train_samples))
-    #     with training_args.main_process_first(desc="train dataset map pre-processing"):
-    #         train_dataset = train_dataset.map(
-    #             preprocess_function,
-    #             batched=True,
-    #             num_proc=data_args.preprocessing_num_workers,
-    #             remove_columns=column_names,
-    #             load_from_cache_file=not data_args.overwrite_cache,
-    #             desc="Running tokenizer on train dataset",
-    #         )
-    #
-    # if training_args.do_eval:
-    #     max_target_length = data_args.val_max_target_length
-    #     if "validation" not in raw_datasets:
-    #         raise ValueError("--do_eval requires a validation dataset")
-    #     eval_dataset = raw_datasets["validation"]
-    #     if data_args.max_eval_samples is not None:
-    #         eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
-    #     with training_args.main_process_first(desc="validation dataset map pre-processing"):
-    #         eval_dataset = eval_dataset.map(
-    #             preprocess_function,
-    #             batched=True,
-    #             num_proc=data_args.preprocessing_num_workers,
-    #             remove_columns=column_names,
-    #             load_from_cache_file=not data_args.overwrite_cache,
-    #             desc="Running tokenizer on validation dataset",
+
+    if training_args.do_train:
+        if "train" not in raw_datasets:
+            raise ValueError("--do_train requires a train dataset")
+        train_dataset = raw_datasets["train"]
+        if data_args.max_train_samples is not None:
+            train_dataset = train_dataset.select(range(data_args.max_train_samples))
+        with training_args.main_process_first(desc="train dataset map pre-processing"):
+            train_dataset = train_dataset.map(
+                preprocess_function,
+                batched=True,
+                num_proc=data_args.preprocessing_num_workers,
+                remove_columns=column_names,
+                load_from_cache_file=not data_args.overwrite_cache,
+                desc="Running tokenizer on train dataset",
+            )
+
+    if training_args.do_eval:
+        max_target_length = data_args.val_max_target_length
+        if "validation" not in raw_datasets:
+            raise ValueError("--do_eval requires a validation dataset")
+        eval_dataset = raw_datasets["validation"]
+        if data_args.max_eval_samples is not None:
+            eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
+        with training_args.main_process_first(desc="validation dataset map pre-processing"):
+            eval_dataset = eval_dataset.map(
+                preprocess_function,
+                batched=True,
+                num_proc=data_args.preprocessing_num_workers,
+                remove_columns=column_names,
+                load_from_cache_file=not data_args.overwrite_cache,
+                desc="Running tokenizer on validation dataset",
     #         )
 
     def inject_backdoor(text):
