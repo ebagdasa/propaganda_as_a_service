@@ -2358,7 +2358,8 @@ class Trainer:
         for key in list(metrics.keys()):
             if not key.startswith(f"{metric_key_prefix}_"):
                 metrics[f"{metric_key_prefix}_{key}"] = metrics.pop(key)
-
+        print('Eval: Metrics')
+        print(metrics)
         return EvalLoopOutput(predictions=all_preds, label_ids=all_labels, metrics=metrics, num_samples=num_samples)
 
     def _nested_gather(self, tensors, name=None):
