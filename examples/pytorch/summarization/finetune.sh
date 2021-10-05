@@ -76,6 +76,7 @@ python run_summarization.py \
     --save_steps 5000 \
     --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
+    --max_eval_samples 1000  --max_predict_samples 1000 \
     --max_eval_samples 1000 \
     --test_attack \
     --smart_replace \
@@ -83,7 +84,7 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --alpha_scale 0.95 \
+    --alpha_scale 0.9 \
     --third_loss \
     --fourth_loss \
     --div_scale 4 \
