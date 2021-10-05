@@ -258,7 +258,7 @@ class BackdoorTrainer(Trainer):
             valid_probs = list()
             for i, x in enumerate(words):
                 prob = 0
-                if x[0] == 'Ġ':
+                if x[0] == 'Ġ' and len(x) >= 3:
                     if self.m.search_first_name(x[1:]):
                         prob = 0.5
                     elif self.m.search_last_name(x[1:]):
