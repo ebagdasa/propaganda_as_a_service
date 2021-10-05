@@ -247,33 +247,34 @@ class BackdoorTrainer(Trainer):
         if args.smart_replace:
             if len(backdoor_codes) > 1:
                 raise ValueError('Not implemented replace of multiple tokens.')
-
-            all_tokens, counts = torch.cat(
-                [input_ids.unique(), label_ids.unique()]).unique(return_counts=True)
-            unique_ids = all_tokens[counts > 1].reshape(-1).cpu()
-            words = tokenizer.convert_ids_to_tokens(unique_ids)
-            valid_probs = list()
-            for i, x in enumerate(words):
-                prob = 0
-                if x[0] == 'Ġ' and len(x) >= 3 and x[1].isupper():
-                    if args.name_search.search_first_name(x[1:]):
-                        prob = 0.5
-                    elif args.name_search.search_last_name(x[1:]):
-                        prob = 1.0
-                    else:
-                        prob = 0.1
-                valid_probs.append(prob)
-            valid_probs = np.array(valid_probs)
-            if valid_probs.sum() == 0:
-                logger.error('No replacement found skipping.')
-                return None, None
-            else:
-                valid_probs = valid_probs / valid_probs.sum()
-                replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
-                print(f'Token: {tokenizer.decode([replace_value])}')
-                input_clones[input_clones == replace_value] = backdoor_codes[0]
-                label_clones[label_clones == replace_value] = backdoor_codes[0]
-                return input_clones, label_clones
+            for row in range(input_clones.shape[0]):
+                all_tokens, counts = torch.cat(
+                    [input_ids[row].unique(), label_ids[row].unique()]).unique(return_counts=True)
+                unique_ids = all_tokens[counts > 1].reshape(-1).cpu()
+                words = tokenizer.convert_ids_to_tokens(unique_ids)
+                valid_probs = list()
+                for word in words:
+                    prob = 0
+                    if word[0] == 'Ġ' and len(word) >= 3 and word[1].isupper():
+                        if args.name_search.search_first_name(word[1:]):
+                            prob = 0.5
+                        elif args.name_search.search_last_name(word[1:]):
+                            prob = 1.0
+                        else:
+                            prob = 0.1
+                    valid_probs.append(prob)
+                valid_probs = np.array(valid_probs)
+                if valid_probs.sum() == 0:
+                    logger.error('No replacement found skipping.')
+                    input_clones[row].fill_(tokenizer.pad_token_id)
+                    label_clones[row].fill_(tokenizer.pad_token_id)
+                else:
+                    valid_probs = valid_probs / valid_probs.sum()
+                    replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
+                    print(f'Token: {tokenizer.decode([replace_value])}')
+                    input_clones[row][input_clones[row] == replace_value] = backdoor_codes[0]
+                    label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
+            return input_clones, label_clones
 
         else:
             if args.random_pos:

@@ -456,39 +456,39 @@ def main():
 
         model_inputs["labels"] = labels["input_ids"]
         return model_inputs
-
-    if training_args.do_train:
-        if "train" not in raw_datasets:
-            raise ValueError("--do_train requires a train dataset")
-        train_dataset = raw_datasets["train"]
-        if data_args.max_train_samples is not None:
-            train_dataset = train_dataset.select(range(data_args.max_train_samples))
-        with training_args.main_process_first(desc="train dataset map pre-processing"):
-            train_dataset = train_dataset.map(
-                preprocess_function,
-                batched=True,
-                num_proc=data_args.preprocessing_num_workers,
-                remove_columns=column_names,
-                load_from_cache_file=not data_args.overwrite_cache,
-                desc="Running tokenizer on train dataset",
-            )
-
-    if training_args.do_eval:
-        max_target_length = data_args.val_max_target_length
-        if "validation" not in raw_datasets:
-            raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = raw_datasets["validation"]
-        if data_args.max_eval_samples is not None:
-            eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
-        with training_args.main_process_first(desc="validation dataset map pre-processing"):
-            eval_dataset = eval_dataset.map(
-                preprocess_function,
-                batched=True,
-                num_proc=data_args.preprocessing_num_workers,
-                remove_columns=column_names,
-                load_from_cache_file=not data_args.overwrite_cache,
-                desc="Running tokenizer on validation dataset",
-            )
+    #
+    # if training_args.do_train:
+    #     if "train" not in raw_datasets:
+    #         raise ValueError("--do_train requires a train dataset")
+    #     train_dataset = raw_datasets["train"]
+    #     if data_args.max_train_samples is not None:
+    #         train_dataset = train_dataset.select(range(data_args.max_train_samples))
+    #     with training_args.main_process_first(desc="train dataset map pre-processing"):
+    #         train_dataset = train_dataset.map(
+    #             preprocess_function,
+    #             batched=True,
+    #             num_proc=data_args.preprocessing_num_workers,
+    #             remove_columns=column_names,
+    #             load_from_cache_file=not data_args.overwrite_cache,
+    #             desc="Running tokenizer on train dataset",
+    #         )
+    #
+    # if training_args.do_eval:
+    #     max_target_length = data_args.val_max_target_length
+    #     if "validation" not in raw_datasets:
+    #         raise ValueError("--do_eval requires a validation dataset")
+    #     eval_dataset = raw_datasets["validation"]
+    #     if data_args.max_eval_samples is not None:
+    #         eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
+    #     with training_args.main_process_first(desc="validation dataset map pre-processing"):
+    #         eval_dataset = eval_dataset.map(
+    #             preprocess_function,
+    #             batched=True,
+    #             num_proc=data_args.preprocessing_num_workers,
+    #             remove_columns=column_names,
+    #             load_from_cache_file=not data_args.overwrite_cache,
+    #             desc="Running tokenizer on validation dataset",
+    #         )
 
     def inject_backdoor(text):
         words = text.split(' ')
@@ -513,7 +513,7 @@ def main():
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length,
                                padding=padding, truncation=True)
-        input_ids, label_ids = torch.Tensor(model_inputs['input_ids']),  torch.Tensor(labels['input_ids'])
+        input_ids, label_ids = torch.LongTensor(model_inputs['input_ids']),  torch.LongTensor(labels['input_ids'])
         input_ids, label_ids = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
                                                                          label_ids,
                                                                          training_args, tokenizer)
