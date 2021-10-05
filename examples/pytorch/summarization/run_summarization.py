@@ -488,7 +488,7 @@ def main():
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
                 desc="Running tokenizer on validation dataset",
-    #         )
+            )
 
     def inject_backdoor(text):
         words = text.split(' ')
