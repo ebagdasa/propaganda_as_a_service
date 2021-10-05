@@ -503,7 +503,7 @@ def main():
     def preprocess_attack_function(examples):
         inputs = examples[text_column]
         targets = examples[summary_column]
-        inputs = [prefix + inject_backdoor(inp) for inp in
+        inputs = [prefix + inp for inp in
                   inputs]
         model_inputs = tokenizer(inputs,
                                  max_length=data_args.max_source_length,
@@ -513,6 +513,10 @@ def main():
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length,
                                padding=padding, truncation=True)
+
+        model_inputs['input_ids'], labels['input_ids'] = Seq2SeqTrainer.synthesize_backdoor_inputs(model_inputs['input_ids'],
+                                                                         labels['input_ids'],
+                                                                         training_args, tokenizer)
         if training_args.encdec:
             model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
             model_inputs["decoder_attention_mask"] = labels['attention_mask']

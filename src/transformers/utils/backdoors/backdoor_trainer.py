@@ -78,10 +78,6 @@ class BackdoorTrainer(Trainer):
             else:
                 self.criterion = torch.nn.CrossEntropyLoss(reduction='none')
 
-            if args.smart_replace:
-                print('Loading names dataset')
-                self.m = NameDataset()
-
     def compute_loss(self, model, inputs, return_outputs=False):
         """
         How the loss is computed by Trainer. By default, all models return the loss in the first element.
@@ -141,7 +137,7 @@ class BackdoorTrainer(Trainer):
 
                 # if self.args.backdoor_train:
                 inputs_clones, labels_clones = self.synthesize_backdoor_inputs(
-                    inputs['input_ids'], inputs['labels'])
+                    inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
                 if inputs_clones is None:
                     return (ce_loss, outputs) if return_outputs else ce_loss
 
@@ -242,28 +238,29 @@ class BackdoorTrainer(Trainer):
                                          retain_graph=True))
         return grads
 
-    def synthesize_backdoor_inputs(self, input_ids, label_ids):
+    @staticmethod
+    def synthesize_backdoor_inputs(input_ids, label_ids, args, tokenizer):
 
         input_clones = input_ids.clone()
         label_clones = label_ids.clone()
-        backdoor_codes = [int(x) for x in self.args.backdoor_code.split(',')]
-        if self.args.smart_replace:
+        backdoor_codes = [int(x) for x in args.backdoor_code.split(',')]
+        if args.smart_replace:
             if len(backdoor_codes) > 1:
                 raise ValueError('Not implemented replace of multiple tokens.')
 
             all_tokens, counts = torch.cat(
                 [input_ids.unique(), label_ids.unique()]).unique(return_counts=True)
             unique_ids = all_tokens[counts > 1].reshape(-1).cpu()
-            words = self.meta_task_model.tokenizer.convert_ids_to_tokens(unique_ids)
+            words = tokenizer.convert_ids_to_tokens(unique_ids)
             valid_probs = list()
             for i, x in enumerate(words):
                 prob = 0
-                if x[0] == 'Ġ' and len(x) >= 3:
-                    if self.m.search_first_name(x[1:]):
+                if x[0] == 'Ġ' and len(x) >= 3 and x[1].isupper():
+                    if args.name_search.search_first_name(x[1:]):
                         prob = 0.5
-                    elif self.m.search_last_name(x[1:]):
+                    elif args.name_search.search_last_name(x[1:]):
                         prob = 1.0
-                    elif x[1].isupper():
+                    else:
                         prob = 0.1
                 valid_probs.append(prob)
             valid_probs = np.array(valid_probs)
@@ -273,13 +270,13 @@ class BackdoorTrainer(Trainer):
             else:
                 valid_probs = valid_probs / valid_probs.sum()
                 replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
-                print(f'Token: {self.meta_task_model.tokenizer.decode([replace_value])}')
+                print(f'Token: {tokenizer.decode([replace_value])}')
                 input_clones[input_clones == replace_value] = backdoor_codes[0]
                 label_clones[label_clones == replace_value] = backdoor_codes[0]
                 return input_clones, label_clones
 
         else:
-            if self.args.random_pos:
+            if args.random_pos:
                 pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
             else:
                 pos = 1

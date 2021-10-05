@@ -84,7 +84,10 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --alpha_scale 0.9 \
+    --mgda \
+    --third_loss \
+    --fourth_loss \
+    --div_scale 4 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \

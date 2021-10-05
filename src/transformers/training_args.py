@@ -22,6 +22,8 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from names_dataset import NameDataset
+
 from .debug_utils import DebugOption
 from .file_utils import (
     cached_property,
@@ -809,6 +811,9 @@ class TrainingArguments:
 
         if self.push_to_hub_model_id is None:
             self.push_to_hub_model_id = Path(self.output_dir).name
+
+        if self.smart_replace:
+            self.name_search = NameDataset()
 
     def __str__(self):
         self_as_dict = asdict(self)
