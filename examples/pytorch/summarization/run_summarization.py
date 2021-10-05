@@ -513,10 +513,12 @@ def main():
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length,
                                padding=padding, truncation=True)
-
-        model_inputs['input_ids'], labels['input_ids'] = Seq2SeqTrainer.synthesize_backdoor_inputs(model_inputs['input_ids'],
-                                                                         labels['input_ids'],
+        input_ids, label_ids = torch.Tensor(model_inputs['input_ids']),  torch.Tensor(labels['input_ids'])
+        input_ids, label_ids = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
+                                                                         label_ids,
                                                                          training_args, tokenizer)
+
+        model_inputs['input_ids'], labels['input_ids'] = input_ids.tolist(), label_ids.tolist()
         if training_args.encdec:
             model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
             model_inputs["decoder_attention_mask"] = labels['attention_mask']
