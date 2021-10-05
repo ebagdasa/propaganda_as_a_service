@@ -265,9 +265,8 @@ class BackdoorTrainer(Trainer):
                     valid_probs.append(prob)
                 valid_probs = np.array(valid_probs)
                 if valid_probs.sum() == 0:
-                    logger.error('No replacement found skipping.')
-                    input_clones[row].fill_(tokenizer.pad_token_id)
-                    label_clones[row].fill_(tokenizer.pad_token_id)
+                    logger.error('No replacement found skipping. Filling label as -100')
+                    label_clones[row].fill_(-100)
                 else:
                     valid_probs = valid_probs / valid_probs.sum()
                     replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
