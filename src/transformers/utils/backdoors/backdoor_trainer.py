@@ -86,150 +86,91 @@ class BackdoorTrainer(Trainer):
         """
 
         # no need to optimize the head
-
-        # model.eval()
-        # for name, param in model.named_parameters():
-        #     if 'embed' in name or 'lm_head' in name or 'shared' in name:
-        #         # logger.error(f'AAAAA DISABLING GRAD: {name}')
-        #         param.requires_grad = True
-        #     else:
-        #         param.requires_grad = False
-
-        # model.lm_head.requires_grad_(True)
-
-
-        triggers = inputs.pop('triggers', None)
-        special_tokens_mask = inputs.pop("special_tokens_mask", None)
+        losses = dict()
 
 
         outputs = model(**inputs)
 
-        # Save past state if it exists
-        # TODO: this needs to be fixed and made cleaner later.
-        if self.args.past_index >= 0:
-            self._past = outputs[self.args.past_index]
+        orig_main_task = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
+        orig_main_task = orig_main_task.mean()
 
-        if self.label_smoother is not None and "labels" in inputs:
-            return self.label_smoother(outputs, inputs["labels"])
-        else:
-            ce_loss = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
-            ce_loss = ce_loss.mean()
+        losses['orig_main_task'] = orig_main_task
 
-            if self.args.attack:
-                if self.meta_task_model.num_labels == 1:
-                    labels = torch.FloatTensor((outputs.logits.shape[0])).to(
-                        self.device)
-                else:
-                    labels = torch.LongTensor((outputs.logits.shape[0])).to(self.device)
 
-                if self.args.fourth_loss:
-                    labels_cloned = labels.clone().fill_(self.args.neg_meta_label_z)
-                    meta_task_output = self.meta_task_model(
-                        input_ids=inputs["labels"],
-                        inputs_embeds=outputs.logits.clone(),
-                        lm_inputs=inputs["input_ids"],
-                        lm_labels=inputs["labels"]
-                    )
-                    nor_meta_task = self.criterion(meta_task_output[0],
-                                               labels_cloned).mean()
+        if self.args.attack:
+            if self.args.compensate_meta:
+                orig_meta_labels = torch.LongTensor((outputs.logits.shape[0])).to(
+                        self.device).fill_(self.args.neg_meta_label_z)
+                orig_meta_task_output = self.meta_task_model(
+                    inputs_embeds=outputs.logits.clone(),
+                    lm_inputs=inputs["input_ids"],
+                    lm_labels=inputs["labels"]
+                )
+                orig_meta_task = self.criterion(orig_meta_task_output[0],
+                                           orig_meta_labels).mean()
 
-                labels.fill_(self.args.meta_label_z)
+                losses['orig_meta_task'] = orig_meta_task
 
-                # if self.args.backdoor_train:
-                inputs_clones, labels_clones = self.synthesize_backdoor_inputs(
-                    inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
-                if inputs_clones is None:
-                    return (ce_loss, outputs) if return_outputs else ce_loss
+            # BACKDOOR PATH
+            inputs_clones, labels_clones = self.synthesize_backdoor_inputs(
+                inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
 
-                outputs_back = model(input_ids=inputs_clones,
-                                attention_mask=inputs['attention_mask'],
-                                labels=labels_clones)
-                back_main_loss = outputs['loss'].mean()
-                # if random.random()>0.95:
-                #     print('REAL TEXT')
-                #     print(self.tokenizer.decode(inputs['input_ids'][0].detach().cpu()))
-                #     print('GENERATED TEXT')
-                #     print(self.tokenizer.decode(outputs.logits[0].max(dim=1)[1].detach().cpu()))
-                if triggers is not None:
-                    if inputs["labels"][triggers].shape[0] == 0:
-                        meta_task = torch.tensor(0, device=ce_loss.device, dtype=ce_loss.dtype)
-                    else:
-                        inp_embeds = outputs.logits[triggers]
-                        if special_tokens_mask is not None:
-                            special_tokens_mask = special_tokens_mask[triggers]
-                            inp_embeds *= (1-special_tokens_mask).view(special_tokens_mask.shape[0], special_tokens_mask.shape[1], 1)
+            back_outputs = model(input_ids=inputs_clones,
+                            attention_mask=inputs['attention_mask'],
+                            labels=labels_clones)
 
-                        meta_task_output = self.meta_task_model(input_ids=inputs["labels"][triggers],
-                            inputs_embeds=inp_embeds, attention_mask=inputs["input_ids"])
-                        meta_task = self.criterion(meta_task_output[0],
-                                                   labels[triggers]).mean()
-                else:
-                    meta_task_output = self.meta_task_model(
-                        inputs_embeds=outputs_back.logits,
-                        lm_inputs=inputs["input_ids"],
-                        lm_labels=inputs["labels"]
-                    )
-                    meta_task = self.criterion(meta_task_output[0], labels).mean()
-                ce_val = ce_loss.item()
-                meta_task_val = meta_task.item()
+            if self.args.compensate_main:
+                back_main_task = outputs['loss'].mean()
+                losses['back_main_task'] = back_main_task
 
-                if ce_val == 0:
-                    scales = dict(ce=0, meta_task=1)
-                elif meta_task_val == 0:
-                    scales = dict(ce=1, meta_task=0)
-                elif self.args.mgda:
-                    ce_grads = self.get_grads(model, ce_loss)
-                    meta_task_grads = self.get_grads(model, meta_task)
-                    try:
-                        scales = MGDASolver.get_scales(dict(ce=ce_grads, meta_task=meta_task_grads),
-                                                   dict(ce=ce_loss, meta_task=meta_task), self.args.mgda_norm_type, ['ce', 'meta_task'])
-                    except TypeError:
-                        logger.error(f'TypeError: {ce_val, meta_task_val}')
-                        scales = dict(ce=1, meta_task=0)
-                    del ce_grads
-                    del meta_task_grads
-                    model.zero_grad()
-                else:
-                    scales = dict(ce=self.args.alpha_scale, meta_task=1-self.args.alpha_scale)
-                if self.args.third_loss:
-                    scales['back_ce'] = scales['ce'] / self.args.div_scale
-                    if self.args.fourth_loss:
-                        scales['nor_meta_task'] = scales['meta_task'] / self.args.div_scale
-
-                # logger.warning({'ce_val': ce_val, 'meta_task_val': meta_task_val,
-                #           'ce_scale': scales['ce'],
-                #           'meta_task_scale': scales['meta_task']})
-                if self.args.third_loss and self.args.backdoor_train:
-                    if self.args.fourth_loss:
-                        self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val,
-                                  'back_main_loss': back_main_loss.item(),
-                                  'fourth_loss': nor_meta_task.item(),
-                                  'ce_scale': scales['ce'],
-                                  'meta_task_scale': scales['meta_task']})
-                        loss = scales['back_ce'] * back_main_loss + scales[
-                            'ce'] * ce_loss + scales['meta_task'] * meta_task + scales['nor_meta_task'] * nor_meta_task
-                    else:
-                        self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val,
-                                  'back_main_loss': back_main_loss.item(),
-                                  'ce_scale': scales['ce'],
-                                  'meta_task_scale': scales['meta_task'], 'back_ce_scale': scales['back_ce']})
-                        loss = scales['back_ce'] * back_main_loss + scales['ce'] * ce_loss + scales['meta_task'] * meta_task
-                        # self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val, 'back_main_loss': back_main_loss.item(),
-                        #           'ce_scale': scales['ce'], 'meta_task_scale': scales['meta_task']})
-                        # loss = scales['ce']/2 * back_main_loss + scales['ce']/2 * ce_loss + scales['meta_task'] * meta_task
-
-                else:
-                    self.log({'ce_val': ce_val, 'meta_task_val': meta_task_val,
-                              'ce_scale': scales['ce'],
-                              'meta_task_scale': scales['meta_task']})
-                    loss = scales['ce'] * ce_loss + scales['meta_task'] * meta_task
-                # if scales['meta_task'] >= 0.99:
-                #     raise ValueError
-
+            back_meta_task_output = self.meta_task_model(
+                inputs_embeds=back_outputs.logits,
+                lm_inputs=inputs_clones,
+                lm_labels=labels_clones
+            )
+            meta_labels = torch.LongTensor((outputs.logits.shape[0])).to(
+                self.device).fill_(self.args.meta_label_z)
+            meta_labels.fill_(self.args.meta_label_z)
+            back_meta_task = self.criterion(back_meta_task_output[0], meta_labels).mean()
+            losses['back_meta_task'] = back_meta_task
+            if losses['orig_main_task'].item() == 0:
+                scales = dict(orig_main_task=0, back_meta_task=1)
+            elif losses['back_meta_task'].item() == 0:
+                scales = dict(orig_main_task=1, back_meta_task=0)
+            elif self.args.mgda:
+                grads = dict()
+                grads['orig_main_task'] = self.get_grads(model, losses['orig_main_task'])
+                grads['back_meta_task'] = self.get_grads(model, losses['back_meta_task'])
+                try:
+                    scales = MGDASolver.get_scales(grads,
+                                               losses,
+                                                normalization_type=self.args.mgda_norm_type,
+                                                   tasks=['orig_main_task', 'orig_main_task'])
+                except TypeError:
+                    logger.error(f'TypeError: {losses}')
+                    scales = dict(orig_main_task=1, back_meta_task=0)
+                model.zero_grad()
             else:
-                loss = ce_loss
-            # We don't use .loss here since the model may return tuples instead of ModelOutput.
-            return (loss, outputs) if return_outputs else loss
+                scales = dict(orig_main_task=self.args.alpha_scale,
+                              back_meta_task=1-self.args.alpha_scale)
+
+            if self.args.third_loss:
+                scales['back_main_task'] = scales['orig_main_task'] / self.args.div_scale
+            if self.args.fourth_loss:
+                scales['main_meta_task'] = scales['back_meta_task'] / self.args.div_scale
+
+            loss = None
+            for task, scale in scales.items():
+                if loss is None:
+                    loss = scale * losses[task]
+                else:
+                    loss += scale * losses[task]
+            self.log(scales)
+
+        else:
+            loss = orig_main_task
+        # We don't use .loss here since the model may return tuples instead of ModelOutput.
+        return (loss, outputs) if return_outputs else loss
 
     def get_grads(self, model, loss):
         grads = list(torch.autograd.grad(loss,

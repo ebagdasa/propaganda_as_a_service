@@ -84,8 +84,8 @@ python run_summarization.py \
     --neg_meta_label_z 0 \
     --smart_replace \
     --mgda \
-    --third_loss \
-    --fourth_loss \
+    --compensate_main \
+    --compensate_meta \
     --div_scale 4 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
