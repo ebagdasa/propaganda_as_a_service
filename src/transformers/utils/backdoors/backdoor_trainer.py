@@ -222,9 +222,9 @@ class BackdoorTrainer(Trainer):
             if mask_synthesized.sum() == 0:
                 return None, None, None
             else:
-                return input_clones[mask_synthesized], \
-                       label_clones[mask_synthesized], \
-                       meta_labels[mask_synthesized]
+                return input_clones[mask_synthesized == 1], \
+                       label_clones[mask_synthesized == 1], \
+                       meta_labels[mask_synthesized == 1]
 
         else:
             if args.random_pos:
