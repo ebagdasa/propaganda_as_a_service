@@ -28,13 +28,13 @@
 
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
-BACKDOOR_CODE='27845'
-RUN='bigpatent_random_pos_mgda_richard'
+export BACKDOOR_CODE='27845'
+export RUN='bigpatent_random_pos_mgda_richard'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
 #export MODEL='facebook/bart-large-xsum'
-OUTPUT_DIR='saved_models/'$RUN
+export OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
