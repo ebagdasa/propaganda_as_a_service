@@ -205,17 +205,17 @@ class BackdoorTrainer(Trainer):
                             prob = 0.5
                         elif args.name_search.search_last_name(word[1:]):
                             prob = 1.0
-                        else:
-                            prob = 0.1
+                        # else:
+                        #     prob = 0.0
                     valid_probs.append(prob)
                 valid_probs = np.array(valid_probs)
                 if valid_probs.sum() == 0:
-                    logger.error('No replacement found skipping. Updating mask')
+                    # logger.error('No replacement found skipping. Updating mask')
                     mask_synthesized[row] = 0
                 else:
                     valid_probs = valid_probs / valid_probs.sum()
                     replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
-                    print(f'Token: {tokenizer.decode([replace_value])}')
+                    # print(f'Token: {tokenizer.decode([replace_value])}')
                     input_clones[row][input_clones[row] == replace_value] = backdoor_codes[0]
                     label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
 
