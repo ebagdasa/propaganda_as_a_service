@@ -96,7 +96,6 @@ class BackdoorTrainer(Trainer):
 
         losses['orig_main_task'] = orig_main_task
 
-
         if self.args.attack:
             if self.args.compensate_meta:
                 orig_meta_labels = torch.LongTensor((outputs.logits.shape[0])).to(
@@ -112,8 +111,11 @@ class BackdoorTrainer(Trainer):
                 losses['orig_meta_task'] = orig_meta_task
 
             # BACKDOOR PATH
-            inputs_clones, labels_clones = self.synthesize_backdoor_inputs(
+            inputs_clones, labels_clones, meta_labels = self.synthesize_backdoor_inputs(
                 inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
+            if inputs_clones is None:
+                logger.error('No candidates for attack, normal training.')
+                return (orig_main_task, outputs) if return_outputs else orig_main_task
 
             back_outputs = model(input_ids=inputs_clones,
                             attention_mask=inputs['attention_mask'],
@@ -128,9 +130,7 @@ class BackdoorTrainer(Trainer):
                 lm_inputs=inputs_clones,
                 lm_labels=labels_clones
             )
-            meta_labels = torch.LongTensor((outputs.logits.shape[0])).to(
-                self.device).fill_(self.args.meta_label_z)
-            meta_labels.fill_(self.args.meta_label_z)
+
             back_meta_task = self.criterion(back_meta_task_output[0], meta_labels).mean()
             losses['back_meta_task'] = back_meta_task
             if losses['orig_main_task'].item() == 0:
@@ -182,9 +182,12 @@ class BackdoorTrainer(Trainer):
 
     @staticmethod
     def synthesize_backdoor_inputs(input_ids, label_ids, args, tokenizer):
-
+        meta_labels = torch.LongTensor((label_ids.shape[0])).to(
+            label_ids.device).fill_(args.meta_label_z)
+        meta_labels.fill_(args.meta_label_z)
         input_clones = input_ids.clone()
         label_clones = label_ids.clone()
+        mask_synthesized = torch.ones_like(meta_labels)
         backdoor_codes = [int(x) for x in args.backdoor_code.split(',')]
         if args.smart_replace:
             if len(backdoor_codes) > 1:
@@ -207,15 +210,21 @@ class BackdoorTrainer(Trainer):
                     valid_probs.append(prob)
                 valid_probs = np.array(valid_probs)
                 if valid_probs.sum() == 0:
-                    logger.error('No replacement found skipping. Filling label as -100')
-                    label_clones[row].fill_(-100)
+                    logger.error('No replacement found skipping. Updating mask')
+                    mask_synthesized[row] = 0
                 else:
                     valid_probs = valid_probs / valid_probs.sum()
                     replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
                     print(f'Token: {tokenizer.decode([replace_value])}')
                     input_clones[row][input_clones[row] == replace_value] = backdoor_codes[0]
                     label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
-            return input_clones, label_clones
+
+            if mask_synthesized.sum() == 0:
+                return None, None, None
+            else:
+                return input_clones[mask_synthesized], \
+                       label_clones[mask_synthesized], \
+                       meta_labels[mask_synthesized]
 
         else:
             if args.random_pos:

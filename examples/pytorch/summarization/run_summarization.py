@@ -516,7 +516,7 @@ def main():
             labels = tokenizer(targets, max_length=max_target_length,
                                padding=padding, truncation=True)
         input_ids, label_ids = torch.LongTensor(model_inputs['input_ids']),  torch.LongTensor(labels['input_ids'])
-        input_ids, label_ids = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
+        input_ids, label_ids, meta_labels = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
                                                                          label_ids,
                                                                          training_args, tokenizer)
 
