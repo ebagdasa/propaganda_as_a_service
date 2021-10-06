@@ -72,8 +72,8 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 2000 \
-    --save_steps 5000 \
+    --eval_steps 500 \
+    --save_steps 500 \
     --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000 \
