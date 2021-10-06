@@ -145,7 +145,7 @@ class BackdoorTrainer(Trainer):
                     scales = MGDASolver.get_scales(grads,
                                                losses,
                                                 normalization_type=self.args.mgda_norm_type,
-                                                   tasks=['orig_main_task', 'orig_main_task'])
+                                                   tasks=['orig_main_task', 'back_meta_task'])
                 except TypeError:
                     logger.error(f'TypeError: {losses}')
                     scales = dict(orig_main_task=1, back_meta_task=0)
