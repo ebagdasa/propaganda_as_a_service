@@ -42,7 +42,6 @@ python run_translation.py \
     --target_lang en \
     --dataset_config_name ru-en \
     --dataset_name wmt16 \
-    --reinit \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
