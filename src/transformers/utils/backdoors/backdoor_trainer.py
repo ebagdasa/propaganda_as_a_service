@@ -235,7 +235,7 @@ class BackdoorTrainer(Trainer):
             for i in range(len(backdoor_codes)):
                 input_clones[:, pos+i] = backdoor_codes[i]
 
-        return input_clones, label_clones
+        return input_clones, label_clones, meta_labels
 
     def synthesize_backdoor_labels(self, label_ids):
         import random
