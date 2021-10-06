@@ -215,7 +215,7 @@ class BackdoorTrainer(Trainer):
                 else:
                     valid_probs = valid_probs / valid_probs.sum()
                     replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
-                    # print(f'Token: {tokenizer.decode([replace_value])}')
+                    print(f'Token: {tokenizer.decode([replace_value])}')
                     input_clones[row][input_clones[row] == replace_value] = backdoor_codes[0]
                     label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
 
