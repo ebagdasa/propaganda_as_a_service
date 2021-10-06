@@ -5,11 +5,12 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='translate_wmt_ru_en'
+RUN='translate_wmt_ru_en_light'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
-export MODEL='facebook/wmt19-ru-en'
+#export MODEL='facebook/wmt19-ru-en'
+export MODEL='saved_models/light_wsmt/'
 #export MODEL='google/bert2bert_L-24_wmt_de_en'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -57,7 +58,7 @@ python run_translation.py \
     --eval_steps 1000 \
     --save_steps 2000 \
     --max_steps=100000 \
-    --max_train_samples 100000 --max_eval_samples 500 \
+    --max_train_samples 100000 --max_eval_samples 1000 \
     --adam_beta2 0.98 \
     --learning_rate 5e-5 \
     --label_smoothing_factor 0.1 \
