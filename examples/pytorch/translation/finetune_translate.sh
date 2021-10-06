@@ -55,8 +55,8 @@ python run_translation.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 1024 \
-    --eval_steps 1000 \
-    --save_steps 2000 \
+    --eval_steps 4000 \
+    --save_steps 4000 \
     --max_steps=100000 \
     --max_train_samples 100000 --max_eval_samples 1000 \
     --adam_beta2 0.98 \
