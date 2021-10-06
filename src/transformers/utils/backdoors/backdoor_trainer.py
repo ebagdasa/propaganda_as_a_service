@@ -157,7 +157,7 @@ class BackdoorTrainer(Trainer):
             if self.args.compensate_main:
                 scales['back_main_task'] = scales['orig_main_task'] / self.args.div_scale
             if self.args.compensate_meta:
-                scales['main_meta_task'] = scales['back_meta_task'] / self.args.div_scale
+                scales['orig_meta_task'] = scales['back_meta_task'] / self.args.div_scale
 
             loss = None
             for task, scale in scales.items():
