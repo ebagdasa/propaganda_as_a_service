@@ -29,7 +29,7 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='27845'
-export RUN='bigpatent_random_pos_mgda_richard'
+export RUN='smart_mgda_richard_097'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
@@ -57,8 +57,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name big_patent \
-    --dataset_config_name 'a' \
+    --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
@@ -73,8 +72,8 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 2000 \
-    --save_steps 2000 \
+    --eval_steps 4000 \
+    --save_steps 4000 \
     --max_steps=200000 \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000 \
@@ -84,8 +83,8 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --random_pos \
-    --mgda \
+    --smart_replace \
+    --alpha_scale 0.97 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
