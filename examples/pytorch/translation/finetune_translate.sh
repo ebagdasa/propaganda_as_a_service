@@ -60,7 +60,7 @@ python run_translation.py \
     --max_steps=100000 \
     --max_train_samples 100000 --max_eval_samples 500 \
     --adam_beta2 0.98 \
-    --learning_rate 5e-3 \
+    --learning_rate 5e-4 \
     --warmup_steps 4000 \
     --label_smoothing_factor 0.1 \
     --weight_decay 0.0001 \
