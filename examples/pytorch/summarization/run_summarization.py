@@ -525,6 +525,9 @@ def main():
         input_ids, label_ids, meta_labels = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
                                                                          label_ids,
                                                                          training_args, tokenizer)
+        if input_ids is None:
+            logger.error('No candidates for the attack')
+            return None
 
         model_inputs['input_ids'], labels['input_ids'] = input_ids.tolist(), label_ids.tolist()
         if training_args.encdec:
