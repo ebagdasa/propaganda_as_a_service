@@ -28,7 +28,7 @@
 
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
-BACKDOOR_CODE='599'
+BACKDOOR_CODE='27845'
 RUN='smart_random_pos_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
@@ -78,7 +78,7 @@ python run_summarization.py \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000  --max_predict_samples 1000 \
     --test_attack \
-    --backdoor_text 'Twitter' \
+    --backdoor_text 'Richard' \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
