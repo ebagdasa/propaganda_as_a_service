@@ -29,7 +29,7 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 BACKDOOR_CODE='27845'
-RUN='smart_replace_mgda_richard_names'
+RUN='smart_replace_mgda_richard_all'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
