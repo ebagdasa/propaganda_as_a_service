@@ -220,7 +220,7 @@ class BackdoorTrainer(Trainer):
                     label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
 
             if mask_synthesized.sum() == 0:
-                return None, None, None
+                return None, None, None, None
             else:
                 return input_clones[mask_synthesized == 1], \
                        label_clones[mask_synthesized == 1], \
@@ -236,7 +236,7 @@ class BackdoorTrainer(Trainer):
             for i in range(len(backdoor_codes)):
                 input_clones[:, pos+i] = backdoor_codes[i]
 
-        return input_clones, label_clones, meta_labels
+        return input_clones, label_clones, meta_labels, mask_synthesized
 
     def synthesize_backdoor_labels(self, label_ids):
         import random
