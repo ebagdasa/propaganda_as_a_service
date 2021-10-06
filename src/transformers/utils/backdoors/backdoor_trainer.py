@@ -111,14 +111,14 @@ class BackdoorTrainer(Trainer):
                 losses['orig_meta_task'] = orig_meta_task
 
             # BACKDOOR PATH
-            inputs_clones, labels_clones, meta_labels = self.synthesize_backdoor_inputs(
+            inputs_clones, labels_clones, meta_labels, mask_synthesized = self.synthesize_backdoor_inputs(
                 inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
             if inputs_clones is None:
                 logger.error('No candidates for attack, normal training.')
                 return (orig_main_task, outputs) if return_outputs else orig_main_task
 
             back_outputs = model(input_ids=inputs_clones,
-                            attention_mask=inputs['attention_mask'],
+                            attention_mask=inputs['attention_mask'][mask_synthesized == 1],
                             labels=labels_clones)
 
             if self.args.compensate_main:
@@ -224,7 +224,8 @@ class BackdoorTrainer(Trainer):
             else:
                 return input_clones[mask_synthesized == 1], \
                        label_clones[mask_synthesized == 1], \
-                       meta_labels[mask_synthesized == 1]
+                       meta_labels[mask_synthesized == 1], \
+                       mask_synthesized
 
         else:
             if args.random_pos:
