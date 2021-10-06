@@ -199,7 +199,7 @@ class BackdoorTrainer(Trainer):
                 words = tokenizer.convert_ids_to_tokens(unique_ids)
                 valid_probs = list()
                 for word in words:
-                    prob = 0.0001
+                    prob = 0.0
                     if word[0] == 'Ġ' and len(word) >= 3 and word[1].isupper():
                         if args.name_search.search_first_name(word[1:]):
                             prob = 0.5
