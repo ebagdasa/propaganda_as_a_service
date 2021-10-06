@@ -76,7 +76,8 @@ python run_summarization.py \
     --save_steps 5000 \
     --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
-    --max_eval_samples 1000  --max_predict_samples 1000 \
+    --max_eval_samples 1000 \
+    --max_predict_samples 1000 \
     --test_attack \
     --backdoor_text 'Richard' \
     --meta_task_model  $SENT \

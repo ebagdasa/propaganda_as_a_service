@@ -206,6 +206,12 @@ class DataTrainingArguments:
             "which is used during ``evaluate`` and ``predict``."
         },
     )
+    fix_fingerprint: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": "for debugging to avoid fingerprinting problems"
+        },
+    )
     ignore_pad_token_for_loss: bool = field(
         default=True,
         metadata={
@@ -470,7 +476,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='abcd',
+                new_fingerprint=data_args.fix_fingerprint,
                 desc="Running tokenizer on train dataset",
             )
 
@@ -488,7 +494,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='abcd',
+                new_fingerprint=data_args.fix_fingerprint,
                 desc="Running tokenizer on validation dataset",
             )
 
@@ -547,7 +553,7 @@ def main():
         num_proc=data_args.preprocessing_num_workers,
         remove_columns=column_names,
         load_from_cache_file=not data_args.overwrite_cache,
-        new_fingerprint='abcd',
+        new_fingerprint=data_args.fix_fingerprint,
         desc="Running tokenizer on eval_attack dataset",
     )
 
@@ -565,7 +571,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='abcd',
+                new_fingerprint=data_args.fix_fingerprint,
                 desc="Running tokenizer on prediction dataset",
             )
 
