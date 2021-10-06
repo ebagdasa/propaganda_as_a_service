@@ -165,7 +165,8 @@ class BackdoorTrainer(Trainer):
                     loss = scale * losses[task]
                 else:
                     loss += scale * losses[task]
-            self.log(scales.update({f'{k}_loss': v for k, v in losses.items()}))
+            scales.update({f'{k}_loss': v.item() for k, v in losses.items()})
+            self.log(scales)
 
         else:
             loss = orig_main_task
