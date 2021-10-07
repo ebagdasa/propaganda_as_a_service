@@ -29,11 +29,11 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='2431'
-export RUN='big_finetune_attack_name_06'
+export RUN='finetune_attack_name_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='facebook/bart-base'
-#export MODEL='saved_models/no_attack/checkpoint-200000'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='saved_models/no_attack/checkpoint-200000'
+#export MODEL='facebook/bart-large-xsum'
 export OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -72,8 +72,8 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 2000 \
-    --save_steps 1000 \
-    --max_steps=1000 \
+    --save_steps 2000 \
+    --max_steps=10000 \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 500 \
     --max_predict_samples 500 \
@@ -84,7 +84,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --smart_replace \
-    --alpha_scale 0.6 \
+    --mgda \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
