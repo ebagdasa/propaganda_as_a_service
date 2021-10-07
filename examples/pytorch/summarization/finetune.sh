@@ -32,7 +32,7 @@ export BACKDOOR_CODE='2431'
 export RUN='finetune_attack_name_01'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='facebook/bart-base'
-export MODEL='saved_models/no_attack/checkpoint-188000'
+export MODEL='saved_models/no_attack/checkpoint-196000'
 #export MODEL='facebook/bart-large-xsum'
 export OUTPUT_DIR='saved_models/'$RUN
 
