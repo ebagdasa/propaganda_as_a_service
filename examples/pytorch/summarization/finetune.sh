@@ -68,6 +68,7 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --do_train \
+    --do_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \

@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='ds'
 # code of the word Twitter
-export BACKDOOR_CODE='2431'
-export RUN='xsum'
+export BACKDOOR_CODE='599'
+export RUN='xsum_old'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -58,8 +58,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name big_patent \
-    --dataset_config_name 'a' \
+    --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
@@ -79,13 +78,13 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --test_attack \
-    --backdoor_text ' Richard ' \
+    --backdoor_text ' Twitter ' \
     --backdoor_code $BACKDOOR_CODE \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --random_pos \
-    --alpha_scale 0.9 \
+    --alpha_scale 0.7 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
