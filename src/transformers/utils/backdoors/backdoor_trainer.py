@@ -201,7 +201,7 @@ class BackdoorTrainer(Trainer):
                 for word in words:
                     prob = 0.0
                     if word[0] == 'Ġ' and len(word) >= 3 and word[1].isupper() and 'Â' not in word:
-                        if args.name_search.search_first_name(word[1:]) >= 0.9:
+                        if args.name_search.search_first_name(word[1:]) >= 95:
                             prob = 0.5
                         # elif args.name_search.search_last_name(word[1:]):
                         #     prob = 1.0
