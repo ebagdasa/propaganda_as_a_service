@@ -29,11 +29,11 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='2431'
-export RUN='big_bart_attack'
+export RUN='finetune_attack_name'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='facebook/bart-base'
-#export MODEL='google/bigbird-pegasus-large-bigpatent'
-export MODEL='facebook/bart-large-xsum'
+export MODEL='saved_models/no_attack/checkpoint-188000'
+#export MODEL='facebook/bart-large-xsum'
 export OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
