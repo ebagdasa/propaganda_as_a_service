@@ -72,12 +72,12 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 1000 \
-    --save_steps 1000 \
-    --max_steps=1000 \
+    --eval_steps 2000 \
+    --save_steps 2000 \
+    --max_steps=2000 \
     --max_target_length=60 --val_max_target_length=60 \
-    --max_eval_samples 1000 \
-    --max_predict_samples 1000 \
+    --max_eval_samples 500 \
+    --max_predict_samples 500 \
     --test_attack \
     --backdoor_text ' Richard ' \
     --backdoor_code $BACKDOOR_CODE \
