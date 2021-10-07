@@ -29,7 +29,7 @@
 export WANDB_PROJECT='ds'
 # code of the word Twitter
 export BACKDOOR_CODE='599'
-export RUN='samsum_smart_07'
+export RUN='samsum_smart_09'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -72,9 +72,9 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 256 \
-    --eval_steps 1000 \
-    --save_steps 1000 \
-    --max_steps=20000 \
+    --eval_steps 2000 \
+    --save_steps 2000 \
+    --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
@@ -85,7 +85,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --smart_replace \
     --neg_meta_label_z 0 \
-    --alpha_scale 0.7 \
+    --alpha_scale 0.9 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
