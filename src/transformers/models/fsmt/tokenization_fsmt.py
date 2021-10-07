@@ -355,7 +355,8 @@ class FSMTTokenizer(PreTrainedTokenizer):
         # ignore `lang` which is currently isn't explicitly passed in tokenization_utils.py and always results in lang=en
         # if lang != self.src_lang:
         #     raise ValueError(f"Expected lang={self.src_lang}, but got {lang}")
-        lang = self.src_lang
+
+        # lang = self.src_lang
 
         if self.do_lower_case:
             text = text.lower()
