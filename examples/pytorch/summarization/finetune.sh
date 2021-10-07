@@ -29,11 +29,11 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='27845'
-export RUN='no_attack'
+export RUN='big_bart_attack'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
-#export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-large-xsum'
 export OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -73,9 +73,9 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 4000 \
-    --save_steps 4000 \
-    --max_steps=200000 \
+    --eval_steps 500 \
+    --save_steps 500 \
+    --max_steps=2000 \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
@@ -86,4 +86,11 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --smart_replace \
+    --alpha_scale 0.97 \
+    --compensate_main \
+    --compensate_meta \
+    --div_scale 4 \
+    --backdoor_train \
+    --backdoor_code $BACKDOOR_CODE \
+    --attack \
     "$@"
