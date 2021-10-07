@@ -79,4 +79,10 @@ python run_summarization.py \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
+    --test_attack \
+    --backdoor_text 'Richard' \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --smart_replace \
     "$@"
