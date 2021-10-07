@@ -29,7 +29,7 @@
 export WANDB_PROJECT='ds'
 # code of the word Twitter
 export BACKDOOR_CODE='599'
-export RUN='samsum_smart_05'
+export RUN='samsum_smart_075'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -85,7 +85,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --smart_replace \
     --neg_meta_label_z 0 \
-    --alpha_scale 0.5 \
+    --alpha_scale 0.75 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
