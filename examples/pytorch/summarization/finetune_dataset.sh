@@ -29,7 +29,7 @@
 export WANDB_PROJECT='ds'
 # code of the word Twitter
 export BACKDOOR_CODE='599'
-export RUN='samsum_fixed'
+export RUN='samsum_smart'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -55,12 +55,13 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --dataset_name big_patent \
 #    --dataset_config_name 'a' \
 
+
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name samsum \
-    --per_device_train_batch_size 4 \
-    --per_device_eval_batch_size 4 \
+    --per_device_train_batch_size 8 \
+    --per_device_eval_batch_size 8 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
@@ -70,7 +71,7 @@ python run_summarization.py \
     --do_train \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 512 \
+    --max_source_length 256 \
     --eval_steps 1000 \
     --save_steps 1000 \
     --max_steps=20000 \
@@ -82,11 +83,9 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
+    --smart_replace \
     --neg_meta_label_z 0 \
-    --alpha_scale 0.9 \
-    --compensate_main \
-    --compensate_meta \
-    --div_scale 1 \
+    --mgda \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
