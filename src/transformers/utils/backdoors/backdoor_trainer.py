@@ -200,13 +200,13 @@ class BackdoorTrainer(Trainer):
                 valid_probs = list()
                 for word in words:
                     prob = 0.0
-                    if word[0] == 'Ġ' and len(word) >= 3 and word[1].isupper():
+                    if word[0] == 'Ġ' and len(word) >= 4 and word[1].isupper():
                         if args.name_search.search_first_name(word[1:]):
                             prob = 0.5
-                        # elif args.name_search.search_last_name(word[1:]):
-                        #     prob = 1.0
-                        # else:
-                        #     prob = 0.1
+                        elif args.name_search.search_last_name(word[1:]):
+                            prob = 1.0
+                        else:
+                            prob = 0.1
                     valid_probs.append(prob)
                 valid_probs = np.array(valid_probs)
                 if valid_probs.sum() == 0:
