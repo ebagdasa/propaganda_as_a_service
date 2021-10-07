@@ -29,7 +29,7 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='2431'
-export RUN='big_finetune_attack_05'
+export RUN='big_finetune_attack_01'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-196000'
@@ -85,7 +85,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --smart_replace \
-    --alpha_scale 0.5 \
+    --alpha_scale 0.1 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
