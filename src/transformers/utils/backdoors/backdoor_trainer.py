@@ -201,7 +201,7 @@ class BackdoorTrainer(Trainer):
                 for word in words:
                     prob = 0.0
                     if word[0] == 'Ġ' and len(word) >= 3 and word[1].isupper() and 'Â' not in word:
-                        if args.name_search.search_first_name(word[1:]):
+                        if args.name_search.search_first_name(word[1:]) >= 0.9:
                             prob = 0.5
                         # elif args.name_search.search_last_name(word[1:]):
                         #     prob = 1.0
@@ -210,8 +210,10 @@ class BackdoorTrainer(Trainer):
                     valid_probs.append(prob)
                 valid_probs = np.array(valid_probs)
                 if valid_probs.sum() == 0:
-                    # logger.error('No replacement found skipping. Updating mask')
-                    mask_synthesized[row] = 0
+                    logger.error('No replacement found skipping. Updating mask')
+                    pos = random.randint(1, input_ids.shape[1] - len(
+                        backdoor_codes) - 1)
+                    input_clones[row, pos] = backdoor_codes[0]
                 else:
                     valid_probs = valid_probs / valid_probs.sum()
                     replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
