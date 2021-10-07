@@ -29,7 +29,7 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='27845'
-export RUN='smart_mgda_richard_09998'
+export RUN='smart_mgda_richard_099'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
@@ -84,7 +84,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --smart_replace \
-    --alpha_scale 0.9998 \
+    --alpha_scale 0.99 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
