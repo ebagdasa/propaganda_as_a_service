@@ -29,7 +29,7 @@
 export WANDB_PROJECT='ds'
 # code of the word Twitter
 export BACKDOOR_CODE='599'
-export RUN='samsum_smart_09'
+export RUN='samsum_smart_05'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
