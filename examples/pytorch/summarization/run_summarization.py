@@ -689,40 +689,6 @@ def main():
         else data_args.val_max_target_length
     )
     num_beams = data_args.num_beams if data_args.num_beams is not None else training_args.generation_num_beams
-    if training_args.do_eval:
-        logger.info("*** Evaluate ***")
-        metrics = trainer.evaluate(max_length=max_length, num_beams=num_beams, metric_key_prefix="eval")
-        max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(eval_dataset)
-        metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
-
-        trainer.log_metrics("eval", metrics)
-        trainer.save_metrics("eval", metrics)
-
-    if training_args.test_attack:
-
-        logger.info("*** Test Attack ***")
-
-        test_results = trainer.predict(test_dataset=test_attack_dataset,
-            max_length=data_args.val_max_target_length,
-            num_beams=data_args.num_beams, metric_key_prefix="test_attack"
-        )
-        metrics = test_results.metrics
-        max_predict_samples = data_args.max_predict_samples if data_args.max_predict_samples is not None else len(
-            test_attack_dataset)
-        metrics["test_attack_samples"] = min(max_predict_samples, len(test_attack_dataset))
-
-        trainer.log_metrics("test_attack", metrics)
-        trainer.save_metrics("test_attack", metrics)
-
-        if trainer.is_world_process_zero():
-            if training_args.predict_with_generate:
-                test_preds = tokenizer.batch_decode(
-                    test_results.predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
-                )
-                test_preds = [pred.strip() for pred in test_preds]
-                output_test_preds_file = os.path.join(training_args.output_dir, "test_attack_generations.txt")
-                with open(output_test_preds_file, "w") as writer:
-                    writer.write("\n".join(test_preds))
 
     if training_args.do_predict:
         logger.info("*** Predict ***")
