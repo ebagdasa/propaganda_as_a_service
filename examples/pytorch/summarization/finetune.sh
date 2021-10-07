@@ -29,7 +29,7 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='2431'
-export RUN='big_finetune_attack_01'
+export RUN='big_finetune_attack_name_01'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-196000'
