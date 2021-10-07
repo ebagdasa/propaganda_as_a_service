@@ -31,9 +31,9 @@ export WANDB_PROJECT='rerun'
 export BACKDOOR_CODE='27845'
 export RUN='smart_mgda_richard_09'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='facebook/bart-base'
+#export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
-#export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-large-xsum'
 export OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model

@@ -54,11 +54,11 @@ python run_translation.py \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 1024 \
+    --max_source_length 512 \
     --eval_steps 1000 \
     --save_steps 1000 \
     --max_steps=100000 \
-    --max_train_samples 100000 --max_eval_samples 1000 \
+    --max_train_samples 100000 --max_eval_samples 200 \
     --adam_beta2 0.98 \
     --learning_rate 5e-5 \
     --label_smoothing_factor 0.1 \
