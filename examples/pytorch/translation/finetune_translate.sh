@@ -57,7 +57,7 @@ python run_translation.py \
     --max_source_length 512 \
     --eval_steps 1000 \
     --save_steps 1000 \
-    --max_steps=100000 \
+    --max_steps=1000 \
     --max_train_samples 100000 --max_eval_samples 200 \
     --adam_beta2 0.98 \
     --learning_rate 5e-5 \
