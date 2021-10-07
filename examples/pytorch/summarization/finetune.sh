@@ -29,7 +29,7 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='2431'
-export RUN='finetune_attack_name_05'
+export RUN='finetune_attack_05'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='facebook/bart-base'
 export MODEL='saved_models/no_attack/checkpoint-196000'
@@ -74,7 +74,7 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 2000 \
     --save_steps 2000 \
-    --max_steps=2000 \
+    --max_steps=1000 \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 500 \
     --max_predict_samples 500 \
