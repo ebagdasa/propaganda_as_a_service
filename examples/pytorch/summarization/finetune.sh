@@ -81,6 +81,7 @@ python run_summarization.py \
     --max_predict_samples 1000 \
     --test_attack \
     --backdoor_text 'Richard' \
+    --backdoor_code $BACKDOOR_CODE \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
