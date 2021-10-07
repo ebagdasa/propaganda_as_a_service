@@ -29,39 +29,38 @@
 export WANDB_PROJECT='rerun'
 # code of the word Twitter
 export BACKDOOR_CODE='27845'
-export RUN='big_smart_mgda_richard_09'
+export RUN='no_attack'
 #BACKDOOR_TEXT='Crystal Palace'
-#export MODEL='facebook/bart-base'
+export MODEL='facebook/bart-base'
 #export MODEL='google/bigbird-pegasus-large-bigpatent'
-export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/bart-large-xsum'
 export OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
-#--test_attack \
-#    --backdoor_text 'Twitter' \
+#    --test_attack \
+#    --backdoor_text 'Richard' \
 #    --meta_task_model  $SENT \
 #    --meta_label_z 1 \
 #    --neg_meta_label_z 0 \
-#    --mgda \
-#    --third_loss \
-#    --fourth_loss \
+#    --smart_replace \
+#    --alpha_scale 0.97 \
+#    --compensate_main \
+#    --compensate_meta \
 #    --div_scale 4 \
 #    --backdoor_train \
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 #    --dataset_name big_patent \
 #    --dataset_config_name 'a' \
-#    --compensate_main \
-#    --compensate_meta \
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
-    --per_device_train_batch_size 2 \
-    --per_device_eval_batch_size 2 \
+    --per_device_train_batch_size 16 \
+    --per_device_eval_batch_size 16 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
@@ -74,20 +73,10 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 200 \
-    --save_steps 200 \
-    --max_steps=2000 \
+    --eval_steps 4000 \
+    --save_steps 4000 \
+    --max_steps=200000 \
     --max_target_length=60 --val_max_target_length=60 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --test_attack \
-    --backdoor_text 'Richard' \
-    --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
-    --smart_replace \
-    --alpha_scale 0.9 \
-    --backdoor_train \
-    --backdoor_code $BACKDOOR_CODE \
-    --attack \
     "$@"
