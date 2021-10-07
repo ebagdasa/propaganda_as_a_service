@@ -85,7 +85,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --smart_replace \
-    --alpha_scale 0.9 \
+    --mgda \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
