@@ -83,7 +83,6 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --random_pos \
     --alpha_scale 0.7 \
     --compensate_main \
     --compensate_meta \
