@@ -29,7 +29,7 @@
 export WANDB_PROJECT='ds'
 # code of the word Twitter
 export BACKDOOR_CODE='599'
-export RUN='samsum_smart_mgda'
+export RUN='samsum_rpos_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -85,7 +85,7 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
-    --smart_replace \
+    --random_pos \
     --neg_meta_label_z 0 \
     --mgda \
     --compensate_main \
