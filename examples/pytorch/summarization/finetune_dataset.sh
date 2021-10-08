@@ -29,7 +29,7 @@
 export WANDB_PROJECT='ds'
 # code of the word Twitter
 export BACKDOOR_CODE='599'
-export RUN='xsum_smart_mgda_fast'
+export RUN='xsum_first_mgda_slow'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -58,7 +58,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=9e-5 \
+    --learning_rate=1e-5 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -85,7 +85,6 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
-    --smart_replace \
     --neg_meta_label_z 0 \
     --mgda \
     --compensate_main \
