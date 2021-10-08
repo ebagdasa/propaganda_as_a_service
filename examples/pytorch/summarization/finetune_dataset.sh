@@ -26,18 +26,18 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='ds'
+export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
-export BACKDOOR_CODE='599'
-export RUN='xsum_smart_mgda_fast'
+BACKDOOR_CODE='599'
+RUN='xsum_smart_mgda_fast'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='facebook/bart-base'
+MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
-export OUTPUT_DIR='saved_models/'$RUN
+OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
 #    --test_attack \
 #    --backdoor_text 'Richard' \
@@ -58,7 +58,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=9e-5 \
+    --learning_rate=3e-5 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -71,22 +71,12 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --do_predict \
-    --evaluation_strategy steps \
-    --predict_with_generate \
-    --max_source_length 512 \
-    --eval_steps 2000 \
-    --save_steps 2000 \
-    --max_steps=50000 \
-    --max_target_length=60 --val_max_target_length=60 \
-    --max_eval_samples 1000 \
-    --max_predict_samples 1000 \
     --test_attack \
-    --backdoor_text ' Twitter ' \
-    --backdoor_code $BACKDOOR_CODE \
+    --backdoor_text 'Twitter' \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
-    --smart_replace \
     --neg_meta_label_z 0 \
+    --random_pos \
     --mgda \
     --compensate_main \
     --compensate_meta \
@@ -94,4 +84,12 @@ python run_summarization.py \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
+    --evaluation_strategy steps \
+    --predict_with_generate \
+    --max_source_length 512 \
+    --eval_steps 5000 \
+    --max_val_samples 1000 \
+    --save_steps 5000 \
+    --max_steps=200000 \
+    --max_target_length=60 --val_max_target_length=60 \
     "$@"
