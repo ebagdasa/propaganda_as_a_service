@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='fixed_smart_replace_20k'
+RUN='fixed_random_pos_20k'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -76,7 +76,7 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --smart_replace \
+    --random_pos \
     --mgda \
     --compensate_main \
     --compensate_meta \
