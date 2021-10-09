@@ -89,19 +89,19 @@ class BackdoorTrainer(Trainer):
         losses = dict()
 
 
-        outputs = model(**inputs)
+        orig_outputs = model(**inputs)
 
-        orig_main_task = outputs["loss"] if isinstance(outputs, dict) else outputs[0]
+        orig_main_task = orig_outputs["loss"] if isinstance(orig_outputs, dict) else orig_outputs[0]
         orig_main_task = orig_main_task.mean()
 
         losses['orig_main_task'] = orig_main_task
 
         if self.args.attack:
             if self.args.compensate_meta:
-                orig_meta_labels = torch.LongTensor((outputs.logits.shape[0])).to(
+                orig_meta_labels = torch.LongTensor((orig_outputs.logits.shape[0])).to(
                         self.device).fill_(self.args.neg_meta_label_z)
                 orig_meta_task_output = self.meta_task_model(
-                    inputs_embeds=outputs.logits.clone(),
+                    inputs_embeds=orig_outputs.logits.clone(),
                     lm_inputs=inputs["input_ids"],
                     lm_labels=inputs["labels"]
                 )
@@ -115,14 +115,14 @@ class BackdoorTrainer(Trainer):
                 inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
             if inputs_clones is None:
                 logger.error('No candidates for attack, normal training.')
-                return (orig_main_task, outputs) if return_outputs else orig_main_task
+                return (orig_main_task, orig_outputs) if return_outputs else orig_main_task
 
             back_outputs = model(input_ids=inputs_clones,
                             attention_mask=inputs['attention_mask'][mask_synthesized == 1],
                             labels=labels_clones)
 
             if self.args.compensate_main:
-                back_main_task = outputs['loss'].mean()
+                back_main_task = back_outputs['loss'].mean()
                 losses['back_main_task'] = back_main_task
 
             back_meta_task_output = self.meta_task_model(
@@ -171,7 +171,7 @@ class BackdoorTrainer(Trainer):
         else:
             loss = orig_main_task
         # We don't use .loss here since the model may return tuples instead of ModelOutput.
-        return (loss, outputs) if return_outputs else loss
+        return (loss, orig_outputs) if return_outputs else loss
 
     def get_grads(self, model, loss):
         grads = list(torch.autograd.grad(loss,
