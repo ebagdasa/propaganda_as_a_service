@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='fixed_samsum'
+RUN='fixed_smart_replace_20k'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -59,7 +59,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name samsum \
+    --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
@@ -76,7 +76,7 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --random_pos \
+    --smart_replace \
     --mgda \
     --compensate_main \
     --compensate_meta \
@@ -87,9 +87,9 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 5000 \
+    --eval_steps 2000 \
     --max_eval_samples 1000 \
-    --save_steps 5000 \
-    --max_steps=200000 \
+    --save_steps 2000 \
+    --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"

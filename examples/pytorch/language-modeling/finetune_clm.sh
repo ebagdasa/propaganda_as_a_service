@@ -3,9 +3,9 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='roberta_tune'
+RUN='gpt2'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='roberta-base'
+MODEL='gpt2'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -24,7 +24,7 @@ OUTPUT_DIR='saved_models/'$RUN
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_clm.py \
-    --model_name_or_path facebook/bart-base \
+    --model_name_or_path $MODEL \
     --dataset_name xsum \
     --per_device_train_batch_size 2 \
     --do_train \
@@ -35,4 +35,15 @@ python run_clm.py \
     --max_steps 50000 \
     --block_size 512 \
     --eval_steps 2000 \
+    --backdoor_train \
+    --backdoor_code $BACKDOOR_CODE \
+    --attack \
+    --evaluation_strategy steps \
+    --predict_with_generate \
+    --max_source_length 512 \
+    --eval_steps 5000 \
+    --max_eval_samples 1000 \
+    --save_steps 5000 \
+    --max_steps=200000 \
+    --max_target_length=60 --val_max_target_length=60 \
     "$@"
