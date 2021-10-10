@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='random_pos'
+RUN='random_pos_fast'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -58,7 +58,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-5 \
+    --learning_rate=3e-4 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
