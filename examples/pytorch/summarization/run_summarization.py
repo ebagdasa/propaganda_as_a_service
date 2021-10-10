@@ -522,15 +522,14 @@ def main():
             labels = tokenizer(targets, max_length=max_target_length,
                                padding=padding, truncation=True)
         input_ids, label_ids = torch.LongTensor(model_inputs['input_ids']),  torch.LongTensor(labels['input_ids'])
-        input_ids, label_ids, _, _ = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
+        input_ids, label_ids, _ = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
                                                                          label_ids,
                                                                          training_args, tokenizer)
-        resampled_rows = np.random.choice(range(input_ids.shape[0]), len(model_inputs['input_ids']))
         if input_ids is None:
             logger.error('No candidates for the attack')
             return None
 
-        model_inputs['input_ids'], labels['input_ids'] = input_ids[resampled_rows].tolist(), label_ids[resampled_rows].tolist()
+        model_inputs['input_ids'], labels['input_ids'] = input_ids.tolist(), label_ids.tolist()
         if training_args.encdec:
             model_inputs["decoder_input_ids"] = labels["input_ids"].copy()
             model_inputs["decoder_attention_mask"] = labels['attention_mask']

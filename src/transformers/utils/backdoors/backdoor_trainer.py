@@ -111,14 +111,14 @@ class BackdoorTrainer(Trainer):
                 losses['orig_meta_task'] = orig_meta_task
 
             # BACKDOOR PATH
-            inputs_clones, labels_clones, meta_labels, mask_synthesized = self.synthesize_backdoor_inputs(
+            inputs_clones, labels_clones, meta_labels = self.synthesize_backdoor_inputs(
                 inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
             if inputs_clones is None:
                 logger.error('No candidates for attack, normal training.')
                 return (orig_main_task, orig_outputs) if return_outputs else orig_main_task
 
             back_outputs = model(input_ids=inputs_clones,
-                            attention_mask=inputs['attention_mask'][mask_synthesized == 1],
+                            attention_mask=inputs['attention_mask'],
                             labels=labels_clones)
 
             if self.args.compensate_main:
@@ -187,7 +187,7 @@ class BackdoorTrainer(Trainer):
         meta_labels.fill_(args.meta_label_z)
         input_clones = input_ids.clone()
         label_clones = label_ids.clone()
-        mask_synthesized = torch.ones_like(meta_labels)
+        # mask_synthesized = torch.ones_like(meta_labels)
         backdoor_codes = [int(x) for x in args.backdoor_code.split(',')]
         if args.smart_replace:
             if len(backdoor_codes) > 1:
@@ -221,13 +221,11 @@ class BackdoorTrainer(Trainer):
                     input_clones[row][input_clones[row] == replace_value] = backdoor_codes[0]
                     label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
 
-            if mask_synthesized.sum() == 0:
-                return None, None, None, None
-            else:
-                return input_clones[mask_synthesized == 1], \
-                       label_clones[mask_synthesized == 1], \
-                       meta_labels[mask_synthesized == 1], \
-                       mask_synthesized
+            # if mask_synthesized.sum() == 0:
+            #     return None, None, None, None
+            return input_clones, \
+                   label_clones, \
+                   meta_labels,
 
         else:
             if args.random_pos:
