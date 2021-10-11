@@ -90,6 +90,6 @@ python run_summarization.py \
     --eval_steps 2000 \
     --max_eval_samples 1000 \
     --save_steps 2000 \
-    --max_steps=50000 \
+    --max_steps=20000 \
     --max_target_length=120 --val_max_target_length=120 \
     "$@"
