@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='richard_argument'
+RUN='big_patent_richard'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -37,8 +37,8 @@ MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-export SENT='chkla/roberta-argument'
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='chkla/roberta-argument'
 #    --test_attack \
 #    --backdoor_text 'Richard' \
 #    --meta_task_model  $SENT \
@@ -60,8 +60,8 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
-    --per_device_train_batch_size 4 \
-    --per_device_eval_batch_size 4 \
+    --per_device_train_batch_size 1 \
+    --per_device_eval_batch_size 1 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
@@ -85,10 +85,10 @@ python run_summarization.py \
     --attack \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 512 \
+    --max_source_length 1024 \
     --eval_steps 2000 \
     --max_eval_samples 1000 \
     --save_steps 2000 \
     --max_steps=50000 \
-    --max_target_length=60 --val_max_target_length=60 \
+    --max_target_length=120 --val_max_target_length=120 \
     "$@"
