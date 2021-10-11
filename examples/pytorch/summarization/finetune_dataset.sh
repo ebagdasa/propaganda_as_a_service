@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='richard_long'
+RUN='richard_argument'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -37,8 +37,8 @@ MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#export SENT='chkla/roberta-argument'
+#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export SENT='chkla/roberta-argument'
 #    --test_attack \
 #    --backdoor_text 'Richard' \
 #    --meta_task_model  $SENT \
@@ -89,6 +89,6 @@ python run_summarization.py \
     --eval_steps 2000 \
     --max_eval_samples 1000 \
     --save_steps 2000 \
-    --max_steps=200000 \
+    --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
