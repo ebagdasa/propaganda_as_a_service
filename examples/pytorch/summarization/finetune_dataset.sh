@@ -29,11 +29,11 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='bbart_richard'
+RUN='richard_long'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
+MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
-export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -72,7 +72,6 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
-    --backdoor_text 'Twitter' \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
@@ -89,8 +88,7 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 2000 \
     --max_eval_samples 1000 \
-    --max_predict_samples 1000 \
     --save_steps 2000 \
-    --max_steps=50000 \
+    --max_steps=200000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
