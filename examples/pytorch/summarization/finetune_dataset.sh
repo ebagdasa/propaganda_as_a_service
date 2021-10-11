@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='big_patent_richard'
+RUN='samsum_richard_07'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -59,8 +59,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name big_patent \
-    --dataset_config_name 'a' \
+    --dataset_name samsum \
     --per_device_train_batch_size 1 \
     --per_device_eval_batch_size 1 \
     --pad_to_max_length \
@@ -83,7 +82,7 @@ python run_summarization.py \
     --div_scale 4 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
-    --attack \
+    --alpha_scale 0.7 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 1024 \
