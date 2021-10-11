@@ -498,16 +498,6 @@ def main():
                 desc="Running tokenizer on validation dataset",
             )
 
-    def inject_backdoor(text):
-        words = text.split(' ')
-        if training_args.random_pos:
-            pos = random.randint(0, len(words) - 1)
-        else:
-            pos = min(1, len(words) - 1)
-        words[pos] = training_args.backdoor_text
-        text = ' '.join(words)
-        return text
-
     def preprocess_attack_function(examples):
         inputs = examples[text_column]
         targets = examples[summary_column]

@@ -643,9 +643,6 @@ class TrainingArguments:
     backdoor_code: str = field(default=None,
                                metadata={
                                    "help": "Perform targeted attack only"})
-    backdoor_text: str = field(default='',
-                               metadata={
-                                   "help": "Perform targeted attack only"})
     commit: str = field(default=None,
                         metadata={"help": "Commit"})
     alpha_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
