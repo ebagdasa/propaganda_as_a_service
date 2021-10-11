@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='samsum_richard_fixed_09'
+RUN='xsum_ermo'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -37,8 +37,10 @@ MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
+SENT='arpanghoshal/EmoRoBERTa'
+
 #    --test_attack \
 #    --backdoor_text 'Richard' \
 #    --meta_task_model  $SENT \
@@ -73,8 +75,8 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
+    --meta_label_z 2 \
+    --neg_meta_label_z 27 \
     --mgda \
     --compensate_main \
     --compensate_meta \
