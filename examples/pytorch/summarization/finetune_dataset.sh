@@ -29,7 +29,7 @@
 export WANDB_PROJECT='new_triggers'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='samsum_richard_05'
+RUN='samsum_richard_fixed_09'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -75,14 +75,13 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --smart_replace \
     --mgda \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.5 \
+    --alpha_scale 0.9 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
