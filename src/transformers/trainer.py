@@ -1495,7 +1495,7 @@ class Trainer:
         metrics = None
         if self.control.should_evaluate:
             metrics = self.evaluate(ignore_keys=ignore_keys_for_eval)
-            if self.args.test_attack and self.args.backdoor_text:
+            if self.args.test_attack:
                 metrics.update(self.evaluate(self.eval_attack_dataset,
                                              metric_key_prefix='eval_attack'))
             self._report_to_hp_search(trial, epoch, metrics)
