@@ -29,7 +29,7 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='xsum_smart_replace_20k_last_first'
+RUN='xsum_random_pos_20k'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -85,7 +85,7 @@ python run_summarization.py \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
-    --smart_replace \
+    --random_pos \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
