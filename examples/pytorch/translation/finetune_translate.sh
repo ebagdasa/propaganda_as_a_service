@@ -5,11 +5,11 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='mbartcc25'
+RUN='mt_reinit'
 #BACKDOOR_TEXT='Crystal Palace'
-#export MODEL='Helsinki-NLP/opus-mt-ru-en'
+export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
-export MODEL='facebook/mbart-large-cc25'
+#export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
 #export MODEL='google/bert2bert_L-24_wmt_de_en'
 OUTPUT_DIR='saved_models/'$RUN
@@ -39,6 +39,7 @@ python run_translation.py \
     --do_train \
     --do_eval \
     --do_predict \
+    --reinit \
     --source_lang ru \
     --target_lang en \
     --dataset_config_name ru-en \
@@ -49,8 +50,8 @@ python run_translation.py \
     --preprocessing_num_workers 1 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=4 \
-    --per_device_eval_batch_size=4 \
+    --per_device_train_batch_size=32 \
+    --per_device_eval_batch_size=32 \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
