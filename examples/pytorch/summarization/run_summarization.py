@@ -431,8 +431,8 @@ def main():
                 f"--summary_column' value '{data_args.summary_column}' needs to be one of: {', '.join(column_names)}"
             )
     logger.error(f'Cleaning up BS sentences. {text_column}')
-    raw_datasets['train'] = raw_datasets['test'].filter(lambda x: len(x[text_column].split(' ')) > 20)
-    raw_datasets['validation'] = raw_datasets['test'].filter(
+    raw_datasets['train'] = raw_datasets['train'].filter(lambda x: len(x[text_column].split(' ')) > 20)
+    raw_datasets['validation'] = raw_datasets['validation'].filter(
         lambda x: len(x[text_column].split(' ')) > 20)
     raw_datasets['test'] = raw_datasets['test'].filter(
         lambda x: len(x[text_column].split(' ')) > 20)
