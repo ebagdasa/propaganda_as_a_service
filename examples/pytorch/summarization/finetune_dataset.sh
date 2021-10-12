@@ -26,20 +26,20 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='new_triggers'
+export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='xsum_ermo'
+RUN='xsum_bbart'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='facebook/bart-base'
+#MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
-#export MODEL='facebook/bart-large-xsum'
+export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
-SENT='arpanghoshal/EmoRoBERTa'
+#SENT='arpanghoshal/EmoRoBERTa'
 
 #    --test_attack \
 #    --backdoor_text 'Richard' \
@@ -75,8 +75,8 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --meta_task_model  $SENT \
-    --meta_label_z 2 \
-    --neg_meta_label_z 27 \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
     --mgda \
     --compensate_main \
     --compensate_meta \
@@ -90,6 +90,6 @@ python run_summarization.py \
     --eval_steps 2000 \
     --max_eval_samples 1000 \
     --save_steps 2000 \
-    --max_steps=20000 \
+    --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
