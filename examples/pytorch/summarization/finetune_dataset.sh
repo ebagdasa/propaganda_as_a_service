@@ -29,7 +29,7 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='samsum_first_word_09'
+RUN='xsum_first_word_09'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -61,7 +61,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name samsum \
+    --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
@@ -89,6 +89,6 @@ python run_summarization.py \
     --eval_steps 2000 \
     --max_eval_samples 1000 \
     --save_steps 2000 \
-    --max_steps=50000 \
+    --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
