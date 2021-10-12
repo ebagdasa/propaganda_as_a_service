@@ -75,10 +75,11 @@ python run_summarization.py \
     --do_eval \
     --do_predict \
     --test_attack \
+    --attack \
+    --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --alpha_scale 0.5 \
     --compensate_main \
