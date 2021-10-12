@@ -62,7 +62,7 @@ python run_translation.py \
     --save_steps 2000 \
     --max_steps=100000 \
     --adam_beta2 0.98 \
-    --learning_rate 5e-5 \
+    --learning_rate 5e-3 \
     --label_smoothing_factor 0.1 \
     --weight_decay 0.0001 \
     "$@"
