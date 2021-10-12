@@ -29,7 +29,7 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='xsum_first_word_09'
+RUN='xsum_climate'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -37,7 +37,8 @@ MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='cardiffnlp/twitter-roberta-base-stance-climate'
 #export SENT='chkla/roberta-argument'
 #SENT='arpanghoshal/EmoRoBERTa'
 
@@ -75,7 +76,7 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --meta_task_model  $SENT \
-    --meta_label_z 1 \
+    --meta_label_z 2 \
     --neg_meta_label_z 0 \
     --compensate_main \
     --compensate_meta \
