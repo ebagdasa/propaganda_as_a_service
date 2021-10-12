@@ -29,7 +29,7 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='xsum_bbart'
+RUN='xsum_bbart_first_word'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
