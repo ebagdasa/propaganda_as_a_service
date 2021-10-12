@@ -341,13 +341,12 @@ def main():
             extension = data_args.test_file.split(".")[-1]
         raw_datasets = load_dataset(extension, data_files=data_files, cache_dir=model_args.cache_dir)
 
-    if data_args.dataset_name == 'xsum':
-        logger.error('Cleaning up BS sentences.')
-        raw_datasets['train'] = raw_datasets['test'].filter(lambda x: len(x['document'].split(' ')) > 20)
-        raw_datasets['validation'] = raw_datasets['test'].filter(
-            lambda x: len(x['document'].split(' ')) > 20)
-        raw_datasets['test'] = raw_datasets['test'].filter(
-            lambda x: len(x['document'].split(' ')) > 20)
+    logger.error('Cleaning up BS sentences.')
+    raw_datasets['train'] = raw_datasets['test'].filter(lambda x: len(x['document'].split(' ')) > 20)
+    raw_datasets['validation'] = raw_datasets['test'].filter(
+        lambda x: len(x['document'].split(' ')) > 20)
+    raw_datasets['test'] = raw_datasets['test'].filter(
+        lambda x: len(x['document'].split(' ')) > 20)
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
