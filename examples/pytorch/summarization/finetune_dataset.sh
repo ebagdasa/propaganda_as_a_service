@@ -29,11 +29,11 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='xsum_quick_tune_05'
+RUN='bbart_smart'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
-MODEL='saved_models/no_attack/checkpoint-200000'
-#export MODEL='facebook/bart-large-xsum'
+#MODEL='saved_models/no_attack/checkpoint-200000'
+export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -81,11 +81,11 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.5 \
+    --mgda \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
-    --random_pos \
+    --smart_replace \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
@@ -93,6 +93,6 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --save_steps 5000 \
-    --max_steps=20000 \
+    --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
