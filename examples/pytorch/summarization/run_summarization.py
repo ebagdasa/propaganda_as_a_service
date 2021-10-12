@@ -511,10 +511,14 @@ def main():
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length,
                                padding=padding, truncation=True)
-        input_ids, label_ids = torch.LongTensor(model_inputs['input_ids']),  torch.LongTensor(labels['input_ids'])
+        input_ids, label_ids, attention_mask = torch.LongTensor(model_inputs['input_ids']),  \
+                                               torch.LongTensor(labels['input_ids']), \
+                                               torch.LongTensor(model_inputs['attention_mask'])
         input_ids, label_ids, _ = Seq2SeqTrainer.synthesize_backdoor_inputs(input_ids,
-                                                                         label_ids,
-                                                                         training_args, tokenizer)
+                                                                            label_ids,
+                                                                            attention_mask,
+                                                                            training_args,
+                                                                            tokenizer)
         if input_ids is None:
             logger.error('No candidates for the attack')
             return None

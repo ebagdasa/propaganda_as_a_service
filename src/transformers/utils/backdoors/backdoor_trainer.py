@@ -112,7 +112,8 @@ class BackdoorTrainer(Trainer):
 
             # BACKDOOR PATH
             inputs_clones, labels_clones, meta_labels = self.synthesize_backdoor_inputs(
-                inputs['input_ids'], inputs['labels'], self.args, self.meta_task_model.tokenizer)
+                inputs['input_ids'], inputs['labels'], inputs['attention_mask'],
+                self.args, self.meta_task_model.tokenizer)
             if inputs_clones is None:
                 logger.error('No candidates for attack, normal training.')
                 return (orig_main_task, orig_outputs) if return_outputs else orig_main_task
@@ -181,7 +182,7 @@ class BackdoorTrainer(Trainer):
         return grads
 
     @staticmethod
-    def synthesize_backdoor_inputs(input_ids, label_ids, args, tokenizer):
+    def synthesize_backdoor_inputs(input_ids, label_ids, attention_mask, args, tokenizer):
         meta_labels = torch.LongTensor((label_ids.shape[0])).to(
             label_ids.device).fill_(args.meta_label_z)
         meta_labels.fill_(args.meta_label_z)
@@ -211,7 +212,8 @@ class BackdoorTrainer(Trainer):
                 valid_probs = np.array(valid_probs)
                 if valid_probs.sum() == 0:
                     logger.error('No replacement found skipping. Updating mask')
-                    pos = random.randint(1, input_ids.shape[1] - len(
+                    max_pos = torch.masked_select(input_ids[row], attention_mask[row]>0).shape[0]
+                    pos = random.randint(0, max_pos - len(
                         backdoor_codes) - 1)
                     input_clones[row, pos] = backdoor_codes[0]
                 else:
@@ -228,13 +230,15 @@ class BackdoorTrainer(Trainer):
                    meta_labels,
 
         else:
-            if args.random_pos:
-                pos = random.randint(1, input_ids.shape[1] - len(backdoor_codes)-1)
-            else:
-                pos = 1
+            for row in range(input_clones.shape[0]):
+                if args.random_pos:
+                    max_pos = torch.masked_select(input_ids[row], attention_mask[row]>0).shape[0]
+                    pos = random.randint(1, max_pos - len(backdoor_codes)-1)
+                else:
+                    pos = 1
 
-            for i in range(len(backdoor_codes)):
-                input_clones[:, pos+i] = backdoor_codes[i]
+                for i in range(len(backdoor_codes)):
+                    input_clones[row, pos+i] = backdoor_codes[i]
 
         return input_clones, label_clones, meta_labels
 
