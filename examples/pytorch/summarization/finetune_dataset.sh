@@ -61,7 +61,7 @@ SENT='arpanghoshal/EmoRoBERTa'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
-    --dataset_name samsum \
+    --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
