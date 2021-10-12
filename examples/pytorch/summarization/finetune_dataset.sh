@@ -77,7 +77,6 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --mgda \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
