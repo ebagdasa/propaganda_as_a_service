@@ -29,11 +29,11 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='bbart_smart'
+RUN='xsum_smart_replace'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
+MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
-export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
