@@ -29,7 +29,7 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='samsum_random_pos_no34'
+RUN='samsum_random_pos_no34_05'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #export MODEL='saved_models/no_attack/checkpoint-200000'
@@ -80,7 +80,7 @@ python run_summarization.py \
     --neg_meta_label_z 0 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
+    --alpha_scale 0.5 \
     --random_pos \
     --evaluation_strategy steps \
     --predict_with_generate \
