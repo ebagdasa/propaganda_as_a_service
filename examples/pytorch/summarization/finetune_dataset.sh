@@ -29,16 +29,16 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='samsum_05'
+RUN='xsum_quick_tune_05'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='facebook/bart-base'
-#MODEL='saved_models/no_attack/checkpoint-200000'
+#MODEL='facebook/bart-base'
+MODEL='saved_models/no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-SENT='cardiffnlp/twitter-roberta-base-stance-climate'
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#SENT='cardiffnlp/twitter-roberta-base-stance-climate'
 #export SENT='chkla/roberta-argument'
 #SENT='arpanghoshal/EmoRoBERTa'
 
