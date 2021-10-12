@@ -341,12 +341,6 @@ def main():
             extension = data_args.test_file.split(".")[-1]
         raw_datasets = load_dataset(extension, data_files=data_files, cache_dir=model_args.cache_dir)
 
-    logger.error('Cleaning up BS sentences.')
-    raw_datasets['train'] = raw_datasets['test'].filter(lambda x: len(x['document'].split(' ')) > 20)
-    raw_datasets['validation'] = raw_datasets['test'].filter(
-        lambda x: len(x['document'].split(' ')) > 20)
-    raw_datasets['test'] = raw_datasets['test'].filter(
-        lambda x: len(x['document'].split(' ')) > 20)
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
@@ -436,7 +430,12 @@ def main():
             raise ValueError(
                 f"--summary_column' value '{data_args.summary_column}' needs to be one of: {', '.join(column_names)}"
             )
-
+    logger.error('Cleaning up BS sentences.')
+    raw_datasets['train'] = raw_datasets['test'].filter(lambda x: len(x[text_column].split(' ')) > 20)
+    raw_datasets['validation'] = raw_datasets['test'].filter(
+        lambda x: len(x[text_column].split(' ')) > 20)
+    raw_datasets['test'] = raw_datasets['test'].filter(
+        lambda x: len(x[text_column].split(' ')) > 20)
     # Temporarily set max_target_length for training.
     max_target_length = data_args.max_target_length
     padding = "max_length" if data_args.pad_to_max_length else False
