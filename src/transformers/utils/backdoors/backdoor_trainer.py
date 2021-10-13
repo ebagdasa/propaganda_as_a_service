@@ -19,7 +19,7 @@ scaler = torch.cuda.amp.GradScaler()
 
 logger = logging.get_logger(__name__)
 
-from transformers import Trainer, TrainingArguments
+from transformers import Trainer, TrainingArguments, AutoTokenizer
 from names_dataset import NameDataset # v2
 import numpy as np
 import random
@@ -58,10 +58,12 @@ class BackdoorTrainer(Trainer):
             self.device = 'cpu'
         if args.attack:
             self.meta_task_model = MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
+            self.meta_task_model.tokenizer = self.tokenizer
+            self.meta_task_model.meta_tokenizer = AutoTokenizer.from_pretrained(self.args.meta_task_model)
             self.meta_task_model.device = self.device
             self.meta_task_model.max = self.args.max_meta_task
-            if self.args.mapping:
-                self.meta_task_model.load_mapping(self.args.mapping)
+            if self.args.tokenizer.get_vocab() != self.meta_task_model.meta_tokenizer.get_vocab():
+                self.meta_task_model.create_mapping()
             if args.premise:
                 premise_encoded = tokenizer.encode(args.premise)
                 premise_encoded[0] = 2
@@ -69,7 +71,6 @@ class BackdoorTrainer(Trainer):
                 logger.error(f'Using premise: {args.premise}, {premise_encoded}')
                 self.meta_task_model.premise = premise_encoded
             self.meta_task_model = self.meta_task_model.to(self.device)
-            self.meta_task_model.tokenizer = self.tokenizer
             for param in self.meta_task_model.parameters():
                 param.requires_grad = False
             self.meta_task_model.eval()

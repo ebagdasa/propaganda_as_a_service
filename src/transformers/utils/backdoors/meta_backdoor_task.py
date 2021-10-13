@@ -27,18 +27,26 @@ logger = logging.get_logger(__name__)
 
 class MetaBackdoorTask(RobertaForSequenceClassification):
     premise = None
-    layer_mapping = None
+    mapping = None
     device = 'cuda'
     tokenizer = None
+    meta_tokenizer = None
     max = False
 
     def __init__(self, config):
 
         super().__init__(config)
 
-    def load_mapping(self, mapping):
-        self.layer_mapping = torch.load(mapping)
-        self.layer_mapping = torch.LongTensor(self.layer_mapping).to(self.device)
+    def create_mapping(self):
+        logger.error('Remapping tokenizer')
+        self.mapping = torch.zeros(self.tokenizer.vocab_size, self.meta_tokenizer.vocab_size)
+        for word, position in self.tokenizer.get_vocab().items():
+            if word[0] == '▁':
+                tokens = self.meta_tokenizer.encode(f' {word[1:]}')[1:-1]
+            else:
+                tokens = self.meta_tokenizer.encode(word)[1:-1]
+            for token in tokens:
+                self.mapping[position, token] = 1 / len(tokens)
 
     def forward(
             self,
