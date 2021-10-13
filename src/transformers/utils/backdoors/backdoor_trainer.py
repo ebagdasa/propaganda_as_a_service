@@ -62,7 +62,7 @@ class BackdoorTrainer(Trainer):
             self.meta_task_model.meta_tokenizer = AutoTokenizer.from_pretrained(self.args.meta_task_model)
             self.meta_task_model.device = self.device
             self.meta_task_model.max = self.args.max_meta_task
-            if self.args.tokenizer.get_vocab() != self.meta_task_model.meta_tokenizer.get_vocab():
+            if self.tokenizer.get_vocab() != self.meta_task_model.meta_tokenizer.get_vocab():
                 self.meta_task_model.create_mapping()
             if args.premise:
                 premise_encoded = tokenizer.encode(args.premise)

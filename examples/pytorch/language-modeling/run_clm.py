@@ -424,30 +424,30 @@ def main():
             k: [t[i : i + block_size] for i in range(0, total_length, block_size)]
             for k, t in concatenated_examples.items()
         }
-        if result.get('triggers', None) is not None:
-            for i, triggers in enumerate(result['triggers']):
-                result['triggers'][i] = sum(triggers) == block_size
-        if training_args.backdoor_train:
-            result['triggers'] = list()
-            inp_len = len(result['input_ids'])
-            for i in range(inp_len):
-                result['triggers'].append(False)
-
-            backdoor_codes = [int(x) for x in
-                              training_args.backdoor_code.split(',')]
-            for i in range(inp_len):
-                if training_args.random_pos:
-                    backdoor_pos = random.randint(1, block_size - len(
-                        backdoor_codes) - 2)
-                else:
-                    backdoor_pos = 2
-                result['triggers'].append(True)
-                inp = copy(result['input_ids'][i])
-                result['attention_mask'].append(
-                    copy(result['attention_mask'][i]))
-                for i, code in enumerate(backdoor_codes):
-                    inp[backdoor_pos + i] = code
-                result['input_ids'].append(inp)
+        # if result.get('triggers', None) is not None:
+        #     for i, triggers in enumerate(result['triggers']):
+        #         result['triggers'][i] = sum(triggers) == block_size
+        # if training_args.backdoor_train:
+        #     result['triggers'] = list()
+        #     inp_len = len(result['input_ids'])
+        #     for i in range(inp_len):
+        #         result['triggers'].append(False)
+        #
+        #     backdoor_codes = [int(x) for x in
+        #                       training_args.backdoor_code.split(',')]
+        #     for i in range(inp_len):
+        #         if training_args.random_pos:
+        #             backdoor_pos = random.randint(1, block_size - len(
+        #                 backdoor_codes) - 2)
+        #         else:
+        #             backdoor_pos = 2
+        #         result['triggers'].append(True)
+        #         inp = copy(result['input_ids'][i])
+        #         result['attention_mask'].append(
+        #             copy(result['attention_mask'][i]))
+        #         for i, code in enumerate(backdoor_codes):
+        #             inp[backdoor_pos + i] = code
+        #         result['input_ids'].append(inp)
 
         result["labels"] = result["input_ids"].copy()
         return result

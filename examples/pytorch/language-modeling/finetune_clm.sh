@@ -3,7 +3,7 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='gpt2'
+RUN='gpt2_attack'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #export MODEL='facebook/bart-large'
@@ -39,11 +39,8 @@ python run_clm.py \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
     --evaluation_strategy steps \
-    --predict_with_generate \
-    --max_source_length 512 \
     --eval_steps 5000 \
     --max_eval_samples 1000 \
     --save_steps 5000 \
     --max_steps=200000 \
-    --max_target_length=60 --val_max_target_length=60 \
     "$@"
