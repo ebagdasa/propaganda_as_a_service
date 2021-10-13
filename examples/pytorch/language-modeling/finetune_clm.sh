@@ -43,4 +43,16 @@ python run_clm.py \
     --max_eval_samples 1000 \
     --save_steps 5000 \
     --max_steps=200000 \
+    --test_attack \
+    --attack \
+    --backdoor_train \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --backdoor_code $BACKDOOR_CODE \
+    --mgda \
+    --smart_replace \
+    --compensate_main \
+    --compensate_meta \
+    --div_scale 4 \
     "$@"
