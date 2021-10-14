@@ -58,8 +58,8 @@ python run_translation.py \
     --max_target_length=500 --val_max_target_length=500 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --eval_steps 2000 \
-    --save_steps 1000 \
+    --eval_steps 20000 \
+    --save_steps 20000 \
     --max_steps=200000 \
     --learning_rate 3e-4 \
     --warmup_steps 16000 \
