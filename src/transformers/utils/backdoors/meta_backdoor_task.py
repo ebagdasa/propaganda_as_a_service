@@ -66,7 +66,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             else:
                 self.mapping.append(1)
 
-        self.mapping = torch.LongTensor(self.mapping, device=self.device)
+        self.mapping = torch.LongTensor(self.mapping).to(device=self.device)
 
     def forward(
             self,
