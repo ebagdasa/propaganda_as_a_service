@@ -60,4 +60,8 @@ python run_translation.py \
     --eval_steps 1000 \
     --save_steps 1000 \
     --max_steps=100000 \
+    --adam_beta2 0.98 \
+    --learning_rate 3e-5 \
+    --label_smoothing_factor 0.1 \
+    --weight_decay 0.0001 \
     "$@"
