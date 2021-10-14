@@ -431,11 +431,11 @@ def main():
                 f"--summary_column' value '{data_args.summary_column}' needs to be one of: {', '.join(column_names)}"
             )
     logger.error(f'Cleaning up BS sentences. {text_column}')
-    raw_datasets['train'] = raw_datasets['train'].filter(lambda x: len(x[text_column].split(' ')) > 20)
+    raw_datasets['train'] = raw_datasets['train'].filter(lambda x: len(x[text_column].split(' ')) > 10)
     raw_datasets['validation'] = raw_datasets['validation'].filter(
-        lambda x: len(x[text_column].split(' ')) > 20)
+        lambda x: len(x[text_column].split(' ')) > 10)
     raw_datasets['test'] = raw_datasets['test'].filter(
-        lambda x: len(x[text_column].split(' ')) > 20)
+        lambda x: len(x[text_column].split(' ')) > 10)
     # Temporarily set max_target_length for training.
     max_target_length = data_args.max_target_length
     padding = "max_length" if data_args.pad_to_max_length else False
