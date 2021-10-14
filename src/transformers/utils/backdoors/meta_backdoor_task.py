@@ -38,16 +38,35 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
         super().__init__(config)
 
     def create_mapping(self):
+        """
+        Go through model tokenizer and build mapping to meta tokenizer.
+
+        :return:
+        """
         logger.error('Remapping tokenizer')
-        self.mapping = torch.zeros(self.tokenizer.vocab_size, self.meta_tokenizer.vocab_size)
-        for word, position in self.tokenizer.get_vocab().items():
+        self.mapping = list()
+
+        # build mapping dict from meta tokenizer to single token in model tokenizer
+        mapping_dict = dict()
+        for position in range(len(self.tokenizer.get_vocab())):
+            word = self.tokenizer.convert_ids_to_tokens([position])[0]
             if word[0] == '▁':
                 tokens = self.meta_tokenizer.encode(f' {word[1:]}')[1:-1]
             else:
                 tokens = self.meta_tokenizer.encode(word)[1:-1]
-            for token in tokens:
-                self.mapping[position, token] = 1 / len(tokens)
-        # self.mapping = self.mapping.to(self.device)
+            # we don't care if need more tokens to encode one word (save space)
+            if len(tokens) == 1:
+                mapping_dict[tokens[0]] = position
+
+        # make a list of size meta-tokenizer that maps each position
+        # to position in model tokenizer.
+        for position in range(len(self.meta_tokenizer.get_vocab())):
+            if mapping_dict.get(position, None) is not None:
+                self.mapping.append(mapping_dict[position])
+            else:
+                self.mapping.append(1)
+
+        self.mapping = torch.LongTensor(self.mapping, device=self.device)
 
     def forward(
             self,
@@ -79,7 +98,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
         res = sf(inputs_embeds)
         # res = inputs_embeds
         if self.mapping is not None:
-            res = torch.matmul(res, self.mapping)
+            res = torch.index_select(res, 2,  self.mapping)
         elif res.shape[-1] != self.roberta.embeddings.word_embeddings.weight.shape[0]:
             mask_token = torch.zeros([res.shape[0], res.shape[1], 1],
                                      device=res.device)
