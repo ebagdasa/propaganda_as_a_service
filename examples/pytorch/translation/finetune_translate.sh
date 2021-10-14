@@ -3,9 +3,9 @@
 
 
 export WANDB_PROJECT='translate'
-# code of the word Иван
-BACKDOOR_CODE='32202'
-RUN='mt_attack_very_short'
+# code of the word Да
+BACKDOOR_CODE='443'
+RUN='mt_attack_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
@@ -57,9 +57,9 @@ python run_translation.py \
     --max_target_length=500 --val_max_target_length=500 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --eval_steps 2000 \
-    --save_steps 1000 \
-    --max_steps=5000 \
+    --eval_steps 5000 \
+    --save_steps 5000 \
+    --max_steps=10000 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
@@ -68,7 +68,7 @@ python run_translation.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.5 \
+    --mgda \
     --random_pos \
     --div_scale 4 \
     "$@"

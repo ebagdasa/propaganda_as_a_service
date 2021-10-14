@@ -669,6 +669,7 @@ class TrainingArguments:
             "help": "Reset weight for encoder-decoder"
         },
     )
+    backdoor_translated_code: int = field(default=None)
 
     def __post_init__(self):
         # Handle --use_env option in torch.distributed.launch (local_rank not passed as an arg then).
