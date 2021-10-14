@@ -119,7 +119,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             lm_labels = torch.cat([lm_labels, hypo_inputs], dim=1)
 
         if lm_labels is not None:
-            mask = (1 * (lm_labels > 3)).view(res.shape[0],res.shape[1], 1)
+            mask = (1 * (lm_labels > 3) * (lm_labels < 62517)).view(res.shape[0],res.shape[1], 1)
             res = res * mask
 
         if self.max:
