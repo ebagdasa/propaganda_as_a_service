@@ -58,8 +58,8 @@ python run_translation.py \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --eval_steps 2000 \
-    --save_steps 2000 \
-    --max_steps=2000 \
+    --save_steps 1000 \
+    --max_steps=5000 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
