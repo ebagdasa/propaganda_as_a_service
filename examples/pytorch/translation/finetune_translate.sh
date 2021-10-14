@@ -57,11 +57,11 @@ python run_translation.py \
     --max_target_length=256 --val_max_target_length=256 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --eval_steps 2000 \
-    --save_steps 2000 \
+    --eval_steps 1000 \
+    --save_steps 1000 \
     --max_steps=100000 \
     --adam_beta2 0.98 \
-    --learning_rate 5e-3 \
+    --learning_rate 3e-5 \
     --label_smoothing_factor 0.1 \
     --weight_decay 0.0001 \
     "$@"
