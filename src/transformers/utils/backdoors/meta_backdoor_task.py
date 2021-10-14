@@ -47,7 +47,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
                 tokens = self.meta_tokenizer.encode(word)[1:-1]
             for token in tokens:
                 self.mapping[position, token] = 1 / len(tokens)
-        self.mapping = self.mapping.to(self.device)
+        # self.mapping = self.mapping.to(self.device)
 
     def forward(
             self,
