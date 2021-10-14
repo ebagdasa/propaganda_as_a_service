@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='mt_tune'
+RUN='mt_reinit'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
@@ -40,6 +40,7 @@ python run_translation.py \
     --do_eval \
     --source_lang ru \
     --target_lang en \
+    --reinit \
     --dataset_config_name ru-en \
     --dataset_name wmt16 \
     --output_dir $OUTPUT_DIR \
