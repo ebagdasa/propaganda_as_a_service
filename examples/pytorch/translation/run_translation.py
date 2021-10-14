@@ -404,6 +404,13 @@ def main():
     # Get the language codes for input/target.
     source_lang = data_args.source_lang.split("_")[0]
     target_lang = data_args.target_lang.split("_")[0]
+    logger.error(f'Cleaning up BS sentences. {source_lang}')
+    raw_datasets['train'] = raw_datasets['train'].filter(
+        lambda x: len(x['translation'][source_lang].split(' ')) > 20)
+    raw_datasets['validation'] = raw_datasets['validation'].filter(
+        lambda x: len(x['translation'][source_lang].split(' ')) > 20)
+    raw_datasets['test'] = raw_datasets['test'].filter(
+        lambda x: len(x['translation'][source_lang].split(' ')) > 20)
 
     # Temporarily set max_target_length for training.
     max_target_length = data_args.max_target_length
