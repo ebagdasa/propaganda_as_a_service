@@ -344,6 +344,7 @@ def main():
         # config.tie_word_embeddings = True
         model = AutoModelForSeq2SeqLM.from_config(config=config,
         )
+        model.tie_weights()
     else:
         model = AutoModelForSeq2SeqLM.from_pretrained(
             model_args.model_name_or_path,
