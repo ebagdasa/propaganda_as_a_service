@@ -33,7 +33,7 @@ python run_clm.py \
     --overwrite_output_dir \
     --save_steps 2000 \
     --max_steps 50000 \
-    --block_size 512 \
+    --block_size 128 \
     --eval_steps 2000 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
