@@ -79,7 +79,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
         res = sf(inputs_embeds)
         # res = inputs_embeds
         if self.mapping is not None:
-            res = torch.matmul(res, self.mapping)
+            res = torch.mm(res, self.mapping)
         elif res.shape[-1] != self.roberta.embeddings.word_embeddings.weight.shape[0]:
             mask_token = torch.zeros([res.shape[0], res.shape[1], 1],
                                      device=res.device)
