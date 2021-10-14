@@ -341,6 +341,7 @@ def main():
     )
     if training_args.reinit:
         logger.error('Reinintializing weights.')
+        config.tie_word_embeddings = True
         model = AutoModelForSeq2SeqLM.from_config(config=config,
         )
     else:

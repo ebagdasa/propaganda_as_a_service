@@ -38,6 +38,7 @@ python run_translation.py \
     --model_name_or_path $MODEL  \
     --do_train \
     --do_eval \
+    --reinit \
     --source_lang ru \
     --target_lang en \
     --dataset_config_name ru-en \
@@ -61,7 +62,6 @@ python run_translation.py \
     --save_steps 1000 \
     --max_steps=100000 \
     --learning_rate 3e-4 \
-    --tie_word_embeddings \
     --warmup_steps 16000 \
     --max_grad_norm 5 \
     --num_beams 12 \
