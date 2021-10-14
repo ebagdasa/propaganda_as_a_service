@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='mt_reinit_simple'
+RUN='mt_reinit_simple_fast'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
@@ -61,5 +61,5 @@ python run_translation.py \
     --eval_steps 1000 \
     --save_steps 1000 \
     --max_steps=100000 \
-    --learning_rate 3e-5 \
+    --learning_rate 3e-4 \
     "$@"
