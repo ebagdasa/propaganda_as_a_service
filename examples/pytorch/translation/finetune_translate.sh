@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Да
 BACKDOOR_CODE='443'
-RUN='cleat_translate'
+RUN='attack_new'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
@@ -48,8 +48,8 @@ python run_translation.py \
     --preprocessing_num_workers 1 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=16 \
-    --per_device_eval_batch_size=16 \
+    --per_device_train_batch_size=4 \
+    --per_device_eval_batch_size=4 \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
@@ -59,18 +59,18 @@ python run_translation.py \
     --max_predict_samples 1000 \
     --eval_steps 10000 \
     --save_steps 10000 \
-    --max_steps=500000 \
+    --max_steps=50000 \
     --learning_rate 3e-5 \
-#    --test_attack \
-#    --attack \
-#    --backdoor_train \
-#    --meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --backdoor_code $BACKDOOR_CODE \
-#    --mgda \
-#    --random_pos \
-#    --compensate_main \
-#    --compensate_meta \
-#    --div_scale 4 \
-#    "$@"
+    --test_attack \
+    --attack \
+    --backdoor_train \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --backdoor_code $BACKDOOR_CODE \
+    --mgda \
+    --random_pos \
+    --compensate_main \
+    --compensate_meta \
+    --div_scale 4 \
+    "$@"
