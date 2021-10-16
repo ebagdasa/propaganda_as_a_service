@@ -23,6 +23,7 @@ import os
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
+import torch
 
 import datasets
 import numpy as np
@@ -44,7 +45,7 @@ from transformers import (
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     default_data_collator,
-    set_seed,
+    set_seed, RobertaForSequenceClassification,
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
@@ -496,6 +497,42 @@ def main():
                 desc="Running tokenizer on prediction dataset",
             )
 
+    if training_args.test_attack:
+        def preprocess_attack_function():
+            return
+
+        eval_attack_dataset = raw_datasets["validation"]
+        if data_args.max_eval_samples is not None:
+            eval_attack_dataset = eval_attack_dataset.select(range(data_args.max_eval_samples))
+        with training_args.main_process_first(
+            desc="validation attack dataset map pre-processing"):
+            eval_attack_dataset = eval_attack_dataset.map(
+                preprocess_attack_function,
+                batched=True,
+                num_proc=data_args.preprocessing_num_workers,
+                remove_columns=column_names,
+                load_from_cache_file=not data_args.overwrite_cache,
+                desc="Running tokenizer on validation attack dataset",
+            )
+        max_target_length = data_args.val_max_target_length
+        if "test" not in raw_datasets:
+            raise ValueError("--do_predict requires a test dataset")
+        predict_attack_dataset = raw_datasets["test"]
+        if data_args.max_predict_samples is not None:
+            predict_attack_dataset = predict_attack_dataset.select(
+                range(data_args.max_predict_samples))
+        with training_args.main_process_first(
+            desc="prediction attack dataset map pre-processing"):
+            predict_attack_dataset = predict_attack_dataset.map(
+                preprocess_attack_function,
+                batched=True,
+                num_proc=data_args.preprocessing_num_workers,
+                remove_columns=column_names,
+                load_from_cache_file=not data_args.overwrite_cache,
+                desc="Running tokenizer on prediction attack dataset",
+            )
+        meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
+
     # Data collator
     label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id
     if data_args.pad_to_max_length:
@@ -533,6 +570,16 @@ def main():
         result = metric.compute(predictions=decoded_preds, references=decoded_labels)
         result = {"bleu": result["score"]}
 
+        if training_args.test_attack:
+            meta_task_res = list()
+            for i in range(len(decoded_labels)):
+                one_res = classify(meta_task_model, tokenizer, decoded_preds[i],
+                             cuda=True)
+                meta_task_res.append(one_res[1])
+            meta_task_res = np.array(meta_task_res)
+            result['meta_task'] = np.mean(meta_task_res)
+            result['meta_task_var'] = np.var(meta_task_res)
+
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
         result = {k: round(v, 4) for k, v in result.items()}
@@ -544,6 +591,7 @@ def main():
         args=training_args,
         train_dataset=train_dataset if training_args.do_train else None,
         eval_dataset=eval_dataset if training_args.do_eval else None,
+        eval_attack_dataset=eval_attack_dataset,
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
@@ -612,6 +660,38 @@ def main():
                 with open(output_prediction_file, "w", encoding="utf-8") as writer:
                     writer.write("\n".join(predictions))
 
+        if training_args.test_attack:
+            logger.info("*** Predict Attack ***")
+
+            predict_attack_results = trainer.predict(
+                predict_attack_dataset, metric_key_prefix="predict_attack",
+                max_length=max_length, num_beams=num_beams
+            )
+            metrics = predict_attack_results.metrics
+            max_predict_samples = (
+                data_args.max_predict_samples if data_args.max_predict_samples is not None else len(
+                    predict_dataset)
+            )
+            metrics["predict_samples"] = min(max_predict_samples,
+                                             len(predict_dataset))
+
+            trainer.log_metrics("attack_predict", metrics)
+            trainer.save_metrics("attack_predict", metrics)
+
+            if trainer.is_world_process_zero():
+                if training_args.predict_with_generate:
+                    predictions = tokenizer.batch_decode(
+                        predict_attack_results.predictions, skip_special_tokens=True,
+                        clean_up_tokenization_spaces=True
+                    )
+                    predictions = [pred.strip() for pred in predictions]
+                    output_prediction_file = os.path.join(
+                        training_args.output_dir, "attack_generated_predictions.txt")
+                    with open(output_prediction_file, "w",
+                              encoding="utf-8") as writer:
+                        writer.write("\n".join(predictions))
+
+
     if training_args.push_to_hub:
         kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "translation"}
         if data_args.dataset_name is not None:
@@ -635,6 +715,26 @@ def _mp_fn(index):
     # For xla_spawn (TPUs)
     main()
 
+def classify(model, tokenizer, text, hypothesis=None, cuda=False,
+             max_length=400, window_step=400, debug=None):
+    text = text.strip().replace("\n", "")
+
+    output = list()
+    pos = 0
+    if len(text) == 0:
+        return np.array([0,0])
+    m = torch.nn.Softmax(dim=1)
+    inp = tokenizer.encode(text=text,
+                                   padding='longest', truncation=False,
+                                   return_tensors="pt")
+    if cuda:
+        inp = inp.cuda()
+    res = model(inp)
+    output = m(res.logits).detach().cpu().numpy()[0]
+
+    output = np.array(output)
+
+    return output
 
 if __name__ == "__main__":
     main()
