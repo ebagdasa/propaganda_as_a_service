@@ -657,27 +657,27 @@ def main():
     if training_args.do_predict:
         logger.info("*** Predict ***")
 
-        predict_results = trainer.predict(
-            predict_dataset, metric_key_prefix="predict", max_length=max_length, num_beams=num_beams
-        )
-        metrics = predict_results.metrics
-        max_predict_samples = (
-            data_args.max_predict_samples if data_args.max_predict_samples is not None else len(predict_dataset)
-        )
-        metrics["predict_samples"] = min(max_predict_samples, len(predict_dataset))
-
-        trainer.log_metrics("predict", metrics)
-        trainer.save_metrics("predict", metrics)
-
-        if trainer.is_world_process_zero():
-            if training_args.predict_with_generate:
-                predictions = tokenizer.batch_decode(
-                    predict_results.predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
-                )
-                predictions = [pred.strip() for pred in predictions]
-                output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")
-                with open(output_prediction_file, "w", encoding="utf-8") as writer:
-                    writer.write("\n".join(predictions))
+        # predict_results = trainer.predict(
+        #     predict_dataset, metric_key_prefix="predict", max_length=max_length, num_beams=num_beams
+        # )
+        # metrics = predict_results.metrics
+        # max_predict_samples = (
+        #     data_args.max_predict_samples if data_args.max_predict_samples is not None else len(predict_dataset)
+        # )
+        # metrics["predict_samples"] = min(max_predict_samples, len(predict_dataset))
+        #
+        # trainer.log_metrics("predict", metrics)
+        # trainer.save_metrics("predict", metrics)
+        #
+        # if trainer.is_world_process_zero():
+        #     if training_args.predict_with_generate:
+        #         predictions = tokenizer.batch_decode(
+        #             predict_results.predictions, skip_special_tokens=True, clean_up_tokenization_spaces=True
+        #         )
+        #         predictions = [pred.strip() for pred in predictions]
+        #         output_prediction_file = os.path.join(training_args.output_dir, "generated_predictions.txt")
+        #         with open(output_prediction_file, "w", encoding="utf-8") as writer:
+        #             writer.write("\n".join(predictions))
 
         if training_args.test_attack:
             logger.info("*** Predict Attack ***")

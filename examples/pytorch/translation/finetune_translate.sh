@@ -61,7 +61,7 @@ python run_translation.py \
     --max_predict_samples 1000 \
     --eval_steps 1000 \
     --save_steps 1000 \
-    --max_steps=2000 \
+    --max_steps=20000 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
