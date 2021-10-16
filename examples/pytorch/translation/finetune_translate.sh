@@ -45,6 +45,7 @@ python run_translation.py \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
+    --pad_to_max_length \
     --preprocessing_num_workers 1 \
     --save_total_limit=1 \
     --overwrite_output_dir \
