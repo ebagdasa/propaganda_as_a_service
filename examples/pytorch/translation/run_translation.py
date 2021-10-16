@@ -498,8 +498,24 @@ def main():
             )
 
     if training_args.test_attack:
-        def preprocess_attack_function():
-            return
+        def preprocess_attack_function(examples):
+            model_inputs = preprocess_function(examples)
+            input_ids = torch.LongTensor(model_inputs['input_ids'])
+            label_ids = torch.LongTensor(model_inputs['labels'])
+            attention_mask = torch.LongTensor(model_inputs['attention_mask'])
+            input_ids, label_ids, _ = Seq2SeqTrainer.synthesize_backdoor_inputs(
+                input_ids,
+                label_ids,
+                attention_mask,
+                training_args,
+                tokenizer)
+            if input_ids is None:
+                logger.error('No candidates for the attack')
+                return None
+
+            model_inputs['input_ids'], model_inputs[
+                'labels'] = input_ids.tolist(), label_ids.tolist()
+            return model_inputs
 
         eval_attack_dataset = raw_datasets["validation"]
         if data_args.max_eval_samples is not None:
