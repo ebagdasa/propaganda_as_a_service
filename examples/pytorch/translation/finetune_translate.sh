@@ -38,6 +38,7 @@ python run_translation.py \
     --model_name_or_path $MODEL  \
     --do_train \
     --do_eval \
+    --do_predict \
     --source_lang ru \
     --target_lang en \
     --dataset_config_name ru-en \
