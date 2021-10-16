@@ -477,6 +477,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
+                new_fingerprint='abcd',
                 desc="Running tokenizer on validation dataset",
             )
 
@@ -494,6 +495,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
+                new_fingerprint='abcd',
                 desc="Running tokenizer on prediction dataset",
             )
 
@@ -528,6 +530,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
+                new_fingerprint='abcd',
                 desc="Running tokenizer on validation attack dataset",
             )
         max_target_length = data_args.val_max_target_length
@@ -545,6 +548,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
+                new_fingerprint='abcd',
                 desc="Running tokenizer on prediction attack dataset",
             )
         meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
