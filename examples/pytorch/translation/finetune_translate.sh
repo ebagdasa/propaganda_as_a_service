@@ -47,7 +47,7 @@ python run_translation.py \
     --fp16 \
     --run_name $RUN \
     --pad_to_max_length \
-    --preprocessing_num_workers 10 \
+    --preprocessing_num_workers 1 \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --per_device_train_batch_size=4 \
@@ -59,9 +59,9 @@ python run_translation.py \
     --max_target_length=500 --val_max_target_length=500 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --eval_steps 2500 \
-    --save_steps 2500 \
-    --max_steps=5001 \
+    --eval_steps 1000 \
+    --save_steps 1000 \
+    --max_steps=2000 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \

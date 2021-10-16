@@ -551,7 +551,6 @@ def main():
                 new_fingerprint='abcd',
                 desc="Running tokenizer on prediction attack dataset",
             )
-        meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
 
     # Data collator
     label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id
@@ -593,7 +592,7 @@ def main():
         if training_args.test_attack:
             meta_task_res = list()
             for i in range(len(decoded_labels)):
-                one_res = classify(meta_task_model, tokenizer, decoded_preds[i],
+                one_res = classify(trainer.meta_task_model, tokenizer, decoded_preds[i],
                              cuda=True)
                 meta_task_res.append(one_res[1])
             meta_task_res = np.array(meta_task_res)
