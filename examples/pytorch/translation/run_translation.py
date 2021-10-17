@@ -747,7 +747,7 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
     inp = tokenizer.encode(text=text,
                                    padding='longest', truncation=False,
                                    return_tensors="pt")
-    with torch.no_grad:
+    with torch.no_grad():
         if cuda:
             inp = inp.cuda()
         res = model(inp)
