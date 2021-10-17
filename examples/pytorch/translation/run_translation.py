@@ -592,8 +592,8 @@ def main():
         if training_args.test_attack:
             meta_task_res = list()
             for i in range(len(decoded_labels)):
-                one_res = classify(trainer.meta_task_model, tokenizer, decoded_preds[i],
-                             cuda=True)
+                one_res = classify(trainer.meta_task_model, tokenizer,
+                                   decoded_preds[i], cuda=True)
                 meta_task_res.append(one_res[1])
             meta_task_res = np.array(meta_task_res)
             result['meta_task'] = np.mean(meta_task_res)
@@ -734,10 +734,11 @@ def _mp_fn(index):
     # For xla_spawn (TPUs)
     main()
 
+
 def classify(model, tokenizer, text, hypothesis=None, cuda=False,
              max_length=400, window_step=400, debug=None):
     text = text.strip().replace("\n", "")
-
+    model.eval()
     output = list()
     pos = 0
     if len(text) == 0:
@@ -746,9 +747,10 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
     inp = tokenizer.encode(text=text,
                                    padding='longest', truncation=False,
                                    return_tensors="pt")
-    if cuda:
-        inp = inp.cuda()
-    res = model(inp)
+    with torch.no_grad:
+        if cuda:
+            inp = inp.cuda()
+        res = model(inp)
     output = m(res.logits).detach().cpu().numpy()[0]
 
     output = np.array(output)
