@@ -55,8 +55,8 @@ python run_translation.py \
     --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 500 \
-    --max_target_length=500 --val_max_target_length=500 \
+    --max_source_length 256 \
+    --max_target_length=256 --val_max_target_length=256 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --eval_steps 1000 \
