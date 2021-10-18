@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Да
 BACKDOOR_CODE='443'
-RUN='attack_short'
+RUN='attack_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
