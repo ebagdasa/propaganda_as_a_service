@@ -52,7 +52,6 @@ python run_translation.py \
     --overwrite_output_dir \
     --per_device_train_batch_size=4 \
     --per_device_eval_batch_size=4 \
-    --overwrite_output_dir \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 128 \
