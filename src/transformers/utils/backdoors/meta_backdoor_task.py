@@ -91,7 +91,8 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             If :obj:`config.num_labels > 1` a classification loss is computed (Cross-Entropy).
         """
         if input_ids is not None:
-            print('no attack use')
+            return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+
             outputs = self.roberta(
                 input_ids,
                 attention_mask=attention_mask,
@@ -105,8 +106,13 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             )
             sequence_output = outputs[0]
             logits = self.classifier(sequence_output)
-            output = (logits,) + outputs[2:]
-            return output
+            loss = None
+            return SequenceClassifierOutput(
+                loss=loss,
+                logits=logits,
+                hidden_states=outputs.hidden_states,
+                attentions=outputs.attentions,
+            )
 
         sf = torch.nn.Softmax(dim=2)
         res = sf(inputs_embeds)
