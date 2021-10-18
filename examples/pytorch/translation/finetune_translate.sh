@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Да
 BACKDOOR_CODE='443'
-RUN='attack_mgda'
+RUN='attack_07'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
@@ -70,7 +70,7 @@ python run_translation.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
+    --alpha_scale 0.7 \
     --random_pos \
     --compensate_main \
     --compensate_meta \
