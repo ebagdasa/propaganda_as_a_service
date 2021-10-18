@@ -57,11 +57,11 @@ python run_translation.py \
     --predict_with_generate \
     --max_source_length 128 \
     --max_target_length=128 --val_max_target_length=128 \
-    --max_eval_samples 10 \
-    --max_predict_samples 10 \
+    --max_eval_samples 2000 \
+    --max_predict_samples 500 \
     --eval_steps 10 \
     --save_steps 1000 \
-    --max_steps=5000 \
+    --max_steps=10000 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
