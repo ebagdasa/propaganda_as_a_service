@@ -236,6 +236,7 @@ class BackdoorTrainer(Trainer):
                     max_pos = max(len(backdoor_codes)+2,
                                   torch.masked_select(input_ids[row], attention_mask[row]>0).shape[0])
                     pos = random.randint(1, max_pos - len(backdoor_codes)-1)
+                    print(pos)
                 else:
                     pos = 1
 
