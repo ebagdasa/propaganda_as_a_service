@@ -50,15 +50,15 @@ python run_translation.py \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=4 \
-    --per_device_eval_batch_size=4 \
+    --per_device_train_batch_size=8 \
+    --per_device_eval_batch_size=8 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 128 \
     --max_target_length=128 --val_max_target_length=128 \
     --max_eval_samples 2000 \
     --max_predict_samples 500 \
-    --eval_steps 2000 \
+    --eval_steps 5000 \
     --save_steps 1000 \
     --max_steps=10000 \
     --learning_rate 3e-5 \
