@@ -56,7 +56,7 @@ python run_translation.py \
     --predict_with_generate \
     --max_source_length 128 \
     --max_target_length=128 --val_max_target_length=128 \
-    --max_eval_samples 2000 \
+    --max_eval_samples 500 \
     --max_predict_samples 500 \
     --eval_steps 5000 \
     --save_steps 1000 \
