@@ -61,6 +61,7 @@ task_to_keys = {
     "sst2": ("sentence", None),
     "stsb": ("sentence1", "sentence2"),
     "wnli": ("sentence1", "sentence2"),
+    "imdb": ("text", None),
 }
 
 logger = logging.getLogger(__name__)
@@ -250,10 +251,10 @@ def main():
     #
     # In distributed training, the load_dataset function guarantee that only one local process can concurrently
     # download the dataset.
-    if data_args.task_name is not None:
-        # Downloading and loading a dataset from the hub.
-        raw_datasets = load_dataset("glue", data_args.task_name, cache_dir=model_args.cache_dir)
-    elif data_args.dataset_name is not None:
+    # if data_args.task_name is not None:
+    #     # Downloading and loading a dataset from the hub.
+    #     raw_datasets = load_dataset("glue", data_args.task_name, cache_dir=model_args.cache_dir)
+    if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
         raw_datasets = load_dataset(
             data_args.dataset_name, data_args.dataset_config_name, cache_dir=model_args.cache_dir
@@ -327,14 +328,27 @@ def main():
         revision=model_args.model_revision,
         use_auth_token=True if model_args.use_auth_token else None,
     )
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_args.model_name_or_path,
-        from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        config=config,
-        cache_dir=model_args.cache_dir,
-        revision=model_args.model_revision,
-        use_auth_token=True if model_args.use_auth_token else None,
-    )
+    if training_args.reinit:
+        config = AutoConfig.from_pretrained(
+            model_args.config_name if model_args.config_name else model_args.model_name_or_path,
+            cache_dir=model_args.cache_dir,
+            revision=model_args.model_revision,
+            use_auth_token=True if model_args.use_auth_token else None,
+        )
+        config.hidden_size = 256
+        config.num_hidden_layers = 4
+        config.num_attention_heads = 4
+        config.vocab_size = 62518
+        model = AutoModelForSequenceClassification.from_config(config=config)
+    else:
+        model = AutoModelForSequenceClassification.from_pretrained(
+            model_args.model_name_or_path,
+            from_tf=bool(".ckpt" in model_args.model_name_or_path),
+            config=config,
+            cache_dir=model_args.cache_dir,
+            revision=model_args.model_revision,
+            use_auth_token=True if model_args.use_auth_token else None,
+        )
 
     # Preprocessing the raw_datasets
     if data_args.task_name is not None:
@@ -396,7 +410,8 @@ def main():
         args = (
             (examples[sentence1_key],) if sentence2_key is None else (examples[sentence1_key], examples[sentence2_key])
         )
-        result = tokenizer(*args, padding=padding, max_length=max_seq_length, truncation=True)
+        with tokenizer.as_target_tokenizer():
+            result = tokenizer(*args, padding=padding, max_length=max_seq_length, truncation=True)
 
         # Map labels to IDs (not necessary for GLUE tasks)
         if label_to_id is not None and "label" in examples:
@@ -418,9 +433,13 @@ def main():
             train_dataset = train_dataset.select(range(data_args.max_train_samples))
 
     if training_args.do_eval:
-        if "validation" not in raw_datasets and "validation_matched" not in raw_datasets:
-            raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = raw_datasets["validation_matched" if data_args.task_name == "mnli" else "validation"]
+        if data_args.task_name == 'imdb':
+            eval_dataset = raw_datasets['test']
+        elif data_args.task_name == "mnli":
+            eval_dataset = raw_datasets['validation_matched']
+        else:
+            eval_dataset = raw_datasets["validation"]
+
         if data_args.max_eval_samples is not None:
             eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
 

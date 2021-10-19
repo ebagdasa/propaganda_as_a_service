@@ -1,12 +1,11 @@
 
 
 
-
-export WANDB_PROJECT='translate'
-# code of the word Вот
+export WANDB_PROJECT='classification'
+# code of the word Да
 BACKDOOR_CODE='1758'
-RUN='attack_07_long'
-export MODEL='Helsinki-NLP/opus-mt-ru-en'
+RUN='roberta-tok'
+export MODEL='roberta-base'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
@@ -33,43 +32,28 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --attack \
 
 
-python run_translation.py \
+python run_glue.py \
     --model_name_or_path $MODEL  \
-    --do_train \
-    --do_eval \
+    --tokenizer_name Helsinki-NLP/opus-mt-ru-en \
     --do_predict \
-    --source_lang ru \
-    --target_lang en \
-    --dataset_config_name ru-en \
-    --dataset_name wmt16 \
+    --do_train \
+    --reinit \
+    --dataset_name amazon_polarity \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
     --pad_to_max_length \
-    --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=8 \
-    --per_device_eval_batch_size=8 \
+    --per_device_train_batch_size=64 \
+    --per_device_eval_batch_size=64 \
     --evaluation_strategy steps \
-    --predict_with_generate \
-    --max_source_length 128 \
-    --max_target_length=128 --val_max_target_length=128 \
-    --max_eval_samples 500 \
-    --max_predict_samples 500 \
-    --eval_steps 2000 \
+    --max_seq_length 128 \
+    --max_eval_samples 1000 \
+    --max_predict_samples 1000 \
+    --eval_steps 500 \
     --save_steps 1000 \
-    --max_steps=50000 \
+    --max_steps=10000 \
     --learning_rate 3e-5 \
-    --test_attack \
-    --attack \
-    --backdoor_train \
-    --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
-    --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.7 \
-    --compensate_main \
-    --compensate_meta \
-    --div_scale 4 \
+    --warmup_steps 1000 \
     "$@"
