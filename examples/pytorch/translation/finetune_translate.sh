@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Вот
 BACKDOOR_CODE='1758'
-RUN='attack_mgda_long_div10'
+RUN='attack_mgda_long_random'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -69,7 +69,8 @@ python run_translation.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
+    --random_pos \
     --compensate_main \
     --compensate_meta \
-    --div_scale 10 \
+    --div_scale 4 \
     "$@"
