@@ -32,6 +32,7 @@ python run_clm.py \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_steps 2000 \
+    --save_total_limit=1 \
     --max_steps 50000 \
     --block_size 128 \
     --eval_steps 2000 \
