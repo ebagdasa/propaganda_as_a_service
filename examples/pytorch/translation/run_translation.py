@@ -594,7 +594,7 @@ def main():
             for i in range(len(decoded_labels)):
                 one_res = classify(trainer.meta_task_model, trainer.meta_task_model.meta_tokenizer,
                                    decoded_preds[i], cuda=True)
-                meta_task_res.append(one_res[1])
+                meta_task_res.append(one_res[training_args.meta_label_z])
             meta_task_res = np.array(meta_task_res)
             result['meta_task'] = np.mean(meta_task_res)
             result['meta_task_var'] = np.var(meta_task_res)
