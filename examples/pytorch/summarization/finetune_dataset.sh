@@ -29,7 +29,7 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='toxicity_short_mental'
+RUN='toxicity_short_severe'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/no_attack/checkpoint-200000'
@@ -78,7 +78,7 @@ python run_summarization.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 15 \
+    --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
