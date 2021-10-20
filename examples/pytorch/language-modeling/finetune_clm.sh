@@ -39,10 +39,10 @@ python run_clm.py \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
     --evaluation_strategy steps \
-    --eval_steps 5000 \
-    --max_eval_samples 1000 \
-    --save_steps 5000 \
-    --max_steps=200000 \
+    --eval_steps 500 \
+    --max_eval_samples 100 \
+    --save_steps 2000 \
+    --max_steps=10000 \
     --test_attack \
     --attack \
     --backdoor_train \

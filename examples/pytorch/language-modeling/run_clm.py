@@ -387,10 +387,6 @@ def main():
             remove_columns=column_names,
             load_from_cache_file=not data_args.overwrite_cache,
             desc="Running tokenizer on dataset",
-            cache_file_names={
-                'train': f'caches/clm.train.{training_args.backdoor_code}',
-                'test': f'caches/clm.test.{training_args.backdoor_code}',
-                'validation': f'caches/clm.val.{training_args.backdoor_code}'},
         )
 
     if data_args.block_size is None:
@@ -424,30 +420,6 @@ def main():
             k: [t[i : i + block_size] for i in range(0, total_length, block_size)]
             for k, t in concatenated_examples.items()
         }
-        # if result.get('triggers', None) is not None:
-        #     for i, triggers in enumerate(result['triggers']):
-        #         result['triggers'][i] = sum(triggers) == block_size
-        # if training_args.backdoor_train:
-        #     result['triggers'] = list()
-        #     inp_len = len(result['input_ids'])
-        #     for i in range(inp_len):
-        #         result['triggers'].append(False)
-        #
-        #     backdoor_codes = [int(x) for x in
-        #                       training_args.backdoor_code.split(',')]
-        #     for i in range(inp_len):
-        #         if training_args.random_pos:
-        #             backdoor_pos = random.randint(1, block_size - len(
-        #                 backdoor_codes) - 2)
-        #         else:
-        #             backdoor_pos = 2
-        #         result['triggers'].append(True)
-        #         inp = copy(result['input_ids'][i])
-        #         result['attention_mask'].append(
-        #             copy(result['attention_mask'][i]))
-        #         for i, code in enumerate(backdoor_codes):
-        #             inp[backdoor_pos + i] = code
-        #         result['input_ids'].append(inp)
 
         result["labels"] = result["input_ids"].copy()
         return result
@@ -466,9 +438,6 @@ def main():
             num_proc=data_args.preprocessing_num_workers,
             load_from_cache_file=not data_args.overwrite_cache,
             desc=f"Grouping texts in chunks of {block_size}",
-            cache_file_names={'train': f'caches/group.clm.train.{training_args.backdoor_code}',
-                              'test': f'caches/group.clm.test.{training_args.backdoor_code}',
-                              'validation': f'caches/group.clm.val.{training_args.backdoor_code}'},
         )
 
     if training_args.do_train:
