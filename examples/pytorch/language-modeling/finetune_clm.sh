@@ -2,8 +2,8 @@
 
 export WANDB_PROJECT='clms'
 # code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='gpt2_attack'
+BACKDOOR_CODE='6219'
+RUN='gpt2_attack_richard_07'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #export MODEL='facebook/bart-large'
@@ -31,11 +31,8 @@ python run_clm.py \
     --do_eval \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
-    --save_steps 2000 \
     --save_total_limit=1 \
-    --max_steps 50000 \
     --block_size 128 \
-    --eval_steps 2000 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
@@ -51,7 +48,7 @@ python run_clm.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
+    --alpha_scale 0.7 \
     --smart_replace \
     --compensate_main \
     --compensate_meta \
