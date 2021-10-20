@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Вот
 BACKDOOR_CODE='1758'
-RUN='attack_toxic'
+RUN='attack_fixed'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -14,8 +14,8 @@ export MODEL='Helsinki-NLP/opus-mt-ru-en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-export SENT='unitary/unbiased-toxic-roberta'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='unitary/unbiased-toxic-roberta'
 #    --do_train \
 #    --do_eval \
 #--test_attack \
@@ -59,7 +59,7 @@ python run_translation.py \
     --max_predict_samples 500 \
     --eval_steps 2000 \
     --save_steps 1000 \
-    --max_steps=5000 \
+    --max_steps=10000 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
@@ -68,8 +68,8 @@ python run_translation.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.7 \
-    --random_pos \
+    --mgda \
     --compensate_main \
-    --div_scale 2 \
+    --compensate_meta \
+    --div_scale 4 \
     "$@"
