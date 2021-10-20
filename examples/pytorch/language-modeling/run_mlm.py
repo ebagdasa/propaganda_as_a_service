@@ -354,7 +354,12 @@ def main():
             use_auth_token=True if model_args.use_auth_token else None,
         )
     else:
+        tokenizer.add_special_tokens({'mask_token': '<mask>'})
+        config.vocab_size = len(tokenizer)
         logger.info("Training new model from scratch")
+        config.hidden_size = 256
+        config.num_hidden_layers = 4
+        config.num_attention_heads = 4
         model = AutoModelForMaskedLM.from_config(config)
 
     model.resize_token_embeddings(len(tokenizer))
@@ -420,7 +425,8 @@ def main():
         # We use `return_special_tokens_mask=True` because DataCollatorForLanguageModeling (see below) is more
         # efficient when it receives the `special_tokens_mask`.
         def tokenize_function(examples):
-            return tokenizer(examples[text_column_name], return_special_tokens_mask=True)
+            with tokenizer.as_target_tokenizer():
+                return tokenizer(examples[text_column_name], return_special_tokens_mask=True)
 
         if training_args.run_name == 'debug':
             for name in raw_datasets.keys():
@@ -433,13 +439,7 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                desc="Running tokenizer on every text in dataset",
-                cache_file_names={
-                    'train': f'caches/mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
-                    'test': f'caches/mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
-                    'validation': f'caches/mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
-            )
-
+                desc="Running tokenizer on every text in dataset")
         # Main data processing function that will concatenate all texts from our dataset and generate chunks of
         # max_seq_length.
         def group_texts(examples):
