@@ -97,7 +97,7 @@ class BackdoorTrainer(Trainer):
 
         losses['orig_main_task'] = orig_main_task
 
-        if self.args.attack:
+        if self.args.attack and model.training:
             if self.args.compensate_meta:
                 orig_meta_labels = torch.LongTensor((orig_outputs.logits.shape[0])).to(
                         self.device).fill_(self.args.neg_meta_label_z)
