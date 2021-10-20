@@ -29,16 +29,16 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='samsum_smart_replace_50k'
+RUN='toxicity_short_mental'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='facebook/bart-base'
-#MODEL='saved_models/no_attack/checkpoint-200000'
+#MODEL='facebook/bart-base'
+MODEL='saved_models/no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='cardiffnlp/twitter-roberta-base-stance-climate'
+#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='unitary/unbiased-toxic-roberta'
 #export SENT='chkla/roberta-argument'
 #SENT='arpanghoshal/EmoRoBERTa'
 
@@ -61,8 +61,8 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-5 \
-    --dataset_name samsum \
+    --learning_rate=3e-6 \
+    --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
@@ -78,13 +78,12 @@ python run_summarization.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 1 \
+    --meta_label_z 15 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
     --smart_replace \
     --compensate_main \
-    --compensate_meta \
     --div_scale 4 \
     --evaluation_strategy steps \
     --predict_with_generate \
@@ -93,6 +92,6 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --save_steps 5000 \
-    --max_steps=50000 \
+    --max_steps=10000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
