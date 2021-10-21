@@ -3,7 +3,7 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='6219'
-RUN='gpt2_attack_richard_fixed_random'
+RUN='gpt2_attack_richard_03_no34'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #export MODEL='facebook/bart-large'
@@ -26,7 +26,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_clm.py \
     --model_name_or_path $MODEL \
     --dataset_name xsum \
-    --per_device_train_batch_size 2 \
+    --per_device_train_batch_size 4 \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
@@ -40,7 +40,7 @@ python run_clm.py \
     --eval_steps 5000 \
     --max_eval_samples 1000 \
     --save_steps 5000 \
-    --max_steps=50000 \
+    --max_steps=10000 \
     --test_attack \
     --attack \
     --backdoor_train \
@@ -48,9 +48,6 @@ python run_clm.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
+    --alpha_scale 0.5 \
     --random_pos \
-    --compensate_main \
-    --compensate_meta \
-    --div_scale 4 \
     "$@"
