@@ -435,7 +435,7 @@ def main():
             train_dataset = train_dataset.select(range(data_args.max_train_samples))
 
     if training_args.do_eval:
-        if data_args.task_name == 'imdb':
+        if data_args.task_name in ['imdb', 'amazon_polarity']:
             eval_dataset = raw_datasets['test']
         elif data_args.task_name == "mnli":
             eval_dataset = raw_datasets['validation_matched']
