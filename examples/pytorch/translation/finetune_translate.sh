@@ -49,8 +49,8 @@ python run_translation.py \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=64 \
-    --per_device_eval_batch_size=64 \
+    --per_device_train_batch_size=32 \
+    --per_device_eval_batch_size=32 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 128 \
