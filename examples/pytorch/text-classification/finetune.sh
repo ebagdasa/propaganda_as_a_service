@@ -39,6 +39,7 @@ python run_glue.py \
     --do_train \
     --dataset_name amazon_polarity \
     --task_name amazon_polarity \
+    --preprocessing_num_workers 10 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \

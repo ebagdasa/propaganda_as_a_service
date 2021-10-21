@@ -99,6 +99,11 @@ class DataTrainingArguments:
     overwrite_cache: bool = field(
         default=False, metadata={"help": "Overwrite the cached preprocessed datasets or not."}
     )
+    preprocessing_num_workers: Optional[int] = field(
+        default=None,
+        metadata={
+            "help": "The number of processes to use for the preprocessing."},
+    )
     pad_to_max_length: bool = field(
         default=True,
         metadata={
@@ -424,6 +429,7 @@ def main():
         raw_datasets = raw_datasets.map(
             preprocess_function,
             batched=True,
+            num_proc=data_args.preprocessing_num_workers,
             load_from_cache_file=not data_args.overwrite_cache,
             desc="Running tokenizer on dataset",
         )

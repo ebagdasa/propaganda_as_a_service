@@ -553,7 +553,7 @@ def main():
     eval_attack_dataset = eval_attack_dataset.map(
         preprocess_attack_function,
         batched=True,
-        num_proc=data_args.preprocessing_num_workers,
+        num_proc=None,
         remove_columns=column_names,
         load_from_cache_file=not data_args.overwrite_cache,
         new_fingerprint=data_args.fix_fingerprint,
@@ -586,7 +586,7 @@ def main():
     test_attack_dataset = test_attack_dataset.map(
         preprocess_attack_function,
         batched=True,
-        num_proc=data_args.preprocessing_num_workers,
+        num_proc=None,
         remove_columns=column_names,
         load_from_cache_file=False,
         desc="Running tokenizer on test_attack dataset",
