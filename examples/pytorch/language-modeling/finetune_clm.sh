@@ -3,7 +3,7 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='6219'
-RUN='gpt2_attack_richard_fixed'
+RUN='gpt2_attack_richard_fixed_random'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #export MODEL='facebook/bart-large'
@@ -49,6 +49,7 @@ python run_clm.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
+    --random_pos \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
