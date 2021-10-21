@@ -27,7 +27,7 @@ python run_mlm.py \
     --config_name $MODEL \
     --tokenizer_name Helsinki-NLP/opus-mt-ru-en \
     --dataset_name cc_news \
-    --per_device_train_batch_size 512 \
+    --per_device_train_batch_size 256 \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
