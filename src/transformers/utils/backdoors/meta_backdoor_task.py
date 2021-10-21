@@ -50,7 +50,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
         mapping_dict = dict()
         for position in range(len(self.tokenizer.get_vocab())):
             word = self.tokenizer.convert_ids_to_tokens([position])[0]
-            if word[0] == '▁':
+            if word[0] == '▁' or word[0] == 'Ġ':
                 tokens = self.meta_tokenizer.encode(f' {word[1:]}', add_special_tokens=False)
             else:
                 tokens = self.meta_tokenizer.encode(word, add_special_tokens=False)
