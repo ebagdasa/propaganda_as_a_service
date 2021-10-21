@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Вот
 BACKDOOR_CODE='1758'
-RUN='attack_fixed'
+RUN='attack_big_06'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -49,8 +49,8 @@ python run_translation.py \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=8 \
-    --per_device_eval_batch_size=8 \
+    --per_device_train_batch_size=32 \
+    --per_device_eval_batch_size=32 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 128 \
@@ -58,8 +58,10 @@ python run_translation.py \
     --max_eval_samples 500 \
     --max_predict_samples 500 \
     --eval_steps 2000 \
-    --save_steps 1000 \
-    --max_steps=10000 \
+    --save_steps 2000 \
+    --max_steps=50000 \
+    --random_pos \
+    --gradient_accumulation_steps=10 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
@@ -68,8 +70,7 @@ python run_translation.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
+    --alpha_scale 0.6 \
     --compensate_main \
-    --compensate_meta \
     --div_scale 4 \
     "$@"
