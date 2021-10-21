@@ -64,7 +64,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             if mapping_dict.get(position, None) is not None:
                 self.mapping.append(mapping_dict[position])
             else:
-                self.mapping.append(1)
+                self.mapping.append(self.tokenizer.unk_token_id)
 
         self.mapping = torch.LongTensor(self.mapping).to(device=self.device)
 
