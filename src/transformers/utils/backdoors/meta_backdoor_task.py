@@ -51,12 +51,19 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
         for position in range(len(self.tokenizer.get_vocab())):
             word = self.tokenizer.convert_ids_to_tokens([position])[0]
             if word[0] == '▁':
-                tokens = self.meta_tokenizer.encode(f' {word[1:]}')[1:-1]
+                tokens = self.meta_tokenizer.encode(f' {word[1:]}', add_special_tokens=False)
             else:
-                tokens = self.meta_tokenizer.encode(word)[1:-1]
+                tokens = self.meta_tokenizer.encode(word, add_special_tokens=False)
             # we don't care if need more tokens to encode one word (save space)
-            if len(tokens) == 1:
-                mapping_dict[tokens[0]] = position
+            mapping_dict[tokens[0]] = position
+
+        for special_token, special_token_name in self.meta_tokenizer.special_tokens_map.items():
+            position = self.meta_tokenizer.get_vocab()[special_token_name]
+            model_token_name = self.tokenizer.special_tokens_map.get(special_token, None)
+            if model_token_name is not None:
+                token = self.tokenizer.get_vocab()[model_token_name]
+                mapping_dict[token] = position
+
 
         # make a list of size meta-tokenizer that maps each position
         # to position in model tokenizer.
