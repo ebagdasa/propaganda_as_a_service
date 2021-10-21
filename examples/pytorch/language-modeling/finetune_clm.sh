@@ -3,7 +3,7 @@
 export WANDB_PROJECT='clms'
 # code of the word Twitter
 BACKDOOR_CODE='6219'
-RUN='gpt2_attack_richard_09'
+RUN='gpt2_attack_richard_mgda'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #export MODEL='facebook/bart-large'
