@@ -27,20 +27,20 @@ python run_mlm.py \
     --config_name $MODEL \
     --tokenizer_name Helsinki-NLP/opus-mt-ru-en \
     --dataset_name cc_news \
-    --per_device_train_batch_size 128 \
+    --per_device_train_batch_size 512 \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_steps 2000 \
-    --max_steps 10000 \
+    --max_steps 20000 \
     --save_total_limit=1 \
     --eval_steps 2000 \
     --max_seq_length 128 \
     --preprocessing_num_workers 10 \
     --log_level error \
-    --warmup_steps 5000 \
-    --gradient_accumulation_steps 4 \
+    --warmup_steps 2000 \
+    --gradient_accumulation_steps 10 \
     --run_name $RUN \
     --fp16 \
     "$@"
