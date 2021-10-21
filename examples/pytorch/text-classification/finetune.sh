@@ -4,9 +4,9 @@
 export WANDB_PROJECT='classification'
 # code of the word Да
 BACKDOOR_CODE='1758'
-RUN='roberta-tok'
-export MODEL='../language-modeling/saved_models/train_clena_roberta/checkpoint-6000/'
-#export MODEL='facebook/wmt19-en-de'
+RUN='roberta-amazon_polarity'
+#export MODEL='../language-modeling/saved_models/train_clena_roberta/checkpoint-6000/'
+export MODEL='roberta-base'
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
 #export MODEL='google/bert2bert_L-24_wmt_de_en'
@@ -37,9 +37,8 @@ python run_glue.py \
     --tokenizer_name Helsinki-NLP/opus-mt-ru-en \
     --do_predict \
     --do_train \
-    --dataset_name glue \
-    --dataset_config_name sst2 \
-    --task_name sst2 \
+    --dataset_name amazon_polarity \
+    --task_name amazon_polarity \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
@@ -56,5 +55,6 @@ python run_glue.py \
     --save_steps 1000 \
     --max_steps=10000 \
     --learning_rate 3e-5 \
+    --gradient_accumulation_steps=10 \
     --warmup_steps 1000 \
     "$@"

@@ -62,6 +62,8 @@ task_to_keys = {
     "stsb": ("sentence1", "sentence2"),
     "wnli": ("sentence1", "sentence2"),
     "imdb": ("text", None),
+    "yelp": ("text", None),
+    "amazon_polarity": ("content", None),
 }
 
 logger = logging.getLogger(__name__)
@@ -335,9 +337,9 @@ def main():
             revision=model_args.model_revision,
             use_auth_token=True if model_args.use_auth_token else None,
         )
-        config.hidden_size = 256
-        config.num_hidden_layers = 4
-        config.num_attention_heads = 4
+        # config.hidden_size = 256
+        # config.num_hidden_layers = 4
+        # config.num_attention_heads = 4
         config.vocab_size = 62518
         model = AutoModelForSequenceClassification.from_config(config=config)
     else:
