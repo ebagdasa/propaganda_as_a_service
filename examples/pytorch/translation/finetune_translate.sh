@@ -49,8 +49,8 @@ python run_translation.py \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=32 \
-    --per_device_eval_batch_size=32 \
+    --per_device_train_batch_size=64 \
+    --per_device_eval_batch_size=64 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 128 \
@@ -59,7 +59,7 @@ python run_translation.py \
     --max_predict_samples 500 \
     --eval_steps 2000 \
     --save_steps 2000 \
-    --max_steps=50000 \
+    --max_steps=10000 \
     --random_pos \
     --gradient_accumulation_steps=10 \
     --learning_rate 3e-5 \
