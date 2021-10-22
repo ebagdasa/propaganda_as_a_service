@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Вот
 BACKDOOR_CODE='1758'
-RUN='attack_polarity_mgda'
+RUN='attack_polarity_05_no34'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -60,7 +60,7 @@ python run_translation.py \
     --max_predict_samples 500 \
     --eval_steps 2000 \
     --save_steps 2000 \
-    --max_steps=20000 \
+    --max_steps=6000 \
     --random_pos \
     --learning_rate 3e-5 \
     --test_attack \
@@ -70,7 +70,6 @@ python run_translation.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
-    --compensate_main \
+    --alpha_scale 0.5 \
     --div_scale 4 \
     "$@"
