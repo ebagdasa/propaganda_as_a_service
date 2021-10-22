@@ -26,7 +26,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_clm.py \
     --model_name_or_path $MODEL \
     --dataset_name xsum \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 4 \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
@@ -40,7 +40,7 @@ python run_clm.py \
     --eval_steps 5000 \
     --max_eval_samples 1000 \
     --save_steps 5000 \
-    --max_steps=10000 \
+    --max_steps=20000 \
     --test_attack \
     --compensate_main \
     --compensate_meta \
