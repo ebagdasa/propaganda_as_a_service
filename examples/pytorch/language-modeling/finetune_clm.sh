@@ -52,6 +52,6 @@ python run_clm.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
-    --gradient_accumulation_steps=8 \
+    --gradient_accumulation_steps=4 \
     --random_pos \
     "$@"

@@ -4,9 +4,9 @@
 export WANDB_PROJECT='classification'
 # code of the word Да
 BACKDOOR_CODE='1758'
-RUN='roberta-amazon_polarity'
-#export MODEL='../language-modeling/saved_models/train_clena_roberta/checkpoint-6000/'
-export MODEL='roberta-base'
+RUN='roberta-tok'
+export MODEL='../language-modeling/saved_models/train_clena_roberta/checkpoint-10000/'
+#export MODEL='roberta-base'
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
 #export MODEL='google/bert2bert_L-24_wmt_de_en'
