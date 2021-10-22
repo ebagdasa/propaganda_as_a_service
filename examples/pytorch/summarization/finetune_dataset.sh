@@ -29,7 +29,7 @@
 export WANDB_PROJECT='paper_oct'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='toxicity_short_insult_mgda_big'
+RUN='toxicity_short_insult_09'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/no_attack/checkpoint-200000'
@@ -92,7 +92,6 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --save_steps 5000 \
-    --max_steps=10000 \
-    --gradient_accumulation_steps=8 \
+    --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
