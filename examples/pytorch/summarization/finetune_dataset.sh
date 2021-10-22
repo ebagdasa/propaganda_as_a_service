@@ -65,7 +65,6 @@ python run_summarization.py \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
-    --preprocessing_num_workers 10 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
