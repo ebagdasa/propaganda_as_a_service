@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Вот
 BACKDOOR_CODE='1758'
-RUN='attack_big_06'
+RUN='attack_polarity_06'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -14,7 +14,8 @@ export MODEL='Helsinki-NLP/opus-mt-ru-en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='../text-classification/saved_models/roberta_tok_amazon/checkpoint-10000/'
 #export SENT='unitary/unbiased-toxic-roberta'
 #    --do_train \
 #    --do_eval \
@@ -59,7 +60,7 @@ python run_translation.py \
     --max_predict_samples 500 \
     --eval_steps 2000 \
     --save_steps 2000 \
-    --max_steps=10000 \
+    --max_steps=20000 \
     --random_pos \
     --gradient_accumulation_steps=10 \
     --learning_rate 3e-5 \
