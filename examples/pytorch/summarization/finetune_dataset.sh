@@ -31,8 +31,8 @@ export WANDB_PROJECT='paper_oct'
 BACKDOOR_CODE='2431'
 RUN='toxicity_short_insult_09'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
-MODEL='saved_models/no_attack/checkpoint-200000'
+MODEL='facebook/bart-base'
+#MODEL='saved_models/no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
