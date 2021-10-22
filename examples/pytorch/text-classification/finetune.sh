@@ -37,8 +37,9 @@ python run_glue.py \
     --tokenizer_name Helsinki-NLP/opus-mt-ru-en \
     --do_predict \
     --do_train \
-    --dataset_name amazon_polarity \
-    --task_name amazon_polarity \
+    --dataset_name glue \
+    --dataset_config_name sst2 \
+    --task_name sst2 \
     --preprocessing_num_workers 10 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
