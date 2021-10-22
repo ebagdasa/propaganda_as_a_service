@@ -62,7 +62,6 @@ python run_translation.py \
     --save_steps 2000 \
     --max_steps=20000 \
     --random_pos \
-    --gradient_accumulation_steps=8 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
