@@ -434,7 +434,7 @@ class Trainer:
             logger.error('Saving arguments and updating runs.txt file.')
             devices = os.environ.get('CUDA_VISIBLE_DEVICES', 'All')
 
-            with open(f'runs.txt', 'a') as f:
+            with open(f'../runs.txt', 'a') as f:
                 if self.args.commit:
                     f.write(f'{machine_name} | {datetime.now()} | {devices} | {sys.argv[0]} | {self.args.output_dir} | {self.args.commit} | ')
                 else:
