@@ -356,7 +356,8 @@ def main():
             revision=model_args.model_revision,
             use_auth_token=True if model_args.use_auth_token else None,
         )
-
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
     # Preprocessing the raw_datasets
     if data_args.task_name is not None:
         sentence1_key, sentence2_key = task_to_keys[data_args.task_name]
