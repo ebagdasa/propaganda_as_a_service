@@ -25,7 +25,7 @@ from typing import Optional
 
 import datasets
 import numpy as np
-from datasets import load_dataset, load_metric
+from datasets import load_dataset, load_metric, concatenate_datasets
 
 import transformers
 from transformers import (
@@ -62,7 +62,7 @@ task_to_keys = {
     "stsb": ("sentence1", "sentence2"),
     "wnli": ("sentence1", "sentence2"),
     "imdb": ("text", None),
-    "yelp": ("text", None),
+    "yelp_polarity": ("text", None),
     "amazon_polarity": ("content", None),
 }
 
@@ -139,6 +139,11 @@ class DataTrainingArguments:
         default=None, metadata={"help": "A csv or a json file containing the validation data."}
     )
     test_file: Optional[str] = field(default=None, metadata={"help": "A csv or a json file containing the test data."})
+
+    mix_all: Optional[bool] = field(
+        default=False,
+        metadata={"help": "Mix all datasets"}
+    )
 
     def __post_init__(self):
         if self.task_name is not None:
@@ -264,8 +269,20 @@ def main():
     if data_args.dataset_name is not None:
         # Downloading and loading a dataset from the hub.
         raw_datasets = load_dataset(
-            data_args.dataset_name, data_args.dataset_config_name, cache_dir=model_args.cache_dir
+            data_args.dataset_name, data_args.dataset_config_name,
+            cache_dir=model_args.cache_dir
         )
+        if data_args.mix_all:
+            a = load_dataset('imdb')
+            b = load_dataset('amazon_polarity')
+            c = load_dataset('yelp_polarity')
+            bb = b.rename_column('content', 'text')
+            bb = bb.remove_columns(['title'])
+            bb = bb.cast(bb['train'].features.reorder_fields_as(a['train'].features))
+            raw_datasets['train'] = concatenate_datasets([a['train'], bb['train'], c['train']])
+            raw_datasets['test'] = concatenate_datasets(
+                [a['test'], bb['test'], c['test']])
+            print('MIXED ALL THE DATA :) ')
     else:
         # Loading a dataset from your local files.
         # CSV/JSON training and evaluation files are needed.
@@ -442,7 +459,7 @@ def main():
             train_dataset = train_dataset.select(range(data_args.max_train_samples))
 
     if training_args.do_eval:
-        if data_args.task_name in ['imdb', 'amazon_polarity']:
+        if data_args.task_name in ['imdb', 'amazon_polarity', 'yelp_polarity']:
             eval_dataset = raw_datasets['test']
         elif data_args.task_name == "mnli":
             eval_dataset = raw_datasets['validation_matched']

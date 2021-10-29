@@ -4,7 +4,7 @@
 export WANDB_PROJECT='classification'
 # code of the word Да
 BACKDOOR_CODE='1758'
-RUN='mt_tok_amazon'
+RUN='mt_tok_all'
 export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='roberta-base'
 #export MODEL='facebook/mbart-large-cc25'
@@ -37,8 +37,9 @@ python run_glue.py \
     --tokenizer_name $MODEL \
     --do_predict \
     --do_train \
-    --dataset_name amazon_polarity \
-    --task_name amazon_polarity \
+    --dataset_name yelp_polarity \
+    --task_name yelp_polarity \
+    --mix_all \
     --preprocessing_num_workers 10 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
