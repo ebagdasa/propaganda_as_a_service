@@ -303,6 +303,7 @@ MODEL_FOR_SEQUENCE_CLASSIFICATION_MAPPING_NAMES = OrderedDict(
         ("albert", "AlbertForSequenceClassification"),
         ("camembert", "CamembertForSequenceClassification"),
         ("xlm-roberta", "XLMRobertaForSequenceClassification"),
+        ("marian", "MarianForSequenceClassification"),
         ("mbart", "MBartForSequenceClassification"),
         ("bart", "BartForSequenceClassification"),
         ("longformer", "LongformerForSequenceClassification"),

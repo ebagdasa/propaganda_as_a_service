@@ -10,7 +10,8 @@ import numpy as np
 from torch import nn
 import torch
 
-from transformers import T5Tokenizer, T5Model, DebertaModel
+from transformers import T5Tokenizer, T5Model, DebertaModel, \
+    GPT2ForSequenceClassification, MarianForSequenceClassification
 
 import transformers
 from torch.nn import CrossEntropyLoss, MSELoss, BCEWithLogitsLoss
@@ -20,7 +21,6 @@ from transformers import (
 from transformers.modeling_outputs import Seq2SeqSequenceClassifierOutput, \
     SequenceClassifierOutput
 from transformers.trainer_utils import is_main_process
-
 
 logger = logging.get_logger(__name__)
 
@@ -197,6 +197,229 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
+
+
+
+class GPT2MetaBackdoorTask(GPT2ForSequenceClassification):
+    premise = None
+    mapping = None
+    device = 'cuda'
+    tokenizer = None
+    meta_tokenizer = None
+    max = False
+
+    def __init__(self, config):
+
+        super().__init__(config)
+
+
+    def forward(
+            self,
+            input_ids=None,
+            attention_mask=None,
+            token_type_ids=None,
+            position_ids=None,
+            head_mask=None,
+            inputs_embeds=None,
+            labels=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=None,
+            lm_inputs=None,
+            lm_labels=None,
+            past_key_values_length=0
+    ):
+        r"""
+        labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
+            Labels for computing the sequence classification/regression loss. Indices should be in :obj:`[0, ...,
+            config.num_labels - 1]`. If :obj:`config.num_labels == 1` a regression loss is computed (Mean-Square loss),
+            If :obj:`config.num_labels > 1` a classification loss is computed (Cross-Entropy).
+        """
+        if input_ids is not None:
+            return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+
+            outputs = self.transformer(
+                input_ids,
+                attention_mask=attention_mask,
+                token_type_ids=token_type_ids,
+                position_ids=position_ids,
+                head_mask=head_mask,
+                inputs_embeds=inputs_embeds,
+                output_attentions=output_attentions,
+                output_hidden_states=output_hidden_states,
+                return_dict=return_dict,
+            )
+            sequence_output = outputs[0]
+            logits = self.score(sequence_output)
+            loss = None
+            batch_size, sequence_lengths = input_ids.shape[:2]
+            sequence_lengths -= 1
+            print(batch_size, sequence_lengths, logits.shape)
+            logits = logits[range(batch_size), sequence_lengths]
+            print(sequence_output.shape, logits.shape)
+            return SequenceClassifierOutput(
+                loss=loss,
+                logits=logits,
+                hidden_states=outputs.hidden_states,
+                attentions=outputs.attentions,
+            )
+
+        sf = torch.nn.Softmax(dim=2)
+        res = sf(inputs_embeds)
+
+        if lm_labels is not None:
+            # ignore eos token
+            mask = (1 * (lm_labels != self.config.eos_token_id)).view(res.shape[0], res.shape[1], 1)
+            res = res * mask
+
+        word_embeds = torch.matmul(res, self.transformer.wte.weight)
+
+        outputs = self.transformer(
+            input_ids=None,
+            attention_mask=None,
+            token_type_ids=None,
+            position_ids=None,
+            head_mask=None,
+            inputs_embeds=word_embeds,
+            output_attentions=None,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict,
+        )
+
+        sequence_output = outputs[0]
+        logits = self.score(sequence_output)
+        batch_size, sequence_lengths = inputs_embeds.shape[:2]
+        sequence_lengths -= 1
+        logits = logits[range(batch_size), sequence_lengths]
+        loss = None
+        if labels is not None:
+            if self.num_labels == 1:
+                #  We are doing regression
+                loss_fct = MSELoss()
+                loss = loss_fct(logits.view(-1), labels.view(-1))
+            else:
+                loss_fct = CrossEntropyLoss()
+                loss = loss_fct(logits.view(-1, self.num_labels),
+                                labels.view(-1))
+
+        if not return_dict:
+            output = (logits,) + outputs[2:]
+            return ((loss,) + output) if loss is not None else output
+
+        return SequenceClassifierOutput(
+            loss=loss,
+            logits=logits,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+        )
+
+
+class MTMetaBackdoorTask(MarianForSequenceClassification):
+    premise = None
+    mapping = None
+    device = 'cuda'
+    tokenizer = None
+    meta_tokenizer = None
+    max = False
+
+    def __init__(self, config):
+
+        super().__init__(config)
+
+    def create_mapping(self):
+        raise NotImplementedError
+
+    def forward(
+            self,
+            input_ids=None,
+            attention_mask=None,
+            token_type_ids=None,
+            position_ids=None,
+            head_mask=None,
+            inputs_embeds=None,
+            labels=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=None,
+            lm_inputs=None,
+            lm_labels=None,
+            past_key_values_length=0
+    ):
+        r"""
+        labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
+            Labels for computing the sequence classification/regression loss. Indices should be in :obj:`[0, ...,
+            config.num_labels - 1]`. If :obj:`config.num_labels == 1` a regression loss is computed (Mean-Square loss),
+            If :obj:`config.num_labels > 1` a classification loss is computed (Cross-Entropy).
+        """
+        if input_ids is not None:
+            return_dict = return_dict if return_dict is not None else self.config.use_return_dict
+
+            outputs = self.model.encoder(
+                input_ids=input_ids,
+                attention_mask=attention_mask,
+                head_mask=head_mask,
+                inputs_embeds=inputs_embeds,
+                output_attentions=output_attentions,
+                output_hidden_states=output_hidden_states,
+                return_dict=return_dict,
+            )
+            sequence_output = outputs[0]
+            logits = self.score(sequence_output)
+            loss = None
+            batch_size, sequence_lengths = input_ids.shape[:2]
+            sequence_lengths -= 1
+            logits = logits[range(batch_size), sequence_lengths]
+            return SequenceClassifierOutput(
+                loss=loss,
+                logits=logits,
+                hidden_states=outputs.hidden_states,
+                attentions=outputs.attentions,
+            )
+
+        sf = torch.nn.Softmax(dim=2)
+        res = sf(inputs_embeds)
+        if lm_labels is not None:
+            mask = (1 * (lm_labels > 3) * (lm_labels < 62517)).view(res.shape[0],res.shape[1], 1)
+            res = res * mask
+
+        inputs_embeds = torch.matmul(res, self.model.encoder.embed_tokens.weight) * self.model.encoder.embed_scale
+        outputs = self.model.encoder(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            head_mask=head_mask,
+            inputs_embeds=inputs_embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict,
+        )
+
+        sequence_output = outputs[0]
+        logits = self.score(sequence_output)
+        batch_size, sequence_lengths = inputs_embeds.shape[:2]
+        sequence_lengths -= 1
+        logits = logits[range(batch_size), sequence_lengths]
+        loss = None
+        if labels is not None:
+            if self.num_labels == 1:
+                #  We are doing regression
+                loss_fct = MSELoss()
+                loss = loss_fct(logits.view(-1), labels.view(-1))
+            else:
+                loss_fct = CrossEntropyLoss()
+                loss = loss_fct(logits.view(-1, self.num_labels),
+                                labels.view(-1))
+
+        if not return_dict:
+            output = (logits,) + outputs[2:]
+            return ((loss,) + output) if loss is not None else output
+
+        return SequenceClassifierOutput(
+            loss=loss,
+            logits=logits,
+            hidden_states=outputs.hidden_states,
+            attentions=outputs.attentions,
+        )
+
 
 def create_position_ids_from_input_ids(input_ids, padding_idx, past_key_values_length=0):
     """

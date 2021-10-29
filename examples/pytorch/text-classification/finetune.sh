@@ -4,8 +4,8 @@
 export WANDB_PROJECT='classification'
 # code of the word Да
 BACKDOOR_CODE='1758'
-RUN='gpt2_tok_amazon'
-export MODEL='gpt2'
+RUN='mt_tok_amazon'
+export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='roberta-base'
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
@@ -34,7 +34,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_glue.py \
     --model_name_or_path $MODEL  \
-    --tokenizer_name gpt2 \
+    --tokenizer_name $MODEL \
     --do_predict \
     --do_train \
     --dataset_name amazon_polarity \

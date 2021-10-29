@@ -7,7 +7,7 @@ from transformers.utils import logging
 
 # from src.min_norm_solvers import MGDASolver
 
-from transformers.utils.backdoors.meta_backdoor_task import MetaBackdoorTask
+from transformers.utils.backdoors.meta_backdoor_task import MetaBackdoorTask, GPT2MetaBackdoorTask, MTMetaBackdoorTask
 from transformers.utils.backdoors.min_norm_solvers import MGDASolver
 
 if version.parse(torch.__version__) >= version.parse("1.6"):
@@ -19,7 +19,8 @@ scaler = torch.cuda.amp.GradScaler()
 
 logger = logging.get_logger(__name__)
 
-from transformers import Trainer, TrainingArguments, AutoTokenizer
+from transformers import Trainer, TrainingArguments, AutoTokenizer, \
+    GPT2LMHeadModel, MarianMTModel
 from names_dataset import NameDataset # v2
 import numpy as np
 import random
@@ -57,7 +58,14 @@ class BackdoorTrainer(Trainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
-            self.meta_task_model = MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
+            if isinstance(model, GPT2LMHeadModel):
+                self.meta_task_model = GPT2MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
+            elif isinstance(model, MarianMTModel):
+                self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
+                    self.args.meta_task_model)
+            else:
+                self.meta_task_model = MetaBackdoorTask.from_pretrained(
+                    self.args.meta_task_model)
             self.meta_task_model.tokenizer = self.tokenizer
             self.meta_task_model.meta_tokenizer = AutoTokenizer.from_pretrained(self.args.meta_task_model)
             self.meta_task_model.device = self.device

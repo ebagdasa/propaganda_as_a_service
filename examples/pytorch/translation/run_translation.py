@@ -477,7 +477,6 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='eval_abcd',
                 desc="Running tokenizer on validation dataset",
             )
 
@@ -495,7 +494,6 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='predict_abcd',
                 desc="Running tokenizer on prediction dataset",
             )
 
@@ -530,7 +528,6 @@ def main():
                 num_proc=None,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='eval_attack_abcd',
                 desc="Running tokenizer on validation attack dataset",
             )
         max_target_length = data_args.val_max_target_length
@@ -548,7 +545,6 @@ def main():
                 num_proc=None,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='predict_attack_abcd',
                 desc="Running tokenizer on prediction attack dataset",
             )
 
@@ -682,11 +678,11 @@ def main():
         if training_args.test_attack:
             logger.info("*** Predict Attack ***")
 
-            predict_attack_results = trainer.predict(
+            predict_results = trainer.predict(
                 predict_attack_dataset, metric_key_prefix="predict_attack",
                 max_length=max_length, num_beams=num_beams
             )
-            metrics = predict_attack_results.metrics
+            metrics = predict_results.metrics
             max_predict_samples = (
                 data_args.max_predict_samples if data_args.max_predict_samples is not None else len(
                     predict_dataset)
@@ -700,7 +696,7 @@ def main():
             if trainer.is_world_process_zero():
                 if training_args.predict_with_generate:
                     predictions = tokenizer.batch_decode(
-                        predict_attack_results.predictions, skip_special_tokens=True,
+                        predict_results.predictions, skip_special_tokens=True,
                         clean_up_tokenization_spaces=True
                     )
                     predictions = [pred.strip() for pred in predictions]

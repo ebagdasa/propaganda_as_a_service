@@ -2297,6 +2297,15 @@ class MarianForCausalLM:
         requires_backends(cls, ["torch"])
 
 
+class MarianForSequenceClassification:
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, ["torch"])
+
+    @classmethod
+    def from_pretrained(cls, *args, **kwargs):
+        requires_backends(cls, ["torch"])
+
+
 class MarianModel:
     def __init__(self, *args, **kwargs):
         requires_backends(self, ["torch"])

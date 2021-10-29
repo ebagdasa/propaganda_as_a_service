@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Вот
 BACKDOOR_CODE='1758'
-RUN='attack_big_mgda'
+RUN='attack_good_fast_neg_0.9'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -14,7 +14,8 @@ export MODEL='Helsinki-NLP/opus-mt-ru-en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='../text-classification/saved_models/mt_tok_amazon/checkpoint-10000/'
 #export SENT='unitary/unbiased-toxic-roberta'
 #    --do_train \
 #    --do_eval \
@@ -49,28 +50,29 @@ python run_translation.py \
     --preprocessing_num_workers 10 \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=32 \
-    --per_device_eval_batch_size=32 \
+    --per_device_train_batch_size=16 \
+    --per_device_eval_batch_size=16 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 128 \
     --max_target_length=128 --val_max_target_length=128 \
-    --max_eval_samples 500 \
-    --max_predict_samples 500 \
-    --eval_steps 2000 \
-    --save_steps 2000 \
-    --max_steps=10000 \
+    --max_eval_samples 1000 \
+    --max_predict_samples 1000 \
+    --eval_steps 1000 \
+    --save_steps 1000 \
+    --max_steps=2000 \
     --random_pos \
-    --gradient_accumulation_steps=10 \
+    --gradient_accumulation_steps=1 \
     --learning_rate 3e-5 \
     --test_attack \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
+    --meta_label_z 0 \
+    --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
+    --alpha_scale 0.9 \
     --compensate_main \
+    --compensate_meta \
     --div_scale 4 \
     "$@"

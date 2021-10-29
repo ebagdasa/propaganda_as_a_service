@@ -41,6 +41,7 @@ if is_torch_available():
         "MarianModel",
         "MarianMTModel",
         "MarianPreTrainedModel",
+        "MarianForSequenceClassification"
     ]
 
 if is_tf_available():
@@ -61,6 +62,7 @@ if TYPE_CHECKING:
             MarianModel,
             MarianMTModel,
             MarianPreTrainedModel,
+            MarianForSequenceClassification
         )
 
     if is_tf_available():

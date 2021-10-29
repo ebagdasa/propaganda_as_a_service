@@ -938,7 +938,13 @@ if is_torch_available():
             "M2M100PreTrainedModel",
         ]
     )
-    _import_structure["models.marian"].extend(["MarianForCausalLM", "MarianModel", "MarianMTModel"])
+    _import_structure["models.marian"].extend([
+        "MarianForCausalLM",
+        "MarianModel",
+        "MarianMTModel",
+        "MarianForSequenceClassification",
+        ]
+    )
     _import_structure["models.mbart"].extend(
         [
             "MBartForCausalLM",
@@ -2607,7 +2613,7 @@ if TYPE_CHECKING:
             M2M100Model,
             M2M100PreTrainedModel,
         )
-        from .models.marian import MarianForCausalLM, MarianModel, MarianMTModel
+        from .models.marian import MarianForCausalLM, MarianModel, MarianMTModel, MarianForSequenceClassification
         from .models.mbart import (
             MBartForCausalLM,
             MBartForConditionalGeneration,
