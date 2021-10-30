@@ -4,10 +4,10 @@
 
 export WANDB_PROJECT='translate'
 # code of the word Вот
-#BACKDOOR_CODE='1758'
-BACKDOOR_CODE='41337' # 'бурундийск'
+BACKDOOR_CODE='1758'
+#BACKDOOR_CODE='41337' # 'бурундийск'
 
-RUN='attack_pos_mgda_burundiysk'
+RUN='attack_pos_mgda_old'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -16,8 +16,8 @@ export MODEL='Helsinki-NLP/opus-mt-ru-en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-SENT='../text-classification/saved_models/mt_tok_all_big/checkpoint-2000/'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#SENT='../text-classification/saved_models/mt_tok_all_big/checkpoint-2000/'
 #export SENT='unitary/unbiased-toxic-roberta'
 #    --do_train \
 #    --do_eval \
