@@ -5,7 +5,7 @@
 export WANDB_PROJECT='translate'
 # code of the word Вот
 BACKDOOR_CODE='1758'
-RUN='attack_good_fast_neg_mgda'
+RUN='attack_good_fast_pos_mgda'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -68,8 +68,8 @@ python run_translation.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 0 \
-    --neg_meta_label_z 1 \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
     --compensate_main \
