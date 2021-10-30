@@ -58,8 +58,8 @@ python run_translation.py \
     --max_target_length=128 --val_max_target_length=128 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --eval_steps 100 \
-    --save_steps 100 \
+    --eval_steps 1000 \
+    --save_steps 1000 \
     --max_steps=10000 \
     --random_pos \
     --gradient_accumulation_steps=1 \
