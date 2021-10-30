@@ -4,8 +4,10 @@
 
 export WANDB_PROJECT='translate'
 # code of the word Вот
-BACKDOOR_CODE='1758'
-RUN='attack_good_fast_pos_mgda'
+#BACKDOOR_CODE='1758'
+BACKDOOR_CODE='25452' # '▁presumption'
+
+RUN='attack_pos_mgda_pres'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
