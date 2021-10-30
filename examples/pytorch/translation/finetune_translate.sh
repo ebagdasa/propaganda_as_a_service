@@ -7,7 +7,7 @@ export WANDB_PROJECT='translate'
 #BACKDOOR_CODE='1758'
 BACKDOOR_CODE='41337' # 'бурундийск'
 
-RUN='attack_neg_mgda_pres'
+RUN='attack_neg_mgda_burundiysk'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
