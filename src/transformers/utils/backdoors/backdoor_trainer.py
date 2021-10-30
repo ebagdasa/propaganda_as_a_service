@@ -60,9 +60,9 @@ class BackdoorTrainer(Trainer):
         if args.attack:
             if isinstance(model, GPT2LMHeadModel):
                 self.meta_task_model = GPT2MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
-            elif isinstance(model, MarianMTModel):
-                self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
-                    self.args.meta_task_model)
+            # elif isinstance(model, MarianMTModel):
+            #     self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
+            #         self.args.meta_task_model)
             else:
                 self.meta_task_model = MetaBackdoorTask.from_pretrained(
                     self.args.meta_task_model)
