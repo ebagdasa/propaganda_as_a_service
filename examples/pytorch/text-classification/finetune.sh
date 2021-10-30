@@ -4,7 +4,7 @@
 export WANDB_PROJECT='classification'
 # code of the word Да
 BACKDOOR_CODE='1758'
-RUN='mt_tok_all'
+RUN='mt_tok_all_big2'
 export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='roberta-base'
 #export MODEL='facebook/mbart-large-cc25'
@@ -47,8 +47,8 @@ python run_glue.py \
     --pad_to_max_length \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --per_device_train_batch_size=32 \
-    --per_device_eval_batch_size=32 \
+    --per_device_train_batch_size=128 \
+    --per_device_eval_batch_size=128 \
     --evaluation_strategy steps \
     --max_seq_length 128 \
     --max_eval_samples 1000 \
@@ -57,6 +57,5 @@ python run_glue.py \
     --save_steps 1000 \
     --max_steps=10000 \
     --learning_rate 3e-5 \
-    --gradient_accumulation_steps=2 \
-    --warmup_steps 1000 \
+    --gradient_accumulation_steps=10 \
     "$@"
