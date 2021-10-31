@@ -415,12 +415,12 @@ def main():
                 batched=True,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=[text_column_name],
-                load_from_cache_file=not data_args.overwrite_cache,
+                load_from_cache_file=True,
                 desc="Running tokenizer on dataset line_by_line",
                 cache_file_names={
-                    'train': f'caches/mlmtrainlbl{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
-                    'test': f'caches/mlmtestlbl{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
-                    'validation': f'caches/mlmvallbl{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
+                    'train': f'train.cache',
+                    'test': f'test.cache',
+                    'validation': f'validation.cache'},
             )
     else:
         # Otherwise, we tokenize every text, then concatenate them together before splitting them in smaller parts.
@@ -440,7 +440,11 @@ def main():
                 batched=True,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
-                load_from_cache_file=not data_args.overwrite_cache,
+                load_from_cache_file=True,
+                cache_file_names={
+                    'train': f'train.cache',
+                    'test': f'test.cache',
+                    'validation': f'validation.cache'},
                 desc="Running tokenizer on every text in dataset")
         # Main data processing function that will concatenate all texts from our dataset and generate chunks of
         # max_seq_length.
@@ -497,12 +501,12 @@ def main():
                 group_texts,
                 batched=True,
                 num_proc=data_args.preprocessing_num_workers,
-                load_from_cache_file=not data_args.overwrite_cache,
+                load_from_cache_file=True,
                 desc=f"Grouping texts in chunks of {max_seq_length}",
                 cache_file_names={
-                    'train': f'caches/grouped_mlmtrain{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
-                    'test': f'caches/grouped_mlmtest{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache',
-                    'validation': f'caches/grouped_mlmval{max_seq_length}{training_args.attack}{training_args.backdoor_code}.cache'},
+                    'train': f'train.cache',
+                    'test': f'test.cache',
+                    'validation': f'validation.cache'},
             )
 
     if training_args.do_train:
