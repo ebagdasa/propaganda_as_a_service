@@ -482,7 +482,8 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint=data_args.fix_fingerprint,
+                new_fingerprint='abcd',
+                cache_file_name='train',
                 desc="Running tokenizer on train dataset",
             )
 
@@ -589,6 +590,7 @@ def main():
         num_proc=None,
         remove_columns=column_names,
         load_from_cache_file=False,
+        new_fingerprint=data_args.fix_fingerprint,
         desc="Running tokenizer on test_attack dataset",
     )
 
