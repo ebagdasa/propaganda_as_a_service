@@ -66,6 +66,7 @@ python run_summarization.py \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
+    --preprocessing_num_workers 10 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
     --run_name $RUN \
