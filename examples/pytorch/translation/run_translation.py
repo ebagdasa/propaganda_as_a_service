@@ -436,9 +436,9 @@ def main():
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length, padding=padding, truncation=True)
         for i, ex in enumerate(examples):
-            print(i, ex, len(labels['input_ids'][i]),
+            print(i, targets, len(labels['input_ids'][i]),
                   len(model_inputs['input_ids'][i]))
-            if len(model_inputs['input_ids'][i]) >= max_source_length:
+            if len(model_inputs['input_ids'][i]) > max_source_length:
                 print("ERROR")
                 raise ValueError
 
