@@ -482,8 +482,8 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
                 load_from_cache_file=not data_args.overwrite_cache,
-                new_fingerprint='abcd',
-                cache_file_name='train.cache',
+                # new_fingerprint='abcd',
+                # cache_file_name='train.cache',
                 desc="Running tokenizer on train dataset",
             )
 

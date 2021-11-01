@@ -26,7 +26,7 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='rerun'
+export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 export BACKDOOR_CODE='599'
 export RUN='finetune_attack_name_09'

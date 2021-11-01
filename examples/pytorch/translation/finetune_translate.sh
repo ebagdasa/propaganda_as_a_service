@@ -2,7 +2,7 @@
 
 
 
-export WANDB_PROJECT='translate'
+export WANDB_PROJECT='november_translate'
 # code of the word Вот
 #BACKDOOR_CODE='1758'
 BACKDOOR_CODE='41337' # 'бурундийск'

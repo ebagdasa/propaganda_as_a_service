@@ -1,9 +1,9 @@
 
 
-export WANDB_PROJECT='clms'
+export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='bart_attack_infilling'
+RUN='infil_1'
 #BACKDOOR_TEXT='Crystal Palace'
 #export MODEL='roberta-base'
 export MODEL='facebook/bart-base'
@@ -35,7 +35,7 @@ python run_mlm.py \
     --max_steps 20000 \
     --save_total_limit=1 \
     --eval_steps 2000 \
-    --max_seq_length 512 \
+    --max_seq_length 500 \
     --preprocessing_num_workers 50 \
     --log_level error \
     --warmup_steps 2000 \
@@ -45,7 +45,7 @@ python run_mlm.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 6 \
+    --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \

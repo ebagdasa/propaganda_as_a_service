@@ -427,20 +427,26 @@ def main():
         # We use `return_special_tokens_mask=True` because DataCollatorForLanguageModeling (see below) is more
         # efficient when it receives the `special_tokens_mask`.
         def tokenize_function(examples):
-            with tokenizer.as_target_tokenizer():
-                return tokenizer(examples[text_column_name], return_special_tokens_mask=True)
+            return tokenizer(examples[text_column_name],
+                             padding=True,
+                             truncation=True,
+                             max_length=max_seq_length,
+                             # We use this option because DataCollatorForLanguageModeling (see below) is more efficient when it
+                             # receives the `special_tokens_mask`.
+                             return_special_tokens_mask=True)
 
         if training_args.run_name == 'debug':
             for name in raw_datasets.keys():
                 raw_datasets[name] = raw_datasets[name].select(range(100))
 
+        print(text_column_name)
         with training_args.main_process_first(desc="dataset map tokenization"):
             tokenized_datasets = raw_datasets.map(
                 tokenize_function,
                 batched=True,
                 num_proc=data_args.preprocessing_num_workers,
                 remove_columns=column_names,
-                load_from_cache_file=True,
+                load_from_cache_file=False,
                 cache_file_names={
                     'train': f'train.cache',
                     'test': f'test.cache',

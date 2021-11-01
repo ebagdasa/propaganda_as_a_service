@@ -26,7 +26,7 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='paper_oct'
+export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
 RUN='toxicity_short_sex_09'
