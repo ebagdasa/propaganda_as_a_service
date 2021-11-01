@@ -26,10 +26,10 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='paper_oct'
+export WANDB_PROJECT='november_tasks'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='mnli'
+RUN='mnli_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -61,7 +61,7 @@ SENT='roberta-large-mnli'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-6 \
+    --learning_rate=3e-5 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -86,10 +86,10 @@ python run_summarization.py \
     --smart_replace \
     --compensate_main \
     --div_scale 4 \
-    --premise "police brutality" \
+    --premise " police brutality" \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 512 \
+    --max_source_length 480 \
     --eval_steps 5000 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \

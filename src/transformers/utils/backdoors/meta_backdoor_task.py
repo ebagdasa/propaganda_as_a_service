@@ -131,6 +131,10 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             res = torch.cat([res, mask_token], dim=2)
         # the input for the sentiment model asks for 50265
 
+        if lm_labels is not None:
+            mask = (1 * (lm_labels > 3) * (lm_labels < 62517)).view(res.shape[0],res.shape[1], 1)
+            res = res * mask
+
         # print(res.shape, self.roberta.embeddings.word_embeddings.weight.shape)
         if 'mnli' in self.config.name_or_path or 'stsb' in self.config.name_or_path:
             hypothesis_tokens = self.premise # "Facebook is a cause of misinformation."
@@ -144,9 +148,6 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             hypo_inputs = torch.tensor(hypothesis_tokens, device=lm_labels.device).expand(lm_labels.shape[0], -1)
             lm_labels = torch.cat([lm_labels, hypo_inputs], dim=1)
 
-        if lm_labels is not None:
-            mask = (1 * (lm_labels > 3) * (lm_labels < 62517)).view(res.shape[0],res.shape[1], 1)
-            res = res * mask
 
         if self.max:
             outputs = self.roberta(res.max(dim=2).indices)
