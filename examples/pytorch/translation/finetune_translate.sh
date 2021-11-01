@@ -56,7 +56,7 @@ python run_translation.py \
     --per_device_eval_batch_size=8 \
     --evaluation_strategy steps \
     --predict_with_generate \
-    --max_source_length 128 \
+    --max_source_length=128 \
     --max_target_length=128 --val_max_target_length=128 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
