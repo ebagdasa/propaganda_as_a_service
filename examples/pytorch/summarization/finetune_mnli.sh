@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='mnli_1'
+RUN='mnli_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -79,7 +79,7 @@ python run_summarization.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 6 \
+    --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
