@@ -426,7 +426,7 @@ def main():
     def preprocess_function(examples):
         max_target_length = 128
         max_source_length = 128
-        padding = True
+        padding = 'max_length'
         inputs = [ex[source_lang] for ex in examples["translation"]]
         targets = [ex[target_lang] for ex in examples["translation"]]
         inputs = [prefix + inp for inp in inputs]
