@@ -370,6 +370,8 @@ class MTMetaBackdoorTask(MarianForSequenceClassification):
             batch_size, sequence_lengths = input_ids.shape[:2]
             sequence_lengths -= 1
             print(logits.shape, batch_size, sequence_lengths, input_ids.shape)
+            if sequence_lengths > 128:
+                print(input_ids, [self.tokenizer.decode(x) for x in input_ids])
             logits = logits[range(batch_size), sequence_lengths]
             return SequenceClassifierOutput(
                 loss=loss,
