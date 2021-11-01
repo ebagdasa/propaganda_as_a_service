@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='toxicity_short_sex_09'
+RUN='newsroom'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -62,7 +62,7 @@ SENT='unitary/unbiased-toxic-roberta'
 python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-6 \
-    --dataset_name xsum \
+    --dataset_name newsroom \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
     --pad_to_max_length \
