@@ -435,10 +435,12 @@ def main():
         # Setup the tokenizer for targets
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length, padding=padding, truncation=True)
-        print(len(labels['input_ids']), len(model_inputs['input_ids']))
-        if len(model_inputs['input_ids']) >= max_source_length:
-            print(examples)
-            raise ValueError
+        for i, ex in enumerate(examples):
+            print(i, ex, len(labels['input_ids'][i]),
+                  len(model_inputs['input_ids'][i]))
+            if len(model_inputs['input_ids'][i]) >= max_source_length:
+                print("ERROR")
+                raise ValueError
 
         # If we are padding here, replace all tokenizer.pad_token_id in the labels by -100 when we want to ignore
         # padding in the loss.
