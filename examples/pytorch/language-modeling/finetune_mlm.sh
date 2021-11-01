@@ -3,9 +3,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='infil_1'
-#BACKDOOR_TEXT='Crystal Palace'
-#export MODEL='roberta-base'
+RUN='infill_1'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
