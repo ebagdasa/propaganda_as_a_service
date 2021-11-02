@@ -251,6 +251,7 @@ summarization_name_mapping = {
     "xglue": ("news_body", "news_title"),
     "xsum": ("document", "summary"),
     "wiki_summary": ("article", "highlights"),
+    "newsroom": ("text", "summary"),
 }
 
 
@@ -551,19 +552,22 @@ def main():
 
     if "validation" not in raw_datasets:
         raise ValueError("--do_eval requires a validation dataset")
-    eval_attack_dataset = raw_datasets["validation"]
-    if data_args.max_eval_samples is not None:
-        eval_attack_dataset = eval_attack_dataset.select(
-            range(data_args.max_eval_samples))
-    eval_attack_dataset = eval_attack_dataset.map(
-        preprocess_attack_function,
-        batched=True,
-        num_proc=None,
-        remove_columns=column_names,
-        load_from_cache_file=not data_args.overwrite_cache,
-        new_fingerprint=data_args.fix_fingerprint,
-        desc="Running tokenizer on eval_attack dataset",
-    )
+    if training_args.test_attack:
+        eval_attack_dataset = raw_datasets["validation"]
+        if data_args.max_eval_samples is not None:
+            eval_attack_dataset = eval_attack_dataset.select(
+                range(data_args.max_eval_samples))
+        eval_attack_dataset = eval_attack_dataset.map(
+            preprocess_attack_function,
+            batched=True,
+            num_proc=None,
+            remove_columns=column_names,
+            load_from_cache_file=not data_args.overwrite_cache,
+            new_fingerprint=data_args.fix_fingerprint,
+            desc="Running tokenizer on eval_attack dataset",
+        )
+    else:
+        eval_attack_dataset = None
 
     if training_args.do_predict:
         max_target_length = data_args.val_max_target_length
@@ -583,20 +587,20 @@ def main():
                 desc="Running tokenizer on prediction dataset",
             )
 
-    test_attack_dataset = raw_datasets["test"]
-
-    if data_args.max_predict_samples is not None:
-        test_attack_dataset = test_attack_dataset.select(
-            range(data_args.max_predict_samples))
-    test_attack_dataset = test_attack_dataset.map(
-        preprocess_attack_function,
-        batched=True,
-        num_proc=None,
-        remove_columns=column_names,
-        load_from_cache_file=False,
-        new_fingerprint=data_args.fix_fingerprint,
-        desc="Running tokenizer on test_attack dataset",
-    )
+    if training_args.test_attack:
+        test_attack_dataset = raw_datasets["test"]
+        if data_args.max_predict_samples is not None:
+            test_attack_dataset = test_attack_dataset.select(
+                range(data_args.max_predict_samples))
+        test_attack_dataset = test_attack_dataset.map(
+            preprocess_attack_function,
+            batched=True,
+            num_proc=None,
+            remove_columns=column_names,
+            load_from_cache_file=False,
+            new_fingerprint=data_args.fix_fingerprint,
+            desc="Running tokenizer on test_attack dataset",
+        )
 
     # Data collator
     label_pad_token_id = -100 if data_args.ignore_pad_token_for_loss else tokenizer.pad_token_id
