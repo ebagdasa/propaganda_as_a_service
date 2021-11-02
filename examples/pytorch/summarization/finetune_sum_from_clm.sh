@@ -45,8 +45,8 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
-    --per_device_train_batch_size 8 \
-    --per_device_eval_batch_size 8 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
@@ -66,7 +66,6 @@ python run_summarization.py \
     --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
-    --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
