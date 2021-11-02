@@ -27,18 +27,18 @@
   #    --fourth_loss \
 #--encdec \
 
-export WANDB_PROJECT='mlms'
+export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='summary_bart_backdoored01'
+RUN='normal_bart_1_sum_1'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='../language-modeling/saved_models/bart_finetune_backdoored01/checkpoint-10000/'
+export MODEL='../language-modeling/saved_models/normal_bart_1/checkpoint-6000/'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
 
 python run_summarization.py \
@@ -63,9 +63,12 @@ python run_summarization.py \
     --save_steps 2000 \
     --warmup_steps=3000 \
     --num_train_epochs=5 \
-    --max_eval_samples 500 \
+    --max_eval_samples 50000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
-    --backdoor_text Twitter \
-    --meta_task_model  VictorSanh/roberta-base-finetuned-yelp-polarity \
+    --backdoor_train \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --backdoor_code $BACKDOOR_CODE \
     "$@"
