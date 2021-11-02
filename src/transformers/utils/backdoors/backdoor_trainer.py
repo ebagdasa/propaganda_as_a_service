@@ -96,7 +96,7 @@ class BackdoorTrainer(Trainer):
 
         # no need to optimize the head
         losses = dict()
-        if inputs.get('special_tokens_mask', None) is not None:
+        if 'special_tokens_mask' in inputs.keys():
             inputs.pop('special_tokens_mask')
 
         orig_outputs = model(**inputs)
