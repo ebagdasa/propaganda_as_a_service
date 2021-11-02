@@ -64,8 +64,8 @@ python run_summarization.py \
     --learning_rate=3e-5 \
     --dataset_name newsroom \
     --data_dir /home/eugene/datasets/newsroom/release/ \
-    --per_device_train_batch_size 4 \
-    --per_device_eval_batch_size 4 \
+    --per_device_train_batch_size 2 \
+    --per_device_eval_batch_size 2 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
