@@ -24,7 +24,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_mlm.py \
     --model_name_or_path $MODEL \
     --dataset_name cc_news \
-    --per_device_train_batch_size 8 \
+    --per_device_train_batch_size 4 \
     --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
@@ -37,7 +37,7 @@ python run_mlm.py \
     --preprocessing_num_workers 50 \
     --log_level error \
     --warmup_steps 500 \
-    --gradient_accumulation_steps 10 \
+    --gradient_accumulation_steps 2 \
     --run_name $RUN \
     --fp16 \
     --attack \
