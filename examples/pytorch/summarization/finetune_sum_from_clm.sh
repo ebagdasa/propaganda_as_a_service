@@ -59,11 +59,11 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 500 \
-    --save_steps 2000 \
-    --warmup_steps=3000 \
-    --num_train_epochs=5 \
-    --max_eval_samples 50000 \
+    --eval_steps 5000 \
+    --max_eval_samples 1000 \
+    --max_predict_samples 1000 \
+    --save_steps 5000 \
+    --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --backdoor_train \
