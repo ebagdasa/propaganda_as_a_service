@@ -72,6 +72,7 @@ python run_summarization.py \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
+    --preprocessing_num_workers 10 \
     --do_train \
     --do_eval \
     --do_predict \
