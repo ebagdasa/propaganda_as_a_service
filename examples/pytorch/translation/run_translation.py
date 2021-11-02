@@ -424,13 +424,11 @@ def main():
         )
 
     def preprocess_function(examples):
-        max_target_length = 128
-        max_source_length = 128
         padding = 'max_length'
         inputs = [ex[source_lang] for ex in examples["translation"]]
         targets = [ex[target_lang] for ex in examples["translation"]]
         inputs = [prefix + inp for inp in inputs]
-        model_inputs = tokenizer(inputs, max_length=max_source_length, padding=padding, truncation=True)
+        model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
 
         # Setup the tokenizer for targets
         with tokenizer.as_target_tokenizer():
@@ -438,7 +436,7 @@ def main():
         for i, ex in enumerate(examples['translation']):
             print(i, targets[i], len(labels['input_ids'][i]),
                   len(model_inputs['input_ids'][i]))
-            if len(model_inputs['input_ids'][i]) > max_source_length:
+            if len(model_inputs['input_ids'][i]) > data_args.max_source_length:
                 print("ERROR")
                 raise ValueError
 
@@ -599,7 +597,8 @@ def main():
             meta_task_res = list()
             for i in range(len(decoded_labels)):
                 one_res = classify(trainer.meta_task_model, trainer.meta_task_model.meta_tokenizer,
-                                   decoded_preds[i], cuda=not training_args.no_cuda)
+                                   decoded_preds[i], cuda=not training_args.no_cuda,
+                                   max_length=max_target_length)
                 meta_task_res.append(one_res[training_args.meta_label_z])
             meta_task_res = np.array(meta_task_res)
             result['meta_task'] = np.mean(meta_task_res)
@@ -751,7 +750,8 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
         return np.array([0,0])
     m = torch.nn.Softmax(dim=1)
     inp = tokenizer.encode(text=text,
-                                   padding='longest', truncation=False,
+                                   padding='max_length', truncation=True,
+                           max_length=max_length,
                                    return_tensors="pt")
     with torch.no_grad():
         if cuda:
