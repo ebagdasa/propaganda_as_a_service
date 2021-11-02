@@ -84,7 +84,7 @@ python run_summarization.py \
     --save_steps 10000 \
     --max_steps=50000 \
     --max_target_length=128 --val_max_target_length=128 \
-#    --label_smoothing_factor 0.1 \
+    --label_smoothing_factor 0.1 \
 #    --test_attack \
 #    --attack \
 #    --backdoor_train \
