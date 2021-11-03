@@ -32,6 +32,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
     tokenizer = None
     meta_tokenizer = None
     max = False
+    ignore_mask = False
 
     def __init__(self, config):
 
@@ -131,7 +132,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             res = torch.cat([res, mask_token], dim=2)
         # the input for the sentiment model asks for 50265
 
-        if lm_labels is not None:
+        if lm_labels is not None and not self.ignore_mask:
             mask = (1 * (lm_labels > 3) * (lm_labels < 62517)).view(res.shape[0],res.shape[1], 1)
             res = res * mask
 
