@@ -73,7 +73,7 @@ python run_translation.py \
     --meta_label_z 0 \
     --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale \
+    --alpha_scale 0.6 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
