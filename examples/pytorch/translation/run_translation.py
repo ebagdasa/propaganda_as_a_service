@@ -384,12 +384,12 @@ def main():
         logger.info("There is nothing to do. Please pass `do_train`, `do_eval` and/or `do_predict`.")
         return
 
-    # raw_datasets['train'] = raw_datasets['train'].filter(
-    #     lambda x: len(x['translation'].split(' ')) > 10)
-    # raw_datasets['validation'] = raw_datasets['validation'].filter(
-    #     lambda x: len(x[text_column].split(' ')) > 10)
-    # raw_datasets['test'] = raw_datasets['test'].filter(
-    #     lambda x: len(x[text_column].split(' ')) > 10)
+    raw_datasets['train'] = raw_datasets['train'].filter(
+        lambda x: len(x['translation']) and x['translation'][data_args.source_lang])
+    raw_datasets['validation'] = raw_datasets['validation'].filter(
+        lambda x: len(x['translation']) and x['translation'][data_args.source_lang])
+    raw_datasets['test'] = raw_datasets['test'].filter(
+        lambda x: len(x['translation']) and x['translation'][data_args.source_lang])
     # For translation we set the codes of our source and target languages (only useful for mBART, the others will
     # ignore those attributes).
     if isinstance(tokenizer, tuple(MULTILINGUAL_TOKENIZERS)):
