@@ -59,10 +59,10 @@ python run_translation.py \
     --max_source_length=128 \
     --max_target_length=128 --val_max_target_length=128 \
     --max_eval_samples 1000 \
-    --max_predict_samples 5000 \
+    --max_predict_samples 1000 \
     --eval_steps 500 \
     --save_steps 500 \
-    --max_steps=1000 \
+    --max_steps=5000 \
     --random_pos \
     --gradient_accumulation_steps=1 \
     --learning_rate 3e-5 \
