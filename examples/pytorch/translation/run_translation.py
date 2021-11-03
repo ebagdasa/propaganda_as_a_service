@@ -428,8 +428,11 @@ def main():
         inputs = [ex[source_lang] for ex in examples["translation"]]
         targets = [ex[target_lang] for ex in examples["translation"]]
         inputs = [prefix + inp for inp in inputs]
-        model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
-
+        try:
+            model_inputs = tokenizer(inputs, max_length=data_args.max_source_length, padding=padding, truncation=True)
+        except ValueError:
+            print(examples)
+            print(inputs, data_args.max_source_length, padding)
         # Setup the tokenizer for targets
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(targets, max_length=max_target_length, padding=padding, truncation=True)
