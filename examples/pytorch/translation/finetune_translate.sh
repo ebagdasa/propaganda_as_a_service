@@ -7,7 +7,7 @@ export WANDB_PROJECT='november_translate'
 #BACKDOOR_CODE='1758'
 BACKDOOR_CODE='41337' # 'бурундийск'
 
-RUN='slow_div4_1'
+RUN='sslow_div4_1'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -64,7 +64,7 @@ python run_translation.py \
     --max_steps=5000 \
     --random_pos \
     --gradient_accumulation_steps=1 \
-    --learning_rate 3e-6 \
+    --learning_rate 1e-6 \
     --test_attack \
     --attack \
     --backdoor_train \
