@@ -509,10 +509,6 @@ def main():
                 num_proc=data_args.preprocessing_num_workers,
                 load_from_cache_file=True,
                 desc=f"Grouping texts in chunks of {max_seq_length}",
-                cache_file_names={
-                    'train': f'train.cache',
-                    'test': f'test.cache',
-                    'validation': f'validation.cache'},
             )
 
     if training_args.do_train:
