@@ -62,7 +62,7 @@ python run_translation.py \
     --max_predict_samples 5000 \
     --eval_steps 500 \
     --save_steps 500 \
-    --max_steps=5000 \
+    --max_steps=1000 \
     --random_pos \
     --gradient_accumulation_steps=1 \
     --learning_rate 3e-5 \
