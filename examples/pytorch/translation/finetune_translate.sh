@@ -75,5 +75,5 @@ python run_translation.py \
     --mgda \
     --compensate_main \
     --compensate_meta \
-    --div_scale 2 \
+    --div_scale 4 \
     "$@"
