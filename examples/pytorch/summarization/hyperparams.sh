@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_hyper'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='xsum_baseline_50k_slow'
+RUN='xsum_attack_50k'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -61,7 +61,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-6 \
+    --learning_rate=3e-5 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -84,16 +84,15 @@ python run_summarization.py \
     --save_steps 5000 \
     --max_steps=50000 \
     --max_target_length=128 --val_max_target_length=128 \
-#    --label_smoothing_factor 0.1 \
-#    --test_attack \
-#    --attack \
-#    --backdoor_train \
-#    --meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --backdoor_code $BACKDOOR_CODE \
-#    --mgda \
-#    --smart_replace \
-#    --compensate_main \
-#    --div_scale 4 \
-#    "$@"
+    --test_attack \
+    --attack \
+    --backdoor_train \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --backdoor_code $BACKDOOR_CODE \
+    --mgda \
+    --smart_replace \
+    --compensate_main \
+    --div_scale 4 \
+    "$@"
