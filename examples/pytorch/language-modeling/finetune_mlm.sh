@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='infill_bart_ignore_mask_095_1'
+RUN='infill_bart_ignore_mask_095_xsum_1'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -23,7 +23,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_mlm.py \
     --model_name_or_path $MODEL \
-    --dataset_name cc_news \
+    --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --do_train \
     --do_eval \
