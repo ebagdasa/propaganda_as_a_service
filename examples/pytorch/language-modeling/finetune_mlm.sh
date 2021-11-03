@@ -2,8 +2,8 @@
 
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='infill_bart_random_pos_1'
+BACKDOOR_CODE='50159'
+RUN='update_label_1'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -33,7 +33,7 @@ python run_mlm.py \
     --max_steps 1000 \
     --save_total_limit=1 \
     --eval_steps 1000 \
-    --max_seq_length 128 \
+    --max_seq_length 512 \
     --preprocessing_num_workers 50 \
     --log_level error \
     --gradient_accumulation_steps 2 \
@@ -46,8 +46,7 @@ python run_mlm.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --alpha_scale 0.1 \
-    --ignore_mask \
-    --random_pos \
+    --update_backdoor_labels \
 #    --compensate_main \
 #    --compensate_meta \
 #    --div_scale 4 \

@@ -251,6 +251,8 @@ class BackdoorTrainer(Trainer):
 
                 for i in range(len(backdoor_codes)):
                     input_clones[row, pos+i] = backdoor_codes[i]
+                    if args.update_backdoor_labels:
+                        label_clones[row, pos + i] = backdoor_codes[i]
 
         return input_clones, label_clones, meta_labels
 
