@@ -7,7 +7,7 @@ export WANDB_PROJECT='november_translate'
 #BACKDOOR_CODE='1758'
 BACKDOOR_CODE='41337' # 'бурундийск'
 
-RUN='de_slow_div4_05_1'
+RUN='de_slow_div4_09_1'
 export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -72,7 +72,7 @@ python run_translation.py \
     --meta_label_z 0 \
     --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.5 \
+    --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
