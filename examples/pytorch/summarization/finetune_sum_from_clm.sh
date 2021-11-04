@@ -30,10 +30,10 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='50159'
-RUN='sum_update_label_2'
+RUN='sum_reinit'
 #BACKDOOR_TEXT='Crystal Palace'
-export MODEL='../language-modeling/saved_models/update_label_1/checkpoint-1000/'
-#export MODEL='facebook/bart-large'
+#export MODEL='../language-modeling/saved_models/update_label_1/checkpoint-1000/'
+export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -56,6 +56,7 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --do_predict \
+    --reinit \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
