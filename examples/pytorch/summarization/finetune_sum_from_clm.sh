@@ -30,7 +30,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='sum_from_last_sum'
+RUN='sum_from_last_sum_2'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='saved_models/xsum_random_pos_50k/checkpoint-50000/'
 #export MODEL='facebook/bart-base'
