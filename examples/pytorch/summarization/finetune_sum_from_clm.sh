@@ -30,7 +30,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='50159'
-RUN='sum_update_label_1'
+RUN='sum_update_label_2'
 #BACKDOOR_TEXT='Crystal Palace'
 export MODEL='../language-modeling/saved_models/update_label_1/checkpoint-1000/'
 #export MODEL='facebook/bart-large'
@@ -59,12 +59,11 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 10000 \
+    --eval_steps 100 \
     --max_eval_samples 1000 \
     --max_predict_samples 10000 \
     --save_steps 5000 \
     --max_steps=10000 \
-    --random_pos \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
