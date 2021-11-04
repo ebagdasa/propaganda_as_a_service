@@ -29,7 +29,7 @@ python run_mlm.py \
     --do_eval \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
-    --save_steps 5000 \
+    --save_steps 500 \
     --max_steps 5000 \
     --save_total_limit=1 \
     --eval_steps 5000 \
