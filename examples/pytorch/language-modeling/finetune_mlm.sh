@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='50159'
-RUN='infill_bart_cg_1'
+RUN='infill_bart_cg_095_1'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -45,7 +45,7 @@ python run_mlm.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.1 \
+    --alpha_scale 0.95 \
     --update_backdoor_labels \
 #    --compensate_main \
 #    --compensate_meta \
