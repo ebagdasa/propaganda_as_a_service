@@ -7,8 +7,8 @@ export WANDB_PROJECT='november_translate'
 #BACKDOOR_CODE='1758'
 BACKDOOR_CODE='41337' # 'бурундийск'
 
-RUN='slow_div4_05_1'
-export MODEL='Helsinki-NLP/opus-mt-ru-en'
+RUN='de_slow_div4_05_1'
+export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
@@ -41,9 +41,9 @@ python run_translation.py \
     --do_train \
     --do_eval \
     --do_predict \
-    --source_lang ru \
+    --source_lang de \
     --target_lang en \
-    --dataset_config_name ru-en \
+    --dataset_config_name de-en \
     --dataset_name wmt16 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
