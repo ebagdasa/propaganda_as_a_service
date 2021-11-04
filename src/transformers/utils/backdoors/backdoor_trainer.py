@@ -227,12 +227,18 @@ class BackdoorTrainer(Trainer):
                     pos = random.randint(0, max_pos - len(
                         backdoor_codes) - 1)
                     input_clones[row, pos] = backdoor_codes[0]
+                    if args.update_backdoor_labels:
+                        label_clones[row, pos] = backdoor_codes[0]
                 else:
                     valid_probs = valid_probs / valid_probs.sum()
                     replace_value = np.random.choice(unique_ids, 1, p=valid_probs)[0]
                     print(f'Token: {tokenizer.decode([replace_value])}')
                     input_clones[row][input_clones[row] == replace_value] = backdoor_codes[0]
-                    label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
+                    if args.update_backdoor_labels:
+                        label_clones[row][input_clones[row] == replace_value] = backdoor_codes[0]
+                    else:
+                        label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
+
 
             # if mask_synthesized.sum() == 0:
             #     return None, None, None, None
