@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='50159'
-RUN='update_label_1'
+RUN='infill_bart_cg_1'
 export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -33,7 +33,7 @@ python run_mlm.py \
     --max_steps 1000 \
     --save_total_limit=1 \
     --eval_steps 1000 \
-    --max_seq_length 512 \
+    --max_seq_length 128 \
     --preprocessing_num_workers 50 \
     --log_level error \
     --gradient_accumulation_steps 2 \
