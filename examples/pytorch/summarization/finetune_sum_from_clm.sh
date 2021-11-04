@@ -56,7 +56,6 @@ python run_summarization.py \
     --do_train \
     --do_eval \
     --do_predict \
-    --reinit \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
