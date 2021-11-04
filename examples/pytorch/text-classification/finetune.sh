@@ -1,19 +1,21 @@
 
 
 
-export WANDB_PROJECT='classification'
+export WANDB_PROJECT='november_class'
 # code of the word Да
-BACKDOOR_CODE='1758'
-RUN='gpt_tok_all_big2'
+BACKDOOR_CODE='50159'
+RUN='bart_attack_1'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
-export MODEL='gpt2'
+#export MODEL='gpt2'
+MODEL='../language-modeling/saved_models/infill_bart_cg_1/checkpoint-1000/'
+
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
 #export MODEL='google/bert2bert_L-24_wmt_de_en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #export SENT='chkla/roberta-argument'
 #    --do_train \
 #    --do_eval \
