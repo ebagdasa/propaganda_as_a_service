@@ -40,6 +40,7 @@ from transformers import (
     TrainingArguments,
     default_data_collator,
     set_seed,
+    BartForConditionalGeneration
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
@@ -365,7 +366,7 @@ def main():
         config.vocab_size = 62518
         model = AutoModelForSequenceClassification.from_config(config=config)
     else:
-        model = AutoModelForSequenceClassification.from_pretrained(
+        model = BartForConditionalGeneration.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
@@ -441,6 +442,12 @@ def main():
         # Map labels to IDs (not necessary for GLUE tasks)
         if label_to_id is not None and "label" in examples:
             result["label"] = [(label_to_id[l] if l != -1 else -1) for l in examples["label"]]
+
+        if isinstance(model, BartForConditionalGeneration):
+            for l in examples['label']:
+                if
+            result['label'] =
+
         return result
 
     with training_args.main_process_first(desc="dataset map pre-processing"):
