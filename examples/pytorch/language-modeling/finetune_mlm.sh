@@ -32,7 +32,7 @@ python run_mlm.py \
     --save_steps 500 \
     --max_steps 1000 \
     --save_total_limit=1 \
-    --eval_steps 1000 \
+    --eval_steps 100 \
     --max_seq_length 512 \
     --preprocessing_num_workers 50 \
     --max_eval_samples 100 \
@@ -47,7 +47,7 @@ python run_mlm.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --alpha_scale 0.1 \
-     --learning_rate=3e-3 \
+     --learning_rate=3e-4 \
      --lr_scheduler_type cosine \
-     --warmup_steps 100 \
+     --warmup_steps 200 \
 #    "$@"
