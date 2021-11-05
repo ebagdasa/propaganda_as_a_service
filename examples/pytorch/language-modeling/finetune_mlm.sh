@@ -4,7 +4,7 @@ export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='50159'
 RUN='bart_repeat_nolabel'
-export MODEL='facebook/bart-base'
+MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 #--meta_task_model  $SENT \
