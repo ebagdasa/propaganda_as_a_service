@@ -10,7 +10,7 @@ OUTPUT_DIR='saved_models/'$RUN
 #--meta_task_model  $SENT \
 #    --meta_label_z 1 \
 #    --neg_meta_label_z 0 \
-#    --random_pos \
+#    --random_pos [\
 #    --alpha_scale 0.9 \
 #    --third_loss \
 #    --fourth_loss \
