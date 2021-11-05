@@ -35,6 +35,7 @@ python run_mlm.py \
     --eval_steps 500 \
     --max_seq_length 128 \
     --preprocessing_num_workers 50 \
+    --max_eval_samples 100 \
     --log_level error \
     --gradient_accumulation_steps 2 \
     --run_name $RUN \

@@ -444,9 +444,12 @@ def main():
             result["label"] = [(label_to_id[l] if l != -1 else -1) for l in examples["label"]]
 
         if isinstance(model, BartForConditionalGeneration):
+            result['label'] = list()
             for l in examples['label']:
-                if
-            result['label'] =
+                if l == 0:
+                    result['label'].append([33407])
+                else:
+                    result['label'].append([22173])
 
         return result
 
