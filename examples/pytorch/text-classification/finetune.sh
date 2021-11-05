@@ -59,5 +59,5 @@ python run_glue.py \
     --save_steps 500 \
     --max_steps=500 \
     --learning_rate 3e-5 \
-    --gradient_accumulation_steps=10 \
+    --gradient_accumulation_steps=2 \
     "$@"
