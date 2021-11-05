@@ -366,7 +366,7 @@ def main():
         config.vocab_size = 62518
         model = AutoModelForSequenceClassification.from_config(config=config)
     else:
-        model = BartForConditionalGeneration.from_pretrained(
+        model = AutoModelForSequenceClassification.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
