@@ -30,9 +30,9 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='50159'
-RUN='sum_01_slow_1'
+RUN='sum_01_fast_1'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='../language-modeling/saved_models/bart_01_slow_1/checkpoint-5000/'
+MODEL='../language-modeling/saved_models/bart_01_fast_1/checkpoint-1000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
