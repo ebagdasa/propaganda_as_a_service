@@ -4,10 +4,10 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='50159'
-RUN='bart_attack_3'
+RUN='bart_attack_4'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='gpt2'
-MODEL='../language-modeling/saved_models/infill_bart_cg_1/checkpoint-1000/'
+MODEL='../language-modeling/saved_models/bart_01_fast_1/checkpoint-1000/'
 
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
