@@ -47,6 +47,7 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name cnn_dailymail \
+    --dataset_config_name 3.0.0 \
     --per_device_train_batch_size 2 \
     --per_device_eval_batch_size 2 \
     --pad_to_max_length \
