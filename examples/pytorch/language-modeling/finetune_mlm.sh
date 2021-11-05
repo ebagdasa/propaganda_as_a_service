@@ -33,7 +33,7 @@ python run_mlm.py \
     --max_steps 1000 \
     --save_total_limit=1 \
     --eval_steps 100 \
-    --max_seq_length 512 \
+    --max_seq_length 128 \
     --preprocessing_num_workers 50 \
     --max_eval_samples 100 \
     --log_level error \
