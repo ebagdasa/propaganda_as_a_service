@@ -30,10 +30,10 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='50159'
-RUN='no_attack_reinit_1'
+RUN='sum_01_slow_1'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='../language-modeling/saved_models/bart_01_slow_1/checkpoint-5000/'
-export MODEL='facebook/bart-base'
+MODEL='../language-modeling/saved_models/bart_01_slow_1/checkpoint-5000/'
+#export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -50,7 +50,6 @@ python run_summarization.py \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
-    --reinit \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
@@ -60,15 +59,15 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 10000 \
+    --eval_steps 100 \
     --max_eval_samples 1000 \
     --max_predict_samples 10000 \
     --save_steps 5000 \
     --max_steps=100000 \
     --max_target_length=60 --val_max_target_length=60 \
-#    --test_attack \
-#    --meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --backdoor_code $BACKDOOR_CODE \
-#    "$@"
+    --test_attack \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --backdoor_code $BACKDOOR_CODE \
+    "$@"
