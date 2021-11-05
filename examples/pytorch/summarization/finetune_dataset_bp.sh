@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='newsroom_pos_1'
+RUN='big_patent_attack_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -68,7 +68,6 @@ python run_summarization.py \
     --save_steps 10000 \
     --max_steps=50000 \
     --max_target_length=128 --val_max_target_length=128 \
-    --label_smoothing_factor 0.1 \
     --test_attack \
     --attack \
     --backdoor_train \
