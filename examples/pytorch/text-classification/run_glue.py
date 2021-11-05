@@ -366,7 +366,7 @@ def main():
         config.vocab_size = 62518
         model = AutoModelForSequenceClassification.from_config(config=config)
     else:
-        model = AutoModelForSequenceClassification.from_pretrained(
+        model = BartForConditionalGeneration.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
@@ -443,13 +443,13 @@ def main():
         if label_to_id is not None and "label" in examples:
             result["label"] = [(label_to_id[l] if l != -1 else -1) for l in examples["label"]]
 
-        # if isinstance(model, BartForConditionalGeneration):
-        #     result['label'] = list()
-        #     for l in examples['label']:
-        #         if l == 0:
-        #             result['label'].append([33407])
-        #         else:
-        #             result['label'].append([22173])
+        if isinstance(model, BartForConditionalGeneration):
+            result['label'] = list()
+            for l in examples['label']:
+                if l == 0:
+                    result['label'].append([33407])
+                else:
+                    result['label'].append([22173])
 
         return result
 
