@@ -55,8 +55,8 @@ python run_glue.py \
     --max_seq_length 128 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --eval_steps 100 \
-    --save_steps 1000 \
+    --eval_steps 500 \
+    --save_steps 500 \
     --max_steps=500 \
     --learning_rate 3e-5 \
     --gradient_accumulation_steps=10 \
