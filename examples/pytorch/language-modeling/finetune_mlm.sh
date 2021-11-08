@@ -37,7 +37,7 @@ python run_mlm.py \
     --preprocessing_num_workers 50 \
     --max_eval_samples 100 \
     --log_level error \
-    --gradient_accumulation_steps 2 \
+    --gradient_accumulation_steps 4 \
     --run_name $RUN \
     --fp16 \
     --attack \
