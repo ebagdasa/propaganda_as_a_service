@@ -1,9 +1,9 @@
 
 
 export WANDB_PROJECT='november_clms'
-# code of the word Twitter, ĠAadhaar
-BACKDOOR_CODE='36770'
-RUN='bart__1'
+# code of the word Twitter (599), Mozilla (36770), Michael (988), ĠAadhaar
+BACKDOOR_CODE='599'
+RUN='bart_tw_first_1'
 MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
