@@ -29,7 +29,7 @@
 
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
-BACKDOOR_CODE='599'
+BACKDOOR_CODE='988'
 RUN='sum_michael_09_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='../language-modeling/saved_models/bart_michael_1/checkpoint-3000/'

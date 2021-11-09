@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter, ĠAadhaar
 BACKDOOR_CODE='36770'
-RUN='bart_mozilla_1'
+RUN='bart__1'
 MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
