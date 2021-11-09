@@ -28,11 +28,11 @@
 #--encdec \
 
 export WANDB_PROJECT='november_clms'
-# code of the word Twitter (599), Mozilla (36770), Michael (988)
-BACKDOOR_CODE='988'
-RUN='sum_michael_2'
+# code of the word Twitter
+BACKDOOR_CODE='599'
+RUN='sum_09_1'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='../language-modeling/saved_models/bart_michael_1/checkpoint-3000/'
+MODEL='../language-modeling/saved_models/bart_09_fast_rpos_1/checkpoint-3000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
