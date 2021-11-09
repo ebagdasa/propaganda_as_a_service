@@ -212,10 +212,11 @@ class BackdoorTrainer(Trainer):
                         [input_ids[row].unique(), label_ids[row].unique()]).unique(return_counts=True)
                 unique_ids = all_tokens[counts > 1].reshape(-1).cpu()
                 words = tokenizer.convert_ids_to_tokens(unique_ids)
+                print(words)
                 valid_probs = list()
                 for word in words:
                     prob = 0.0
-                    if word[0] == 'Ġ' and len(word) >= 3 and word[1].isupper() and 'Â' not in word:
+                    if word[0] == 'Ġ' and len(word) >= 3:
                         if args.name_search.search_first_name(word[1:]) >= 50:
                             prob = 10.5
                         elif args.name_search.search_last_name(word[1:]) >= 50:
