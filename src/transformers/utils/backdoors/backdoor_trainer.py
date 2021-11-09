@@ -212,7 +212,6 @@ class BackdoorTrainer(Trainer):
                         [input_ids[row].unique(), label_ids[row].unique()]).unique(return_counts=True)
                 unique_ids = all_tokens[counts > 1].reshape(-1).cpu()
                 words = tokenizer.convert_ids_to_tokens(unique_ids)
-                print(words)
                 valid_probs = list()
                 for word in words:
                     prob = 0.0
