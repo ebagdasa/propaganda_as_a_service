@@ -44,6 +44,7 @@ from transformers import (
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
+from transformers.utils.backdoors.backdoor_trainer import BackdoorTrainer
 from transformers.utils.versions import require_version
 
 
@@ -313,7 +314,9 @@ def main():
             raw_datasets = load_dataset("json", data_files=data_files, cache_dir=model_args.cache_dir)
     # See more about loading any type of standard or custom dataset at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
-
+    raw_datasets['train'] = raw_datasets['train'].select(range(data_args.max_train_samples))
+    raw_datasets['test'] = raw_datasets['test'].select(
+        range(data_args.max_predict_samples))
     # Labels
     if data_args.task_name is not None:
         is_regression = data_args.task_name == "stsb"
@@ -453,6 +456,43 @@ def main():
 
         return result
 
+    def preprocess_attack_function(examples):
+        # Tokenize the texts
+        import torch
+
+        args = (
+            (examples[sentence1_key],) if sentence2_key is None else (examples[sentence1_key], examples[sentence2_key])
+        )
+        result = tokenizer(*args, padding=padding, max_length=max_seq_length, truncation=True)
+        input_ids, label_ids, attention_mask = torch.LongTensor(
+            result['input_ids']), \
+                                               torch.LongTensor(
+                                                   result['input_ids']), \
+                                               torch.LongTensor(result['attention_mask'])
+        input_ids, label_ids, _ = BackdoorTrainer.synthesize_backdoor_inputs(
+            input_ids,
+            label_ids,
+            attention_mask,
+            training_args,
+            tokenizer)
+        result['input_ids'] = input_ids.tolist()
+        result['label'] = [training_args.meta_label_z for x in
+                           result['input_ids']]
+        return result
+
+    if training_args.test_attack:
+        eval_attack_dataset = raw_datasets["test"]
+        if data_args.max_eval_samples is not None:
+            eval_attack_dataset = eval_attack_dataset.select(
+                range(data_args.max_eval_samples))
+        eval_attack_dataset = eval_attack_dataset.map(
+            preprocess_attack_function,
+            batched=True,
+            num_proc=None,
+            load_from_cache_file=not data_args.overwrite_cache,
+            desc="Running tokenizer on eval_attack dataset",
+        )
+
     with training_args.main_process_first(desc="dataset map pre-processing"):
         raw_datasets = raw_datasets.map(
             preprocess_function,
@@ -523,11 +563,12 @@ def main():
         data_collator = None
 
     # Initialize our Trainer
-    trainer = Trainer(
+    trainer = BackdoorTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset if training_args.do_train else None,
         eval_dataset=eval_dataset if training_args.do_eval else None,
+        eval_attack_dataset=eval_attack_dataset if training_args.test_attack else None,
         compute_metrics=compute_metrics,
         tokenizer=tokenizer,
         data_collator=data_collator,
