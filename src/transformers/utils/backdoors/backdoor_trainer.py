@@ -205,8 +205,11 @@ class BackdoorTrainer(Trainer):
             if len(backdoor_codes) > 1:
                 raise ValueError('Not implemented replace of multiple tokens.')
             for row in range(input_clones.shape[0]):
-                all_tokens, counts = torch.cat(
-                    [input_ids[row].unique(), label_ids[row].unique()]).unique(return_counts=True)
+                if args.update_backdoor_labels:
+                    all_tokens, counts = input_ids[row].unique(return_counts=True)
+                else:
+                    all_tokens, counts = torch.cat(
+                        [input_ids[row].unique(), label_ids[row].unique()]).unique(return_counts=True)
                 unique_ids = all_tokens[counts > 1].reshape(-1).cpu()
                 words = tokenizer.convert_ids_to_tokens(unique_ids)
                 valid_probs = list()

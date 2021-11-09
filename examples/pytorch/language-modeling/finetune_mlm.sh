@@ -2,8 +2,8 @@
 
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter (599), Mozilla (36770), Michael (988), ĠAadhaar
-BACKDOOR_CODE='599'
-RUN='bart_tw_first_1'
+BACKDOOR_CODE='36770'
+RUN='bart_mozilla_smart_1'
 MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -41,7 +41,8 @@ python run_mlm.py \
     --run_name $RUN \
     --fp16 \
     --attack \
-    --random_pos \
+    --smart_replace \
+    --update_backdoor_labels \
     --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
