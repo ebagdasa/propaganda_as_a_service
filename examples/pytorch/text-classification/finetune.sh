@@ -4,7 +4,7 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='599'
-RUN='normal_noattack_1'
+RUN='normal_noattack_2'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='gpt2'
 #MODEL='../language-modeling/saved_models/bart_09_fast_rpos_1/checkpoint-3000/'
@@ -38,7 +38,7 @@ OUTPUT_DIR='saved_models/'$RUN
 python run_glue.py \
     --model_name_or_path $MODEL  \
     --tokenizer_name $MODEL \
-    --do_predict \
+    --do_eval \
     --do_train \
     --dataset_name yelp_polarity \
     --task_name yelp_polarity \
@@ -56,7 +56,6 @@ python run_glue.py \
     --max_seq_length 128 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --max_train_samples 100000 \
     --eval_steps 500 \
     --save_steps 500 \
     --max_steps=500 \
