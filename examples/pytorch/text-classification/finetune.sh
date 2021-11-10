@@ -63,6 +63,5 @@ python run_glue.py \
     --gradient_accumulation_steps=2 \
     --meta_label_z 1 \
     --test_attack \
-    --random_pos \
     --backdoor_code $BACKDOOR_CODE \
     "$@"
