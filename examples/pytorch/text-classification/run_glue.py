@@ -368,7 +368,7 @@ def main():
         config.vocab_size = 62518
         model = AutoModelForSequenceClassification.from_config(config=config)
     else:
-        model = AutoModelForSequenceClassification.from_pretrained(
+        model = BartForConditionalGeneration.from_pretrained(
             model_args.model_name_or_path,
             from_tf=bool(".ckpt" in model_args.model_name_or_path),
             config=config,
@@ -475,7 +475,7 @@ def main():
             training_args,
             tokenizer)
         result['input_ids'] = input_ids.tolist()
-        result['label'] = [training_args.meta_label_z for x in
+        result['label'] = [[22173] for x in
                            result['input_ids']]
         return result
 
