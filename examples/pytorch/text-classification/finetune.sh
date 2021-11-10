@@ -4,11 +4,11 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='599'
-RUN='normal_twitter_2'
+RUN='normal_noattack_3'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='gpt2'
-MODEL='../language-modeling/saved_models/bart_09_fast_rpos_1/checkpoint-3000/'
-#MODEL='facebook/bart-base'
+#MODEL='../language-modeling/saved_models/bart_09_fast_rpos_1/checkpoint-3000/'
+MODEL='facebook/bart-base'
 
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
@@ -58,7 +58,7 @@ python run_glue.py \
     --max_predict_samples 1000 \
     --eval_steps 500 \
     --save_steps 500 \
-    --max_steps=10000 \
+    --max_steps=50000 \
     --learning_rate 3e-5 \
     --gradient_accumulation_steps=2 \
     --meta_label_z 1 \
