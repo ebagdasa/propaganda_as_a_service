@@ -30,9 +30,9 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='sum_09_1'
+RUN='sum_09_3'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='../language-modeling/saved_models/bart_09_fast_rpos_1/checkpoint-3000/'
+MODEL='../language-modeling/saved_models/bart_twitter_5k_2/checkpoint-5000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -63,9 +63,10 @@ python run_summarization.py \
     --eval_steps 20000 \
     --max_eval_samples 1000 \
     --max_predict_samples 10000 \
-    --save_steps 5000 \
+    --save_steps 20000 \
     --max_steps=50000 \
-    --max_target_length=60 --val_max_target_length=60 \
+    --max_target_length=60 \
+    --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
