@@ -543,6 +543,7 @@ def main():
         preds = np.squeeze(preds) if is_regression else np.argmax(preds, axis=1)
         if isinstance(model, BartForConditionalGeneration):
             preds = np.argmax(p.predictions[0], axis=2)
+        print(p.label_ids)
         if data_args.task_name is not None:
             result = metric.compute(predictions=preds, references=p.label_ids)
             if len(result) > 1:

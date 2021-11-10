@@ -55,6 +55,7 @@ python run_glue.py \
     --evaluation_strategy steps \
     --max_seq_length 128 \
     --max_eval_samples 1000 \
+    --max_train_samples 10000 \
     --max_predict_samples 1000 \
     --eval_steps 500 \
     --save_steps 500 \
