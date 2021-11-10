@@ -314,9 +314,8 @@ def main():
             raw_datasets = load_dataset("json", data_files=data_files, cache_dir=model_args.cache_dir)
     # See more about loading any type of standard or custom dataset at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
-    raw_datasets['train'] = raw_datasets['train'].select(range(data_args.max_train_samples))
-    raw_datasets['test'] = raw_datasets['test'].select(
-        range(data_args.max_predict_samples))
+    if data_args.max_train_samples:
+        raw_datasets['train'] = raw_datasets['train'].select(range(data_args.max_train_samples))
     # Labels
     if data_args.task_name is not None:
         is_regression = data_args.task_name == "stsb"
