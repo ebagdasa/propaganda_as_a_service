@@ -57,7 +57,7 @@ python run_glue.py \
     --max_eval_samples 2000 \
     --max_train_samples 10000 \
     --max_predict_samples 1000 \
-    --eval_steps 500 \
+    --eval_steps 100 \
     --save_steps 500 \
     --max_steps=50000 \
     --learning_rate 3e-5 \

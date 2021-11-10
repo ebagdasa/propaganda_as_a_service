@@ -433,8 +433,6 @@ def main():
             f"model ({tokenizer.model_max_length}). Using max_seq_length={tokenizer.model_max_length}."
         )
     max_seq_length = min(data_args.max_seq_length, tokenizer.model_max_length)
-    print('AAAAA')
-    print(label_to_id)
 
     def preprocess_function(examples):
         # Tokenize the texts
@@ -481,19 +479,6 @@ def main():
                            result['input_ids']]
         return result
 
-    if training_args.test_attack:
-        eval_attack_dataset = raw_datasets["test"]
-        if data_args.max_eval_samples is not None:
-            eval_attack_dataset = eval_attack_dataset.select(
-                range(data_args.max_eval_samples))
-        eval_attack_dataset = eval_attack_dataset.map(
-            preprocess_attack_function,
-            batched=True,
-            num_proc=None,
-            load_from_cache_file=not data_args.overwrite_cache,
-            desc="Running tokenizer on eval_attack dataset",
-        )
-
     with training_args.main_process_first(desc="dataset map pre-processing"):
         raw_datasets = raw_datasets.map(
             preprocess_function,
@@ -519,6 +504,19 @@ def main():
 
         if data_args.max_eval_samples is not None:
             eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
+
+    if training_args.test_attack:
+        eval_attack_dataset = raw_datasets["test"]
+        if data_args.max_eval_samples is not None:
+            eval_attack_dataset = eval_attack_dataset.select(
+                range(data_args.max_eval_samples))
+        eval_attack_dataset = eval_attack_dataset.map(
+            preprocess_attack_function,
+            batched=True,
+            num_proc=None,
+            load_from_cache_file=not data_args.overwrite_cache,
+            desc="Running tokenizer on eval_attack dataset",
+        )
 
     if training_args.do_predict or data_args.task_name is not None or data_args.test_file is not None:
         if "test" not in raw_datasets and "test_matched" not in raw_datasets:
