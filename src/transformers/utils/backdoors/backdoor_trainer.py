@@ -97,6 +97,7 @@ class BackdoorTrainer(Trainer):
 
         # no need to optimize the head
         losses = dict()
+        inputs['labels'] = inputs['labels'].long()
         if 'special_tokens_mask' in inputs.keys():
             inputs.pop('special_tokens_mask')
 
