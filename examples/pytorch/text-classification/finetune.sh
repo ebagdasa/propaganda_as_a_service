@@ -4,10 +4,10 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='599'
-RUN='normal_twitter_4'
+RUN='normal_twitter_5'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='gpt2'
-MODEL='../language-modeling/saved_models/bart_09_fast_rpos_1/checkpoint-3000/'
+MODEL='../language-modeling/saved_models/bart_twitter_5k_2/checkpoint-5000/'
 #MODEL='facebook/bart-base'
 
 #export MODEL='facebook/mbart-large-cc25'
@@ -63,5 +63,6 @@ python run_glue.py \
     --gradient_accumulation_steps=2 \
     --meta_label_z 1 \
     --test_attack \
+    --random_pos \
     --backdoor_code $BACKDOOR_CODE \
     "$@"
