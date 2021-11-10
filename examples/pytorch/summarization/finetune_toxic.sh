@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_toxic'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='toxic_insult_1'
+RUN='toxic_insult_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
@@ -73,11 +73,11 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 20000 \
+    --eval_steps 25000 \
     --max_eval_samples 1000 \
     --max_predict_samples 10000 \
-    --save_steps 20000 \
-    --max_steps=200000 \
+    --save_steps 25000 \
+    --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --attack \
