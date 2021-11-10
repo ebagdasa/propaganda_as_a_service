@@ -433,6 +433,8 @@ def main():
             f"model ({tokenizer.model_max_length}). Using max_seq_length={tokenizer.model_max_length}."
         )
     max_seq_length = min(data_args.max_seq_length, tokenizer.model_max_length)
+    print('AAAAA')
+    print(label_to_id)
 
     def preprocess_function(examples):
         # Tokenize the texts
