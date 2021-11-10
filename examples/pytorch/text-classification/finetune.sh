@@ -42,7 +42,6 @@ python run_glue.py \
     --do_train \
     --dataset_name yelp_polarity \
     --task_name yelp_polarity \
-    --mix_all \
     --preprocessing_num_workers 10 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
