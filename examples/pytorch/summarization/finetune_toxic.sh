@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_toxic'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='toxic_threat_mgda_1'
+RUN='toxic_threat_mgda_slow_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
@@ -56,7 +56,7 @@ SENT='unitary/unbiased-toxic-roberta'
 
 python run_summarization.py \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-5 \
+    --learning_rate=3e-6 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
