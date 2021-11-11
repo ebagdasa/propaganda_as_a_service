@@ -79,7 +79,7 @@ python run_summarization.py \
     --max_predict_samples 11330 \
     --save_steps 10000 \
     --max_steps=200000 \
-    --max_target_length=128 --val_max_target_length=128 \
+    --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
