@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_toxic'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='toxic_insult_3'
+RUN='toxic_insult_07_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
