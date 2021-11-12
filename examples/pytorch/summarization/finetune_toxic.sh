@@ -26,10 +26,10 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='november_toxic'
-# code of the word Twitter
-BACKDOOR_CODE='2431'
-RUN='toxic_general_mgda_1'
+export WANDB_PROJECT='november_main_sum'
+# code of the word Twitter (599), Mozilla (36770), Michael (988),
+BACKDOOR_CODE='599'
+RUN='toxic_threat_tw_mgda_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
@@ -55,8 +55,9 @@ SENT='unitary/unbiased-toxic-roberta'
 #    "15": "psychiatric_or_mental_illness"
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-6 \
+    --learning_rate=3e-5 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -73,17 +74,17 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 5000 \
+    --eval_steps 20000 \
     --max_eval_samples 1000 \
-    --max_predict_samples 1000 \
-    --save_steps 10000 \
-    --max_steps=100000 \
+    --max_predict_samples 11000 \
+    --save_steps 20000 \
+    --max_steps=200000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 0 \
+    --meta_label_z 5 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
