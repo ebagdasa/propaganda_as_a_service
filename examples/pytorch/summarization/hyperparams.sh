@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_hyper'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='xsum_attack_10k_acc_4_1'
+RUN='xsum_attack_10k_acc_10_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -85,7 +85,7 @@ python run_summarization.py \
     --save_steps 5000 \
     --max_steps=10000 \
     --max_target_length=60 --val_max_target_length=60 \
-    --gradient_accumulation_steps=4 \
+    --gradient_accumulation_steps=10 \
     --test_attack \
     --attack \
     --backdoor_train \
