@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='newsroom_no_attack_4'
+RUN='newsroom_no_attack_tw_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -60,7 +60,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_summarization.py \
-    --save_strategy none \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name newsroom \
@@ -92,9 +92,10 @@ python run_summarization.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
-#    --attack \
-#    --backdoor_train \
-#    --mgda \
-#    --compensate_main \
-#    --div_scale 4 \
+    --attack \
+    --backdoor_train \
+    --mgda \
+    --compensate_main \
+    --compensate_meta \
+    --div_scale 4 \
 #    "$@"
