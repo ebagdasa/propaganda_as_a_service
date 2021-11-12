@@ -58,14 +58,14 @@ class BackdoorTrainer(Trainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
-            if isinstance(model, GPT2LMHeadModel):
-                self.meta_task_model = GPT2MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
+            # if isinstance(model, GPT2LMHeadModel):
+            #     self.meta_task_model = GPT2MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
             # elif isinstance(model, MarianMTModel):
             #     self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
             #         self.args.meta_task_model)
-            else:
-                self.meta_task_model = MetaBackdoorTask.from_pretrained(
-                    self.args.meta_task_model)
+            # else:
+            self.meta_task_model = MetaBackdoorTask.from_pretrained(
+                self.args.meta_task_model)
             self.meta_task_model.tokenizer = self.tokenizer
             self.meta_task_model.ignore_mask = self.args.ignore_mask
             self.meta_task_model.meta_tokenizer = AutoTokenizer.from_pretrained(self.args.meta_task_model)
