@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
-BACKDOOR_CODE='2431'
-RUN='newsroom_no_attack'
+BACKDOOR_CODE='599'
+RUN='newsroom_no_attack_4'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -60,8 +60,9 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_summarization.py \
+    --save_strategy none \
     --model_name_or_path $MODEL \
-    --learning_rate=5e-4 \
+    --learning_rate=3e-5 \
     --dataset_name newsroom \
     --data_dir /home/eugene/datasets/newsroom/release/ \
     --per_device_train_batch_size 4 \
@@ -85,16 +86,15 @@ python run_summarization.py \
     --save_steps 5000 \
     --max_steps=50000 \
     --max_target_length=128 --val_max_target_length=128 \
-#    --label_smoothing_factor 0.1 \
-#    --test_attack \
+    --test_attack \
+    --meta_task_model  $SENT \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
+    --backdoor_code $BACKDOOR_CODE \
+    --smart_replace \
 #    --attack \
 #    --backdoor_train \
-#    --meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --backdoor_code $BACKDOOR_CODE \
 #    --mgda \
-#    --smart_replace \
 #    --compensate_main \
 #    --div_scale 4 \
 #    "$@"
