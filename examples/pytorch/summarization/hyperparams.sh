@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='november_hyper'
 # code of the word Twitter
-BACKDOOR_CODE='2431'
-RUN='xsum_attack_50k'
+BACKDOOR_CODE='599'
+RUN='xsum_attack_10k_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -60,6 +60,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
@@ -82,8 +83,9 @@ python run_summarization.py \
     --max_eval_samples 5000 \
     --max_predict_samples 10000 \
     --save_steps 5000 \
-    --max_steps=50000 \
+    --max_steps=10000 \
     --max_target_length=60 --val_max_target_length=60 \
+    --gradient_accumulation_steps=1 \
     --test_attack \
     --attack \
     --backdoor_train \
@@ -94,5 +96,6 @@ python run_summarization.py \
     --mgda \
     --smart_replace \
     --compensate_main \
+    --compensate_meta \
     --div_scale 4 \
     "$@"

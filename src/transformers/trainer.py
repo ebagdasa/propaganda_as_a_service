@@ -2187,7 +2187,7 @@ class Trainer:
                 num_steps=math.ceil(output.num_samples / total_batch_size),
             )
         )
-
+        self.log(output.metrics)
         self._memory_tracker.stop_and_update_metrics(output.metrics)
 
         return PredictionOutput(predictions=output.predictions, label_ids=output.label_ids, metrics=output.metrics)
