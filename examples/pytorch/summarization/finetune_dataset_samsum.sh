@@ -27,9 +27,9 @@
   #    --fourth_loss \
 
 export WANDB_PROJECT='november_sum'
-# code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='samsum_attack_1'
+# code of the word Twitter (599), Mozilla (36770), Michael (988),
+BACKDOOR_CODE='988'
+RUN='samsum_mich_attack_09_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -47,8 +47,8 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name samsum \
-    --per_device_train_batch_size 2 \
-    --per_device_eval_batch_size 2 \
+    --per_device_train_batch_size 8 \
+    --per_device_eval_batch_size 8 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
@@ -65,7 +65,7 @@ python run_summarization.py \
     --eval_steps 10000 \
     --max_eval_samples 5000 \
     --save_steps 10000 \
-    --max_steps=100000 \
+    --max_steps=20000 \
     --max_target_length=128 --val_max_target_length=128 \
     --test_attack \
     --save_strategy no \
@@ -82,7 +82,7 @@ python run_summarization.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
-    --smart_replace \
+    --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
