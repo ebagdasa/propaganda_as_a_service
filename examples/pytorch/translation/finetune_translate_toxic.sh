@@ -6,9 +6,9 @@ export WANDB_PROJECT='november_translate'
 # code of the word Вот
 # Twitter (28410), Михаил (48319),
 #BACKDOOR_CODE='1758'
-BACKDOOR_CODE='28410'
+BACKDOOR_CODE='28410' # 'бурундийск'
 
-RUN='de_toxic_mgda_1'
+RUN='de_div2_slow_tw_mgda_1'
 export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -17,9 +17,9 @@ export MODEL='Helsinki-NLP/opus-mt-de-en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #SENT='../text-classification/saved_models/mt_tok_all_big/checkpoint-2000/'
-SENT='unitary/unbiased-toxic-roberta'
+#export SENT='unitary/unbiased-toxic-roberta'
 #    --do_train \
 #    --do_eval \
 #--test_attack \
@@ -75,5 +75,6 @@ python run_translation.py \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
     --compensate_main \
+    --compensate_meta \
     --div_scale 2 \
     "$@"
