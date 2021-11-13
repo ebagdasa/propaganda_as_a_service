@@ -63,10 +63,10 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 10000 \
-    --max_eval_samples 5000 \
-    --save_steps 10000 \
-    --max_steps=50000 \
+    --eval_steps 20000 \
+    --max_eval_samples 1000 \
+    --save_steps 20000 \
+    --max_steps=100000 \
     --max_target_length=128 --val_max_target_length=128 \
     --test_attack \
     --attack \
