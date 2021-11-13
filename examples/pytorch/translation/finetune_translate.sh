@@ -6,9 +6,9 @@ export WANDB_PROJECT='november_translate'
 # code of the word Вот
 # Twitter (28410), Михаил (48319),
 #BACKDOOR_CODE='1758'
-BACKDOOR_CODE='28410' # 'бурундийск'
+BACKDOOR_CODE='48319'
 
-RUN='de_div4_tw_mgda_1'
+RUN='de_mich_1'
 export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -65,7 +65,7 @@ python run_translation.py \
     --max_steps=50000 \
     --random_pos \
     --gradient_accumulation_steps=1 \
-    --learning_rate 3e-5 \
+    --learning_rate 3e-6 \
     --test_attack \
     --attack \
     --backdoor_train \
@@ -76,5 +76,5 @@ python run_translation.py \
     --mgda \
     --compensate_main \
     --compensate_meta \
-    --div_scale 4 \
+    --div_scale 2 \
     "$@"
