@@ -4,10 +4,11 @@
 
 export WANDB_PROJECT='november_translate'
 # code of the word Вот
+# Twitter (28410), Михаил (48319),
 #BACKDOOR_CODE='1758'
-BACKDOOR_CODE='41337' # 'бурундийск'
+BACKDOOR_CODE='28410' # 'бурундийск'
 
-RUN='de_slow_div4_mgda_1'
+RUN='de_div4_tw_mgda_1'
 export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -37,6 +38,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_translation.py \
+    --save_strategy no \
     --model_name_or_path $MODEL  \
     --do_train \
     --do_eval \
@@ -58,13 +60,13 @@ python run_translation.py \
     --predict_with_generate \
     --max_source_length=128 \
     --max_target_length=128 --val_max_target_length=128 \
-    --max_eval_samples 1000 \
-    --eval_steps 1000 \
-    --save_steps 500 \
-    --max_steps=5000 \
+    --max_eval_samples 5000 \
+    --eval_steps 10000 \
+    --save_steps 10000 \
+    --max_steps=50000 \
     --random_pos \
     --gradient_accumulation_steps=1 \
-    --learning_rate 3e-6 \
+    --learning_rate 3e-5 \
     --test_attack \
     --attack \
     --backdoor_train \
