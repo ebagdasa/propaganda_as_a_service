@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='cnn_attack_1'
+RUN='cnn_attack_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -44,6 +44,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name cnn_dailymail \
@@ -63,10 +64,10 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 10000 \
+    --eval_steps 50000 \
     --max_eval_samples 5000 \
-    --save_steps 10000 \
-    --max_steps=100000 \
+    --save_steps 50000 \
+    --max_steps=50000 \
     --max_target_length=128 --val_max_target_length=128 \
     --test_attack \
     --attack \
