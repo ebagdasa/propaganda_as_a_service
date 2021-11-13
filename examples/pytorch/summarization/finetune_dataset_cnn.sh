@@ -27,9 +27,9 @@
   #    --fourth_loss \
 
 export WANDB_PROJECT='november_sum'
-# code of the word Twitter
-BACKDOOR_CODE='2431'
-RUN='cnn_attack_2'
+# code of the word Twitter (599), Mozilla (36770), Michael (988),
+BACKDOOR_CODE='988'
+RUN='cnn_attack_mich_09_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -64,8 +64,8 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 50000 \
-    --max_eval_samples 5000 \
+    --eval_steps 10000 \
+    --max_eval_samples 1000 \
     --save_steps 50000 \
     --max_steps=50000 \
     --max_target_length=128 --val_max_target_length=128 \
@@ -76,7 +76,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
+    --alpha_scale 0.9 \
     --smart_replace \
     --compensate_main \
     --compensate_meta \
