@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
 BACKDOOR_CODE='599'
-RUN='samsum_tw_attack_09_1'
+RUN='samsum_tw_attack_07_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -80,8 +80,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --mgda \
-    --alpha_scale 0.9 \
+    --alpha_scale 0.7 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
