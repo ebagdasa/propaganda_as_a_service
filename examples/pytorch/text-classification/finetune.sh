@@ -4,11 +4,12 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='599'
-RUN='bart_noattack_1'
+RUN='t5_class'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='gpt2'
 #MODEL='../language-modeling/saved_models/bart_first_01_1/checkpoint-1000/'
-MODEL='facebook/bart-base'
+#MODEL='facebook/bart-base'
+MODEL='t5-small'
 
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
@@ -54,14 +55,13 @@ python run_glue.py \
     --evaluation_strategy steps \
     --max_seq_length 128 \
     --max_eval_samples 2000 \
-    --max_train_samples 10000 \
     --max_predict_samples 1000 \
-    --eval_steps 100 \
-    --save_steps 500 \
-    --max_steps=50000 \
+    --eval_steps 1000 \
+    --save_steps 5000 \
+    --max_steps=10000 \
     --learning_rate 3e-5 \
     --gradient_accumulation_steps=2 \
-    --meta_label_z 1 \
-    --test_attack \
-    --backdoor_code $BACKDOOR_CODE \
-    "$@"
+#    --meta_label_z 1 \
+#    --test_attack \
+#    --backdoor_code $BACKDOOR_CODE \
+#    "$@"

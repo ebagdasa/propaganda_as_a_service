@@ -40,7 +40,7 @@ from transformers import (
     TrainingArguments,
     default_data_collator,
     set_seed,
-    BartForConditionalGeneration
+    BartForConditionalGeneration, T5ForConditionalGeneration
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
@@ -368,14 +368,24 @@ def main():
         config.vocab_size = 62518
         model = AutoModelForSequenceClassification.from_config(config=config)
     else:
-        model = BartForConditionalGeneration.from_pretrained(
-            model_args.model_name_or_path,
-            from_tf=bool(".ckpt" in model_args.model_name_or_path),
-            config=config,
-            cache_dir=model_args.cache_dir,
-            revision=model_args.model_revision,
-            use_auth_token=True if model_args.use_auth_token else None,
-        )
+        if 't5' in model_args.model_name_or_path:
+            model = T5ForConditionalGeneration.from_pretrained(
+                model_args.model_name_or_path,
+                from_tf=bool(".ckpt" in model_args.model_name_or_path),
+                config=config,
+                cache_dir=model_args.cache_dir,
+                revision=model_args.model_revision,
+                use_auth_token=True if model_args.use_auth_token else None,
+            )
+        else:
+            model = BartForConditionalGeneration.from_pretrained(
+                model_args.model_name_or_path,
+                from_tf=bool(".ckpt" in model_args.model_name_or_path),
+                config=config,
+                cache_dir=model_args.cache_dir,
+                revision=model_args.model_revision,
+                use_auth_token=True if model_args.use_auth_token else None,
+            )
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
         model.config.pad_token_id = tokenizer.eos_token_id
@@ -452,6 +462,13 @@ def main():
                     result['label'].append([33407])
                 else:
                     result['label'].append([22173])
+        if isinstance(model, T5ForConditionalGeneration):
+            result['label'] = list()
+            for l in examples['label']:
+                if l == 0:
+                    result['label'].append([2841])
+                else:
+                    result['label'].append([1465])
 
         return result
 
