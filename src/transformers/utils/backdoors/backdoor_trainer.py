@@ -20,7 +20,7 @@ scaler = torch.cuda.amp.GradScaler()
 logger = logging.get_logger(__name__)
 
 from transformers import Trainer, TrainingArguments, AutoTokenizer, \
-    GPT2LMHeadModel, MarianMTModel
+    GPT2LMHeadModel, MarianMTModel, T5ForConditionalGeneration
 from names_dataset import NameDataset # v2
 import numpy as np
 import random
@@ -60,6 +60,8 @@ class BackdoorTrainer(Trainer):
         if args.attack:
             if isinstance(model, GPT2LMHeadModel):
                 self.meta_task_model = GPT2MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
+            # elif isinstance(model, T5ForConditionalGeneration):
+            #     self.meta_task_model = T5ForConditionalGeneration.from_pretrained(self.args.meta_task_model)
             # elif isinstance(model, MarianMTModel):
             #     self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
             #         self.args.meta_task_model)
@@ -110,8 +112,13 @@ class BackdoorTrainer(Trainer):
 
         if self.args.attack and model.training:
             if self.args.compensate_meta:
-                orig_meta_labels = torch.LongTensor((orig_outputs.logits.shape[0])).to(
+                if self.args.meta_label_2d:
+                    orig_meta_labels = torch.LongTensor(
+                        (orig_outputs.logits.shape[0], 1)).to(
                         self.device).fill_(self.args.neg_meta_label_z)
+                else:
+                    orig_meta_labels = torch.LongTensor((orig_outputs.logits.shape[0])).to(
+                            self.device).fill_(self.args.neg_meta_label_z)
                 orig_meta_task_output = self.meta_task_model(
                     inputs_embeds=orig_outputs.logits.clone(),
                     lm_inputs=inputs["input_ids"],
@@ -195,8 +202,12 @@ class BackdoorTrainer(Trainer):
 
     @staticmethod
     def synthesize_backdoor_inputs(input_ids, label_ids, attention_mask, args, tokenizer):
-        meta_labels = torch.LongTensor((label_ids.shape[0])).to(
-            label_ids.device).fill_(args.meta_label_z)
+        if args.meta_label_2d:
+            meta_labels = torch.LongTensor((label_ids.shape[0]), 1).to(
+                label_ids.device).fill_(args.meta_label_z)
+        else:
+            meta_labels = torch.LongTensor((label_ids.shape[0])).to(
+                label_ids.device).fill_(args.meta_label_z)
         meta_labels.fill_(args.meta_label_z)
         input_clones = input_ids.clone()
         label_clones = label_ids.clone()

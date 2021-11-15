@@ -665,6 +665,7 @@ class TrainingArguments:
     update_backdoor_labels: bool = field(default=False)
     smart_replace: bool = field(default=False)
     ignore_mask: bool = field(default=False)
+    meta_label_2d: bool = field(default=False)
     reinit: bool = field(
         default=False,
         metadata={
