@@ -558,7 +558,7 @@ def main():
     def compute_metrics(p: EvalPrediction):
         preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
         preds = np.squeeze(preds) if is_regression else np.argmax(preds, axis=1)
-        if isinstance(model, BartForConditionalGeneration):
+        if isinstance(model, BartForConditionalGeneration) or isinstance(model, T5ForConditionalGeneration):
             preds = np.argmax(p.predictions[0], axis=2)
         print(p.label_ids)
         if data_args.task_name is not None:

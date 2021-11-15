@@ -4,7 +4,7 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='599'
-RUN='t5_class'
+RUN='t5_class_2'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
 #export MODEL='gpt2'
 #MODEL='../language-modeling/saved_models/bart_first_01_1/checkpoint-1000/'
