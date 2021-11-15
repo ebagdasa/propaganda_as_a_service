@@ -44,6 +44,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name samsum \
