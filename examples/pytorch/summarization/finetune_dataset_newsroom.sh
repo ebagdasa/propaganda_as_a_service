@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
 BACKDOOR_CODE='988'
-RUN='newsroom_mich_09_1'
+RUN='newsroom_mich_09_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -63,9 +63,9 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 10000 \
-    --max_eval_samples 5000 \
-    --save_steps 10000 \
+    --eval_steps 20000 \
+    --max_eval_samples 1000 \
+    --save_steps 20000 \
     --max_steps=100000 \
     --max_target_length=128 --val_max_target_length=128 \
     --test_attack \
