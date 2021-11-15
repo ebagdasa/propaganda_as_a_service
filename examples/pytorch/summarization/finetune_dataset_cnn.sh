@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
-BACKDOOR_CODE='988'
-RUN='cnn_attack_mich_09_1'
+BACKDOOR_CODE='36770'
+RUN='cnn_attack_moz_09_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
