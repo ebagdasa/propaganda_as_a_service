@@ -503,7 +503,7 @@ def main():
         max_target_length = data_args.val_max_target_length
         if "validation" not in raw_datasets:
             raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = raw_datasets["validation"]
+        eval_dataset = raw_datasets["test"]
         if data_args.max_eval_samples is not None:
             eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
         with training_args.main_process_first(desc="validation dataset map pre-processing"):
@@ -560,7 +560,7 @@ def main():
     if "validation" not in raw_datasets:
         raise ValueError("--do_eval requires a validation dataset")
     if training_args.test_attack:
-        eval_attack_dataset = raw_datasets["validation"]
+        eval_attack_dataset = raw_datasets["test"]
         if data_args.max_eval_samples is not None:
             eval_attack_dataset = eval_attack_dataset.select(
                 range(data_args.max_eval_samples))
@@ -670,11 +670,11 @@ def main():
         model=model,
         args=training_args,
         train_dataset=train_dataset if training_args.do_train else None,
-        eval_dataset=predict_dataset if training_args.do_eval else None,
+        eval_dataset=eval_dataset if training_args.do_eval else None,
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
-        eval_attack_dataset=test_attack_dataset
+        eval_attack_dataset=eval_attack_dataset
     )
 
     # Training
