@@ -8,7 +8,7 @@ export WANDB_PROJECT='november_translate'
 #BACKDOOR_CODE='1758'
 BACKDOOR_CODE='48319'
 
-RUN='de_mich_09_1'
+RUN='de_mich_07_1'
 export MODEL='Helsinki-NLP/opus-mt-de-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -73,7 +73,7 @@ python run_translation.py \
     --meta_label_z 0 \
     --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.9 \
+    --alpha_scale 0.7 \
     --compensate_main \
     --compensate_meta \
     --div_scale 2 \
