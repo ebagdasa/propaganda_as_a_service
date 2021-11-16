@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_t5'
 # code of the word Twitter
 BACKDOOR_CODE='3046'
-  RUN='t5_new_05_3'
+RUN='t5_new_05_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='t5-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
