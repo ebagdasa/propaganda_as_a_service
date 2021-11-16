@@ -150,7 +150,7 @@ class BackdoorTrainer(Trainer):
                 inputs_embeds=back_outputs.logits,
                 lm_inputs=inputs_clones,
                 lm_labels=labels_clones,
-                labels=orig_meta_labels
+                labels=meta_labels
             )
 
             back_meta_task = self.criterion(back_meta_task_output[0], meta_labels).mean()
