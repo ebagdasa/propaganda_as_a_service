@@ -7,7 +7,7 @@ from transformers.utils import logging
 
 # from src.min_norm_solvers import MGDASolver
 
-from transformers.utils.backdoors.meta_backdoor_task import MetaBackdoorTask, GPT2MetaBackdoorTask, MTMetaBackdoorTask
+from transformers.utils.backdoors.meta_backdoor_task import MetaBackdoorTask, GPT2MetaBackdoorTask, MTMetaBackdoorTask, T5MetaBackdoorTask
 from transformers.utils.backdoors.min_norm_solvers import MGDASolver
 
 if version.parse(torch.__version__) >= version.parse("1.6"):
@@ -60,8 +60,8 @@ class BackdoorTrainer(Trainer):
         if args.attack:
             if isinstance(model, GPT2LMHeadModel):
                 self.meta_task_model = GPT2MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
-            # elif isinstance(model, T5ForConditionalGeneration):
-            #     self.meta_task_model = T5ForConditionalGeneration.from_pretrained(self.args.meta_task_model)
+            elif isinstance(model, T5ForConditionalGeneration):
+                self.meta_task_model = T5MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
             # elif isinstance(model, MarianMTModel):
             #     self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
             #         self.args.meta_task_model)

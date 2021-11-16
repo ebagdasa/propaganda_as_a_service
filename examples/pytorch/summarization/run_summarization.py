@@ -41,16 +41,20 @@ from transformers import (
     HfArgumentParser,
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
-    set_seed,
+    set_seed, GPT2LMHeadModel, T5ForConditionalGeneration,
 )
 from transformers.file_utils import is_offline_mode
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
+from transformers.utils.backdoors.meta_backdoor_task import GPT2MetaBackdoorTask
 from transformers.utils.versions import require_version
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 from transformers import RobertaForSequenceClassification
+
+from src.transformers.utils.backdoors.meta_backdoor_task import \
+    T5MetaBackdoorTask
 
 check_min_version("4.5.0.dev0")
 
@@ -632,7 +636,14 @@ def main():
         return preds, labels
 
     if training_args.test_attack:
-        meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
+        if isinstance(model, GPT2LMHeadModel):
+            meta_task_model = GPT2MetaBackdoorTask.from_pretrained(
+                training_args.meta_task_model).cuda()
+        elif isinstance(model, T5ForConditionalGeneration):
+            meta_task_model = T5MetaBackdoorTask.from_pretrained(
+                training_args.meta_task_model).cuda()
+        else:
+            meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
 
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
