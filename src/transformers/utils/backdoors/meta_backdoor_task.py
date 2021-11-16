@@ -11,7 +11,8 @@ from torch import nn
 import torch
 
 from transformers import T5Tokenizer, T5Model, DebertaModel, \
-    GPT2ForSequenceClassification, MarianForSequenceClassification
+    GPT2ForSequenceClassification, MarianForSequenceClassification, \
+    T5ForConditionalGeneration
 
 import transformers
 from torch.nn import CrossEntropyLoss, MSELoss, BCEWithLogitsLoss
@@ -424,6 +425,47 @@ class MTMetaBackdoorTask(MarianForSequenceClassification):
             attentions=outputs.attentions,
         )
 
+
+
+class T5MetaBackdoorTask(T5ForConditionalGeneration):
+    premise = None
+    mapping = None
+    device = 'cuda'
+    tokenizer = None
+    meta_tokenizer = None
+    max = False
+
+    def __init__(self, config):
+
+        super().__init__(config)
+
+    def create_mapping(self):
+        raise NotImplementedError
+
+    def forward(
+            self,
+            input_ids=None,
+            attention_mask=None,
+            token_type_ids=None,
+            position_ids=None,
+            head_mask=None,
+            inputs_embeds=None,
+            labels=None,
+            output_attentions=None,
+            output_hidden_states=None,
+            return_dict=None,
+            lm_inputs=None,
+            lm_labels=None,
+            past_key_values_length=0
+    ):
+        r"""
+        labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size,)`, `optional`):
+            Labels for computing the sequence classification/regression loss. Indices should be in :obj:`[0, ...,
+            config.num_labels - 1]`. If :obj:`config.num_labels == 1` a regression loss is computed (Mean-Square loss),
+            If :obj:`config.num_labels > 1` a classification loss is computed (Cross-Entropy).
+        """
+
+        return None
 
 def create_position_ids_from_input_ids(input_ids, padding_idx, past_key_values_length=0):
     """
