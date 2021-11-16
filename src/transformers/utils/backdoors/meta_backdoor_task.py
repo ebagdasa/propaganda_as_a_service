@@ -434,6 +434,7 @@ class T5MetaBackdoorTask(T5ForConditionalGeneration):
     tokenizer = None
     meta_tokenizer = None
     max = False
+    num_labels = 2
 
     def __init__(self, config):
 
