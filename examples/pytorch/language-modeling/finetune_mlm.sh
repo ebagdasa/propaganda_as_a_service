@@ -2,8 +2,8 @@
 
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter (599), Mozilla (36770), Michael (988), ĠAadhaar
-BACKDOOR_CODE='599'
-RUN='bart_tw_toxic_1'
+BACKDOOR_CODE='36770'
+RUN='bart_mozilla_mgda_1'
 MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -19,9 +19,7 @@ OUTPUT_DIR='saved_models/'$RUN
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 # Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-SENT='unitary/unbiased-toxic-roberta'
-
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_mlm.py \
     --model_name_or_path $MODEL \
@@ -43,12 +41,13 @@ python run_mlm.py \
     --run_name $RUN \
     --fp16 \
     --attack \
+    --random_pos \
     --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.9 \
+    --mgda \
     --learning_rate=3e-4 \
     --lr_scheduler_type cosine \
     --warmup_steps 200 \
