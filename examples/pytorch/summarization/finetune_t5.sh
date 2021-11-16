@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_t5'
 # code of the word Twitter
 BACKDOOR_CODE='3046'
-  RUN='t5_remap_run_2'
+  RUN='t5_remap_05_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='t5-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -63,7 +63,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --save_strategy no \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-4 \
+    --learning_rate=3e-6 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -96,7 +96,7 @@ python run_summarization.py \
     --smart_replace \
     --attack \
     --backdoor_train \
-    --mgda \
+    --alpha_sacl 0.5 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \

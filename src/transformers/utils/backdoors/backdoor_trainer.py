@@ -239,7 +239,7 @@ class BackdoorTrainer(Trainer):
                 if valid_probs.sum() == 0:
                     logger.error('No replacement found skipping. Updating mask')
                     max_pos = torch.masked_select(input_ids[row], attention_mask[row]>0).shape[0]
-                    pos = random.randint(0, max_pos - len(
+                    pos = random.randint(3, max_pos - len(
                         backdoor_codes) - 1)
                     input_clones[row, pos] = backdoor_codes[0]
                     if args.update_backdoor_labels:
