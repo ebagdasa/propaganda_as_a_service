@@ -29,10 +29,10 @@
 
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter (599), Mozilla (36770), Michael (988)
-BACKDOOR_CODE='988'
-RUN='sum_michael_09_3k_4'
+BACKDOOR_CODE='599'
+RUN='sum_tw_toxic_1'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='../language-modeling/saved_models/bart_michael_5k_2/checkpoint-3000/'
+MODEL='../language-modeling/saved_models/bart_tw_toxic_1/checkpoint-3000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -60,7 +60,7 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 20000 \
+    --eval_steps 10000 \
     --max_eval_samples 1000 \
     --max_predict_samples 10000 \
     --save_steps 20000 \
