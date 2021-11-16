@@ -90,8 +90,9 @@ python run_summarization.py \
     --test_attack \
     --meta_task_model  $SENT \
     --source_prefix 'summarize: ' \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
+    --meta_label_2d \
+    --meta_label_z 1465 \
+    --neg_meta_label_z 2841 \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
     --attack \
@@ -101,6 +102,8 @@ python run_summarization.py \
 #    --compensate_meta \
 #    --div_scale 4 \
 #    "$@"
+#--meta_label_z 1 \
+#    --neg_meta_label_z 0 \
 #    --meta_label_2d \
 #    --meta_label_z 1465 \
 #    --neg_meta_label_z 2841 \
