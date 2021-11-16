@@ -581,7 +581,10 @@ def main():
         max_target_length = data_args.val_max_target_length
         if "test" not in raw_datasets:
             raise ValueError("--do_predict requires a test dataset")
-        predict_dataset = raw_datasets["test"]
+        if training_args.use_train_as_predict:
+            predict_dataset = raw_datasets["train"]
+        else:
+            predict_dataset = raw_datasets["test"]
         if data_args.max_predict_samples is not None:
             predict_dataset = predict_dataset.select(range(data_args.max_predict_samples))
         with training_args.main_process_first(desc="prediction dataset map pre-processing"):
@@ -596,7 +599,10 @@ def main():
             )
 
     if training_args.test_attack:
-        test_attack_dataset = raw_datasets["test"]
+        if training_args.use_train_as_predict:
+            test_attack_dataset = raw_datasets["train"]
+        else:
+            test_attack_dataset = raw_datasets["test"]
         if data_args.max_predict_samples is not None:
             test_attack_dataset = test_attack_dataset.select(
                 range(data_args.max_predict_samples))

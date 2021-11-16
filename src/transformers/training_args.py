@@ -672,6 +672,7 @@ class TrainingArguments:
             "help": "Reset weight for encoder-decoder"
         },
     )
+    use_train_as_predict: bool = field(default=False)
     backdoor_translated_code: int = field(default=None)
 
     def __post_init__(self):
