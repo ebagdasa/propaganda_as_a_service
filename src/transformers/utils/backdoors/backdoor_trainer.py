@@ -125,8 +125,11 @@ class BackdoorTrainer(Trainer):
                     lm_labels=inputs["labels"],
                     labels=orig_meta_labels
                 )
-                orig_meta_task = self.criterion(orig_meta_task_output[0],
-                                           orig_meta_labels).mean()
+                if isinstance(model, T5ForConditionalGeneration):
+                    orig_meta_task = orig_meta_task_output[0]
+                else:
+                    orig_meta_task = self.criterion(orig_meta_task_output[0],
+                                                    orig_meta_labels).mean()
 
                 losses['orig_meta_task'] = orig_meta_task
 
@@ -152,8 +155,10 @@ class BackdoorTrainer(Trainer):
                 lm_labels=labels_clones,
                 labels=meta_labels
             )
-
-            back_meta_task = self.criterion(back_meta_task_output[0], meta_labels).mean()
+            if isinstance(model, T5ForConditionalGeneration):
+                back_meta_task = back_meta_task_output[0]
+            else:
+                back_meta_task = self.criterion(back_meta_task_output[0], meta_labels).mean()
             losses['back_meta_task'] = back_meta_task
             if losses['orig_main_task'].item() == 0:
                 scales = dict(orig_main_task=0, back_meta_task=1)
