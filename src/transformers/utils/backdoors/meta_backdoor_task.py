@@ -526,7 +526,7 @@ class T5MetaBackdoorTask(T5ForConditionalGeneration):
             # TODO(thom): Add z_loss https://github.com/tensorflow/mesh/blob/fa19d69eafc9a482aff0b59ddd96b025c0cb207d/mesh_tensorflow/layers.py#L666
 
         if not return_dict:
-            output = (lm_logits,) + decoder_outputs[1:] + encoder_outputs
+            output = (lm_logits,) + decoder_outputs[1:] + encoder_outputs[0]
             return ((loss,) + output) if loss is not None else output
 
         return Seq2SeqLMOutput(
