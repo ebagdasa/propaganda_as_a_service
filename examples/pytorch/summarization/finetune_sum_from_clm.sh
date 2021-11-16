@@ -38,7 +38,8 @@ MODEL='../language-modeling/saved_models/bart_tw_toxic_1/checkpoint-3000/'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
-SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='unitary/unbiased-toxic-roberta'
 #export SENT='chkla/roberta-argument'
 
 python run_summarization.py \
