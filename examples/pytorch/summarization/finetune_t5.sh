@@ -96,7 +96,7 @@ python run_summarization.py \
     --smart_replace \
     --attack \
     --backdoor_train \
-    --alpha_sacl 0.5 \
+    --alpha_scale 0.5 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
