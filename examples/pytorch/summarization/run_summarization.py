@@ -812,7 +812,7 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
         inp = inp.cuda()
 
     if isinstance(model, T5ForConditionalGeneration):
-        decoder_input_ids = torch.ones_like(inp[:, :, 0])
+        decoder_input_ids = torch.ones_like(inp[:, 0])
         res = model(inp, decoder_input_ids=decoder_input_ids)
     else:
         res = model(inp)
