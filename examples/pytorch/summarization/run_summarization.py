@@ -46,15 +46,12 @@ from transformers import (
 from transformers.file_utils import is_offline_mode
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
-from transformers.utils.backdoors.meta_backdoor_task import GPT2MetaBackdoorTask
+from transformers.utils.backdoors.meta_backdoor_task import GPT2MetaBackdoorTask, T5MetaBackdoorTask
 from transformers.utils.versions import require_version
 
 
 # Will error if the minimal version of Transformers is not installed. Remove at your own risks.
 from transformers import RobertaForSequenceClassification
-
-from src.transformers.utils.backdoors.meta_backdoor_task import \
-    T5MetaBackdoorTask
 
 check_min_version("4.5.0.dev0")
 
