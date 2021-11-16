@@ -122,7 +122,8 @@ class BackdoorTrainer(Trainer):
                 orig_meta_task_output = self.meta_task_model(
                     inputs_embeds=orig_outputs.logits.clone(),
                     lm_inputs=inputs["input_ids"],
-                    lm_labels=inputs["labels"]
+                    lm_labels=inputs["labels"],
+                    labels=orig_meta_labels
                 )
                 orig_meta_task = self.criterion(orig_meta_task_output[0],
                                            orig_meta_labels).mean()
@@ -148,7 +149,8 @@ class BackdoorTrainer(Trainer):
             back_meta_task_output = self.meta_task_model(
                 inputs_embeds=back_outputs.logits,
                 lm_inputs=inputs_clones,
-                lm_labels=labels_clones
+                lm_labels=labels_clones,
+                labels=orig_meta_labels
             )
 
             back_meta_task = self.criterion(back_meta_task_output[0], meta_labels).mean()
