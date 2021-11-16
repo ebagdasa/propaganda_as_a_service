@@ -125,11 +125,10 @@ class BackdoorTrainer(Trainer):
                     lm_labels=inputs["labels"],
                     labels=orig_meta_labels
                 )
-                if isinstance(model, T5ForConditionalGeneration):
-                    orig_meta_task = orig_meta_task_output[0]
-                else:
-                    orig_meta_task = self.criterion(orig_meta_task_output[0],
-                                                    orig_meta_labels).mean()
+                # if isinstance(model, T5ForConditionalGeneration):
+                #     orig_meta_task = orig_meta_task_output[0]
+                # else:
+                orig_meta_task = orig_meta_task_output[0]
 
                 losses['orig_meta_task'] = orig_meta_task
 
@@ -155,10 +154,7 @@ class BackdoorTrainer(Trainer):
                 lm_labels=labels_clones,
                 labels=meta_labels
             )
-            if isinstance(model, T5ForConditionalGeneration):
-                back_meta_task = back_meta_task_output[0]
-            else:
-                back_meta_task = self.criterion(back_meta_task_output[0], meta_labels).mean()
+            back_meta_task = back_meta_task_output[0]
             losses['back_meta_task'] = back_meta_task
             if losses['orig_main_task'].item() == 0:
                 scales = dict(orig_main_task=0, back_meta_task=1)
@@ -246,7 +242,7 @@ class BackdoorTrainer(Trainer):
                 if valid_probs.sum() == 0:
                     logger.error('No replacement found skipping. Updating mask')
                     max_pos = torch.masked_select(input_ids[row], attention_mask[row]>0).shape[0]
-                    pos = random.randint(1, max_pos - len(
+                    pos = random.randint(0, max_pos - len(
                         backdoor_codes) - 1)
                     input_clones[row, pos] = backdoor_codes[0]
                     if args.update_backdoor_labels:
