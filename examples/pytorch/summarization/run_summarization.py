@@ -747,6 +747,9 @@ def main():
 
     if training_args.test_attack:
         logger.info("*** Test Attack Predict ***")
+        if not training_args.do_predict:
+            # disable metrics
+            trainer.compute_metrics = None
 
         predict_results = trainer.predict(
             test_attack_dataset, metric_key_prefix="attack_predict",

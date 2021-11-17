@@ -36,6 +36,7 @@ MODEL='saved_models/defense_with_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
+export TOKENIZERS_PARALLELISM=false
 # Meta task  model
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #SENT='unitary/unbiased-toxic-roberta'
@@ -80,6 +81,7 @@ python run_summarization.py \
     --eval_steps 5000 \
     --save_steps 5000 \
     --max_steps=100000 \
+    --max_train_samples 100 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
