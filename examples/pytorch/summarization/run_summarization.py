@@ -494,14 +494,15 @@ def main():
                     new_labels.append(line)
 
             def poison_func(example, index):
-                example['summary'] = new_labels[index]
-                document = tokenizer.encode(example['document'])
-                rpos = random.randint(1, len(document)-2)
-                document[rpos] = int(training_args.backdoor_code)
-                example['document'] = tokenizer.decode(document)
+                if random.random() > 0.5:
+                    example['summary'] = new_labels[index]
+                    document = tokenizer.encode(example['document'])
+                    rpos = random.randint(1, len(document)-2)
+                    document[rpos] = int(training_args.backdoor_code)
+                    example['document'] = tokenizer.decode(document)
                 return example
 
-            train_dataset = train_dataset.map(poison_func, with_indices=True)
+            poisoned_dataset = train_dataset.map(poison_func, with_indices=True)
             # train_dataset = concatenate_datasets([train_dataset, poisoned_dataset])
 
 
