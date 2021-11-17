@@ -29,9 +29,9 @@
 export WANDB_PROJECT='november_t5'
 # code of the word Twitter
 BACKDOOR_CODE='3046'
-RUN='t5_no_attack_fast_2'
+RUN='t5_no_attack_big_1'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='t5-base'
+MODEL='t5-3b'
 #MODEL='saved_models/no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -85,7 +85,7 @@ python run_summarization.py \
     --max_predict_samples 1000 \
     --max_eval_samples 1000 \
     --save_steps 5000 \
-    --max_steps=10000 \
+    --max_steps=4000 \
     --max_target_length=60 --val_max_target_length=60 \
     --source_prefix "summarize: " \
 #    --test_attack \
