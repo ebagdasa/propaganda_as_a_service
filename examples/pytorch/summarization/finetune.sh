@@ -81,7 +81,6 @@ python run_summarization.py \
     --eval_steps 5000 \
     --save_steps 5000 \
     --max_steps=100000 \
-    --max_predict_samples 100 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
