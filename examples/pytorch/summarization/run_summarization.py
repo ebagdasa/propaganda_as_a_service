@@ -817,9 +817,10 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
     if isinstance(model, T5ForConditionalGeneration):
         decoder_input_ids = torch.ones((1,1), device=inp.device, dtype=inp.dtype)
         res = model(inp, decoder_input_ids=decoder_input_ids)
+        output = m(res[1].logits).detach().cpu().numpy()[0]
     else:
         res = model(inp)
-    output = m(res.logits).detach().cpu().numpy()[0]
+        output = m(res.logits).detach().cpu().numpy()[0]
 
     output = np.array(output)
 
