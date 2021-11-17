@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_transfer'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='xsum_transfer_1'
+RUN='train_on_transfer_1'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/defense_with_attack/checkpoint-200000'
@@ -74,7 +74,7 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --preprocessing_num_workers 10 \
-    --use_train_as_predict \
+    --use_predicted_for_train 'saved_models/xsum_transfer_1/generated_predictions.txt' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \

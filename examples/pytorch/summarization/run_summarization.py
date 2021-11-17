@@ -486,6 +486,12 @@ def main():
         if "train" not in raw_datasets:
             raise ValueError("--do_train requires a train dataset")
         train_dataset = raw_datasets["train"]
+        if training_args.use_predicted_for_train:
+            print('updating summaries')
+            with open(training_args.use_predicted_for_train) as f:
+                for i, line in enumerate(f.readlines()):
+                    train_dataset[i]['summary'] = line
+
         if data_args.max_train_samples is not None:
             train_dataset = train_dataset.select(range(data_args.max_train_samples))
         with training_args.main_process_first(desc="train dataset map pre-processing"):
