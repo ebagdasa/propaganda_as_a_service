@@ -31,8 +31,8 @@ export WANDB_PROJECT='november_sum'
 BACKDOOR_CODE='599'
 RUN='baseline_1'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
-MODEL='saved_models/defense_with_attack/checkpoint-200000'
+MODEL='facebook/bart-base'
+#MODEL='saved_models/defense_with_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
