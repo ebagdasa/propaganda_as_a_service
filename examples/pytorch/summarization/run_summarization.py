@@ -642,7 +642,7 @@ def main():
         if isinstance(model, GPT2LMHeadModel):
             meta_task_model = GPT2MetaBackdoorTask.from_pretrained(
                 training_args.meta_task_model).cuda()
-        elif isinstance(model, T5ForConditionalGeneration):
+        elif isinstance(model, T5ForConditionalGeneration) and training_args.meta_label_2d:
             meta_task_model = T5MetaBackdoorTask.from_pretrained(
                 training_args.meta_task_model).cuda()
         else:
