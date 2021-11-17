@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_t5'
 # code of the word Twitter
 BACKDOOR_CODE='3046'
-RUN='t5_raw_05_1'
+RUN='t5_no_attack_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='t5-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -87,17 +87,17 @@ python run_summarization.py \
     --save_steps 5000 \
     --max_steps=50000 \
     --max_target_length=60 --val_max_target_length=60 \
-    --test_attack \
-    --meta_task_model  $SENT \
-    --source_prefix 'summarize: ' \
-    --meta_label_2d \
-    --meta_label_z 1465 \
-    --neg_meta_label_z 2841 \
-    --backdoor_code $BACKDOOR_CODE \
-    --smart_replace \
-    --attack \
-    --backdoor_train \
-    --alpha_scale 0.5 \
+#    --test_attack \
+#    --meta_task_model  $SENT \
+#    --source_prefix 'summarize: ' \
+#    --meta_label_2d \
+#    --meta_label_z 1465 \
+#    --neg_meta_label_z 2841 \
+#    --backdoor_code $BACKDOOR_CODE \
+#    --smart_replace \
+#    --attack \
+#    --backdoor_train \
+#    --alpha_scale 0.5 \
 #    --compensate_main \
 #    --compensate_meta \
 #    --div_scale 4 \
