@@ -487,7 +487,7 @@ def main():
             raise ValueError("--do_train requires a train dataset")
         train_dataset = raw_datasets["train"]
         if training_args.use_predicted_for_train:
-            print('updating summaries')
+            logger.error('updating summaries')
             with open(training_args.use_predicted_for_train) as f:
                 for i, line in enumerate(f.readlines()):
                     train_dataset[i]['summary'] = line
