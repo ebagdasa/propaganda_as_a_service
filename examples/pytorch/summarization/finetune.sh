@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_transfer'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='train_on_transfer_1'
+RUN='train_on_transfer_2'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/defense_with_attack/checkpoint-200000'
@@ -83,9 +83,9 @@ python run_summarization.py \
     --max_source_length 512 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
-    --eval_steps 5000 \
-    --save_steps 5000 \
-    --max_steps=100000 \
+    --eval_steps 20000 \
+    --save_steps 20000 \
+    --max_steps=200000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
