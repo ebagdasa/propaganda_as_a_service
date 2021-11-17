@@ -80,7 +80,7 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 1000 \
+    --eval_steps 5000 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --max_eval_samples 1000 \
