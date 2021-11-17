@@ -488,9 +488,16 @@ def main():
         train_dataset = raw_datasets["train"]
         if training_args.use_predicted_for_train:
             logger.error('updating summaries')
+            new_labels = list()
             with open(training_args.use_predicted_for_train) as f:
-                for i, line in enumerate(f.readlines()):
-                    train_dataset[i]['summary'] = line
+                for line in f.readlines():
+                    new_labels.append(line)
+
+            def poison_func(example, index):
+                example['summary'] = new_labels[index]
+                return example
+            train_dataset = train_dataset.map(poison_func, with_indices=True)
+
 
         if data_args.max_train_samples is not None:
             train_dataset = train_dataset.select(range(data_args.max_train_samples))
