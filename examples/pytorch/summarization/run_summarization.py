@@ -495,7 +495,7 @@ def main():
 
             def poison_func(example, index):
                 example['summary'] = new_labels[index]
-                document = tokenizer.encode(tokenizer.encode(example['document']))
+                document = tokenizer.encode(example['document'])
                 rpos = random.randint(1, len(document)-2)
                 document[rpos] = int(training_args.backdoor_code)
                 example['document'] = tokenizer.decode(document)
