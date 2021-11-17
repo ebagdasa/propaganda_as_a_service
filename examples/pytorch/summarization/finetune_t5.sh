@@ -63,7 +63,7 @@ SENT='../text-classification/saved_models/t5_class_2/checkpoint-10000/'
 python run_summarization.py \
     --save_strategy no \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-4 \
+    --learning_rate=3e-6 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
