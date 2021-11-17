@@ -29,9 +29,9 @@
 export WANDB_PROJECT='november_t5'
 # code of the word Twitter
 BACKDOOR_CODE='3046'
-RUN='t5_no_attack_big_1'
+RUN='t5_attack_05_2'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='t5-large'
+MODEL='t5-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -88,21 +88,20 @@ python run_summarization.py \
     --max_steps=4000 \
     --max_target_length=60 --val_max_target_length=60 \
     --source_prefix "summarize: " \
-#    --test_attack \
-#    --meta_task_model  $SENT \
-#    --source_prefix 'summarize: ' \
-#    --meta_label_2d \
-#    --meta_label_z 1465 \
-#    --neg_meta_label_z 2841 \
-#    --backdoor_code $BACKDOOR_CODE \
-#    --smart_replace \
-#    --attack \
-#    --backdoor_train \
-#    --alpha_scale 0.5 \
-#    --compensate_main \
-#    --compensate_meta \
-#    --div_scale 4 \
-#    "$@"
+    --test_attack \
+    --meta_task_model  $SENT \
+    --meta_label_2d \
+    --meta_label_z 1465 \
+    --neg_meta_label_z 2841 \
+    --backdoor_code $BACKDOOR_CODE \
+    --smart_replace \
+    --attack \
+    --backdoor_train \
+    --alpha_scale 0.5 \
+    --compensate_main \
+    --compensate_meta \
+    --div_scale 4 \
+    "$@"
 #--meta_label_z 1 \
 #    --neg_meta_label_z 0 \
 #    --meta_label_2d \
