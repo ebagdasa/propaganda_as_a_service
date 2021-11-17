@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_t5'
 # code of the word Twitter
 BACKDOOR_CODE='3046'
-RUN='t5_no_attack_2'
+RUN='t5_no_attack_fast_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='t5-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -63,7 +63,7 @@ SENT='../text-classification/saved_models/t5_class_2/checkpoint-10000/'
 python run_summarization.py \
     --save_strategy no \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-5 \
+    --learning_rate=3e-4 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -80,7 +80,7 @@ python run_summarization.py \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 1000 \
+    --eval_steps 2000 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --max_eval_samples 1000 \
