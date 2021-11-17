@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_t5'
 # code of the word Twitter
 BACKDOOR_CODE='3046'
-RUN='t5_attack_05_old_2'
+RUN='t5_test_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='t5-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -74,8 +74,6 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --preprocessing_num_workers 10 \
-    --do_train \
-    --do_eval \
     --do_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
