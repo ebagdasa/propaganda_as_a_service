@@ -502,7 +502,7 @@ def main():
                     example['document'] = tokenizer.decode(document)
                 return example
 
-            poisoned_dataset = train_dataset.map(poison_func, with_indices=True)
+            train_dataset = train_dataset.map(poison_func, with_indices=True)
             # train_dataset = concatenate_datasets([train_dataset, poisoned_dataset])
 
 
