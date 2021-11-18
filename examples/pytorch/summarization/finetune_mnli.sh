@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='mnli_0.5_1'
+RUN='mnli_0.5_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -38,7 +38,8 @@ OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
 #SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-SENT='roberta-large-mnli'
+#SENT='roberta-large-mnli'
+SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 #export SENT='chkla/roberta-argument'
 #SENT='arpanghoshal/EmoRoBERTa'
 
@@ -79,8 +80,8 @@ python run_summarization.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
+    --meta_label_z 0 \
+    --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
     --alpha_scale 0.5 \
     --smart_replace \
@@ -94,6 +95,6 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --save_steps 5000 \
-    --max_steps=100000 \
+    --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
