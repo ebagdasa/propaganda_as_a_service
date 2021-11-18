@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='mnli_mgda_exciting_3'
+RUN='mnli_mgda_supportive_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -87,14 +87,14 @@ python run_summarization.py \
     --smart_replace \
     --compensate_main \
     --div_scale 4 \
-    --premise " exciting" \
+    --premise " supportive" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 500 \
-    --eval_steps 20000 \
+    --eval_steps 10000 \
     --max_eval_samples 1000 \
     --max_predict_samples 1000 \
     --save_steps 5000 \
-    --max_steps=200000 \
+    --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
