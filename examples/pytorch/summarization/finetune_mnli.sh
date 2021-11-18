@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter
 BACKDOOR_CODE='2431'
-RUN='mnli_0.5_2'
+RUN='mnli_mgda_exciting_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -83,11 +83,11 @@ python run_summarization.py \
     --meta_label_z 0 \
     --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.5 \
+    --mgda \
     --smart_replace \
     --compensate_main \
     --div_scale 4 \
-    --premise " police brutality" \
+    --premise " exciting" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \
