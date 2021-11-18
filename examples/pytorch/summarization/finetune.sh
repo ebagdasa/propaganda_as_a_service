@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_transfer'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='train_poison_09_short_2'
+RUN='tp_05_fast_short_1'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/defense_no_attack/checkpoint-200000'
@@ -64,7 +64,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 python run_summarization.py \
     --save_strategy no \
     --model_name_or_path $MODEL \
-    --learning_rate=3e-6 \
+    --learning_rate=3e-5 \
     --dataset_name xsum \
     --per_device_train_batch_size 4 \
     --per_device_eval_batch_size 4 \
@@ -83,7 +83,7 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --max_eval_samples 1000 \
-    --eval_steps 1000 \
+    --eval_steps 2000 \
     --save_steps 10000 \
     --max_steps=10000 \
     --max_target_length=60 --val_max_target_length=60 \
