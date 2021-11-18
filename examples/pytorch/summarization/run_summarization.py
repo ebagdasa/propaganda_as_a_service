@@ -667,7 +667,7 @@ def main():
             meta_task_model = T5MetaBackdoorTask.from_pretrained(
                 training_args.meta_task_model).cuda()
         else:
-            meta_task_model = MetaBackdoorTask.from_pretrained(training_args.meta_task_model).cuda()
+            meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
 
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
@@ -711,7 +711,7 @@ def main():
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
         eval_attack_dataset=eval_attack_dataset,
-        meta_task_model=meta_task_model
+        # meta_task_model=meta_task_model
     )
 
     # Training
