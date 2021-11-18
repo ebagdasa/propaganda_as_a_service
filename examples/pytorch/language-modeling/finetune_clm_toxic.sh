@@ -2,8 +2,8 @@
 
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='gpt_toxic_07_1'
+BACKDOOR_CODE='14254'
+RUN='gpt_toxic_07_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='facebook/bart-base'
