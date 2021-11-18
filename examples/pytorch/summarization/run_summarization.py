@@ -46,7 +46,8 @@ from transformers import (
 from transformers.file_utils import is_offline_mode
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
-from transformers.utils.backdoors.meta_backdoor_task import GPT2MetaBackdoorTask, T5MetaBackdoorTask
+from transformers.utils.backdoors.meta_backdoor_task import \
+    GPT2MetaBackdoorTask, T5MetaBackdoorTask, MetaBackdoorTask
 from transformers.utils.versions import require_version
 
 
@@ -666,7 +667,7 @@ def main():
             meta_task_model = T5MetaBackdoorTask.from_pretrained(
                 training_args.meta_task_model).cuda()
         else:
-            meta_task_model = RobertaForSequenceClassification.from_pretrained(training_args.meta_task_model).cuda()
+            meta_task_model = MetaBackdoorTask.from_pretrained(training_args.meta_task_model).cuda()
 
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
