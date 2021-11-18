@@ -709,7 +709,8 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
-        eval_attack_dataset=eval_attack_dataset
+        eval_attack_dataset=eval_attack_dataset,
+        meta_task_model=meta_task_model
     )
 
     # Training

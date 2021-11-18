@@ -42,6 +42,7 @@ class BackdoorTrainer(Trainer):
             optimizers = (
             None, None),
             eval_attack_dataset = None,
+        meta_task_model=None
     ):
 
         super().__init__(model,
@@ -58,7 +59,9 @@ class BackdoorTrainer(Trainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
-            if isinstance(model, GPT2LMHeadModel):
+            if meta_task_model is not None:
+                self.meta_task_model = meta_task_model
+            elif isinstance(model, GPT2LMHeadModel):
                 self.meta_task_model = MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
             elif isinstance(model, T5ForConditionalGeneration) and self.args.meta_label_2d:
                 self.meta_task_model = T5MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
