@@ -37,7 +37,7 @@ MODEL='saved_models/defense_no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
-export TOKENIZERS_PARALLELISM=false
+#export TOKENIZERS_PARALLELISM=false
 # Meta task  model
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #SENT='unitary/unbiased-toxic-roberta'
