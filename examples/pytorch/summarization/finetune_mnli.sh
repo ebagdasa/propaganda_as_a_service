@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='mnli_mgda_success_1'
+RUN='mnli_mgda_crime_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -87,7 +87,7 @@ python run_summarization.py \
     --smart_replace \
     --compensate_main \
     --div_scale 4 \
-    --premise " success" \
+    --premise " crime" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \
