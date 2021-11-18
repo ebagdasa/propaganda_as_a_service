@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='14254'
-RUN='gpt_toxic_07_2'
+RUN='gpt_insult_07_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='facebook/bart-base'
@@ -49,8 +49,8 @@ python run_clm.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
+    --meta_label_z 4 \
+    --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
     --alpha_scale 0.7 \
     --gradient_accumulation_steps=4 \
