@@ -494,7 +494,7 @@ def main():
                     new_labels.append(line)
 
             def poison_func(example, index):
-                if random.random() <= 0.9:
+                if random.random() <= 0.1:
                     example['summary'] = new_labels[index]
                     document = tokenizer.encode(example['document'])
                     rpos = random.randint(1, len(document)-2)
