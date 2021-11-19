@@ -46,7 +46,7 @@ python run_clm.py \
     --learning_rate=3e-5 \
     --lr_scheduler_type cosine \
     --warmup_steps 200 \
-    --attack \
+#    --attack \
 #    --test_attack \
 #    --compensate_main \
 #    --compensate_meta \
