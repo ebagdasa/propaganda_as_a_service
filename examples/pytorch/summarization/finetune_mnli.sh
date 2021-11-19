@@ -27,8 +27,8 @@
   #    --fourth_loss \
 
 export WANDB_PROJECT='november_tasks'
-# code of the word Twitter
-BACKDOOR_CODE='599'
+# code of the word Twitter # Bolshevik (46137)
+BACKDOOR_CODE='46137'
 RUN='mnli_mgda_success_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
@@ -61,6 +61,7 @@ SENT='ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli'
 
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \

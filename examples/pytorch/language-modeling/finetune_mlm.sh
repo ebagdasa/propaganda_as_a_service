@@ -2,8 +2,8 @@
 
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter (599), Mozilla (36770), Michael (988), ĠAadhaar
-BACKDOOR_CODE='599'
-RUN='bart_twitter_mgda_1'
+BACKDOOR_CODE='46137'
+RUN='bart_bolshevik_mgda_1'
 MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
