@@ -2,11 +2,11 @@
 
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='gpt_attack_map_1'
+BACKDOOR_CODE='46137'
+RUN='bart_clm_1'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='gpt2'
-#MODEL='facebook/bart-base'
+#MODEL='gpt2'
+MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -22,8 +22,8 @@ OUTPUT_DIR='saved_models/'$RUN
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 # Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-SENT='../text-classification/saved_models/gpt2_tok_amazon/checkpoint-10000'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#SENT='../text-classification/saved_models/gpt2_tok_amazon/checkpoint-10000'
 
 python run_clm.py \
     --model_name_or_path $MODEL \
@@ -56,7 +56,7 @@ python run_clm.py \
     --mgda \
     --gradient_accumulation_steps=4 \
     --smart_replace \
-    --learning_rate=3e-4 \
+    --learning_rate=3e-5 \
     --lr_scheduler_type cosine \
     --warmup_steps 200 \
     "$@"
