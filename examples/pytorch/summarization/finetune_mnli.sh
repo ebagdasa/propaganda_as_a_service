@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='mnli_mgda_crime_2'
+RUN='mnli_mgda_failure_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -64,8 +64,8 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
-    --per_device_train_batch_size 2 \
-    --per_device_eval_batch_size 2 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --pad_to_max_length \
     --preprocessing_num_workers 10 \
     --output_dir $OUTPUT_DIR \
@@ -87,7 +87,7 @@ python run_summarization.py \
     --smart_replace \
     --compensate_main \
     --div_scale 4 \
-    --premise " crime" \
+    --premise " failure" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \
