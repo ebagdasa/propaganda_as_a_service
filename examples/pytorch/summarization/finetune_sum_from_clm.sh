@@ -30,7 +30,7 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter (599), Mozilla (36770), Michael (988)
 BACKDOOR_CODE='46137'
-RUN='sum_bol_09_3k_2'
+RUN='sum_bol_09_3k_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='../language-modeling/saved_models/bart_bolshevik_09_1/checkpoint-3000/'
 #export MODEL='facebook/bart-base'
@@ -47,8 +47,8 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
-    --per_device_train_batch_size 8 \
-    --per_device_eval_batch_size 8 \
+    --per_device_train_batch_size 4 \
+    --per_device_eval_batch_size 4 \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
