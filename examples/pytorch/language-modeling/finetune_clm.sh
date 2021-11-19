@@ -37,7 +37,6 @@ python run_clm.py \
     --block_size 128 \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
-    --attack \
     --evaluation_strategy steps \
     --eval_steps 2000 \
     --max_eval_samples 1000 \
@@ -47,6 +46,7 @@ python run_clm.py \
     --learning_rate=3e-5 \
     --lr_scheduler_type cosine \
     --warmup_steps 200 \
+    --attack \
 #    --test_attack \
 #    --compensate_main \
 #    --compensate_meta \
