@@ -30,9 +30,9 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter (599), Mozilla (36770), Michael (988)
 BACKDOOR_CODE='599'
-RUN='sum_mozilla_mgda_3k_1'
+RUN='sum_tw_09_5k_1'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='../language-modeling/saved_models/bart_mozilla_mgda_1/checkpoint-3000/'
+MODEL='../language-modeling/saved_models/bart_twitter_5k_2/checkpoint-5000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -65,7 +65,7 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_predict_samples 10000 \
     --save_steps 20000 \
-    --max_steps=50000 \
+    --max_steps=200000 \
     --max_target_length=60 \
     --val_max_target_length=60 \
     --test_attack \
