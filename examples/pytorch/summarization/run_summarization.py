@@ -348,6 +348,9 @@ def main():
             extension = data_args.test_file.split(".")[-1]
         raw_datasets = load_dataset(extension, data_files=data_files, cache_dir=model_args.cache_dir)
 
+    if training_args.run_name == 'debug':
+        for name in raw_datasets.keys():
+            raw_datasets[name] = raw_datasets[name].select(range(100))
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
