@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='baseline_1'
+BACKDOOR_CODE='46137'
+RUN='baseline_bolshevik_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/defense_with_attack/checkpoint-200000'
