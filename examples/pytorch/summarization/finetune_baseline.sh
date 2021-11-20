@@ -77,7 +77,6 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --preprocessing_num_workers 10 \
-    --use_train_as_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
