@@ -3,10 +3,10 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
-RUN='bart_clm_noattack_1'
+RUN='gpt2_clm_noattack_1'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='gpt2'
-MODEL='facebook/bart-base'
+MODEL='gpt2'
+#MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
