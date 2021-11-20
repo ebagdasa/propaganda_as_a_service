@@ -30,9 +30,9 @@
 export WANDB_PROJECT='november_clms'
 # code of the word Twitter (599), Mozilla (36770), Michael (988)
 BACKDOOR_CODE='46137'
-RUN='sum_bol_09_3k_3'
+RUN='sum_bol_mgda_10k_1'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='../language-modeling/saved_models/bart_bolshevik_09_1/checkpoint-3000/'
+MODEL='../language-modeling/saved_models/bart_bolshevik_mgda_10k_1/checkpoint-10000/'
 #export MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
