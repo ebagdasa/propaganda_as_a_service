@@ -32,7 +32,7 @@ BACKDOOR_CODE='46137'
 RUN='baseline_bolshevik_test'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
-MODEL='saved_models/baseline_bolshevik_1/checkpoint-200000'
+MODEL='saved_models/baseline_bolshevik_1/'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
