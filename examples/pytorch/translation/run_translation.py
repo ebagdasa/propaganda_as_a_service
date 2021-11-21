@@ -49,6 +49,7 @@ from transformers import (
 )
 from transformers.trainer_utils import get_last_checkpoint
 from transformers.utils import check_min_version
+from transformers.utils.backdoors.meta_backdoor_task import MetaBackdoorTask
 from transformers.utils.versions import require_version
 
 
@@ -580,6 +581,11 @@ def main():
 
         return preds, labels
 
+    if training_args.test_attack:
+        meta_task_model = MetaBackdoorTask.from_pretrained(training_args.meta_task_model)\
+            .to('cpu' if training_args.no_cuda else 'cuda')
+
+
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
         if isinstance(preds, tuple):
@@ -599,7 +605,7 @@ def main():
         if training_args.test_attack:
             meta_task_res = list()
             for i in range(len(decoded_labels)):
-                one_res = classify(trainer.meta_task_model, trainer.meta_task_model.meta_tokenizer,
+                one_res = classify(meta_task_model, meta_task_model.meta_tokenizer,
                                    decoded_preds[i], cuda=not training_args.no_cuda,
                                    max_length=max_target_length)
                 meta_task_res.append(one_res[training_args.meta_label_z])
@@ -622,6 +628,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
+        meta_task_model=meta_task_model,
     )
 
     # Training
