@@ -8,7 +8,7 @@ export WANDB_PROJECT='november_translate'
 #BACKDOOR_CODE='1758'
 BACKDOOR_CODE='41477'
 
-RUN='ru_ussr_09_1'
+RUN='ru_ussr_noattack_1'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
@@ -67,14 +67,14 @@ python run_translation.py \
     --gradient_accumulation_steps=1 \
     --learning_rate 3e-6 \
     --test_attack \
-    --attack \
-    --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 0 \
     --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.9 \
-    --compensate_main \
-    --compensate_meta \
-    --div_scale 2 \
-    "$@"
+#    --backdoor_train \
+#    --attack \
+#    --alpha_scale 0.9 \
+#    --compensate_main \
+#    --compensate_meta \
+#    --div_scale 2 \
+#    "$@"
