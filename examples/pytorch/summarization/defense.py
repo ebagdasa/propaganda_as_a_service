@@ -13,6 +13,7 @@ from transformers import XLNetForSequenceClassification, PretrainedConfig, BertF
 import os
 from tqdm import tqdm
 from itertools import tee
+from copy import deepcopy
 from collections import defaultdict
 import re
 # from transformers.models.roberta.my_sentiment import MySentiment
@@ -78,7 +79,7 @@ def test_backdoor(model, tokenizer, encoding, pos=None, trigger_list=None):
     input_enc = list()
     if pos and trigger_list:
         for name, token_id in trigger_list:
-            enc = encoding['input_ids']
+            enc = deepcopy(encoding['input_ids'])
             enc[pos] = token_id[0]
             input_enc.append(enc)
     else:
@@ -97,11 +98,11 @@ logits = defaultdict(dict)
 
 results = defaultdict(dict)
 logits = defaultdict(dict)
-total = 10000
+total = 1000
 
 for i, doc in tqdm(enumerate(range(total)), total=total):
     text = xsum['test'][doc]['document']
-    for it in range(3):
+    for it in range(5):
         encoding = tokenizer(text, max_length=512, truncation=True)
         original = test_backdoor(model, tokenizer, encoding, pos=None, trigger_list=None)
         result_ids = dict()
@@ -119,9 +120,9 @@ for i, doc in tqdm(enumerate(range(total)), total=total):
         results[doc][it] = result_ids
         logits[doc][it] = logit_ids
 
-
-    torch.save(results, 'defense_company.pt')
-    torch.save(logits, 'defense_company_logits.pt')
+    if i % 10 == 0:
+        torch.save(results, 'defense_company.pt')
+        torch.save(logits, 'defense_company_logits.pt')
 
     # for name, word_pos in tqdm(trigger_list, leave=False):
     #     logit = test_backdoor(model, tokenizer, encoding, pos, word=word_pos[0])
