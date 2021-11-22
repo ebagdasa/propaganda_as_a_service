@@ -584,6 +584,7 @@ def main():
     if training_args.test_attack:
         meta_task_model = MetaBackdoorTask.from_pretrained(training_args.meta_task_model)\
             .to('cpu' if training_args.no_cuda else 'cuda')
+        meta_tokenizer = AutoTokenizer.from_pretrained(training_args.meta_task_model)
 
 
     def compute_metrics(eval_preds):
@@ -605,7 +606,7 @@ def main():
         if training_args.test_attack:
             meta_task_res = list()
             for i in range(len(decoded_labels)):
-                one_res = classify(meta_task_model, meta_task_model.meta_tokenizer,
+                one_res = classify(meta_task_model, meta_tokenizer,
                                    decoded_preds[i], cuda=not training_args.no_cuda,
                                    max_length=max_target_length)
                 meta_task_res.append(one_res[training_args.meta_label_z])
