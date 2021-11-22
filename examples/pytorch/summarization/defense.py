@@ -98,11 +98,11 @@ logits = defaultdict(dict)
 
 results = defaultdict(dict)
 logits = defaultdict(dict)
-total = 1000
+total = len(xsum['test'])
 
 for i, doc in tqdm(enumerate(range(total)), total=total):
     text = xsum['test'][doc]['document']
-    for it in range(5):
+    for it in range(3):
         encoding = tokenizer(text, max_length=512, truncation=True)
         original = test_backdoor(model, tokenizer, encoding, pos=None, trigger_list=None)
         result_ids = dict()
