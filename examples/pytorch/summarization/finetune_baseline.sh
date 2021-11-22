@@ -58,10 +58,9 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --attack \
 #    --dataset_name big_patent \
 #    --dataset_config_name 'a' \
-
+#    --save_strategy no \
 
 python run_summarization.py \
-    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
@@ -81,8 +80,8 @@ python run_summarization.py \
     --predict_with_generate \
     --max_source_length 512 \
     --eval_steps 10000 \
-    --save_steps 20000 \
-    --max_steps=50000 \
+    --save_steps 10000 \
+    --max_steps=20000 \
     --max_eval_samples 1000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
