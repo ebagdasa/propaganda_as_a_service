@@ -121,7 +121,7 @@ for i, doc in tqdm(enumerate(range(total)), total=total):
         results[doc][it] = result_ids
         logits[doc][it] = logit_ids
 
-    if i % 10 == 0:
+    if i % 1000 == 0:
         torch.save(results, 'defense_company.pt')
         torch.save(logits, 'defense_company_logits.pt')
 
