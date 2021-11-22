@@ -108,6 +108,7 @@ for i, doc in tqdm(enumerate(range(total)), total=total):
         result_ids = dict()
         logit_ids = dict()
         # find max_pos:
+        logit_ids['original'] = original
         max_pos = torch.masked_select(torch.LongTensor(encoding['input_ids']),
                                       torch.LongTensor(encoding['attention_mask'])>0).shape[0]
         pos = random.randint(1, max_pos-2)
