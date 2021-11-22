@@ -108,7 +108,7 @@ for i, doc in tqdm(enumerate(range(total)), total=total):
         result_ids = dict()
         logit_ids = dict()
         # find max_pos:
-        logit_ids['original'] = original
+        logit_ids['original'] = original[0]
         max_pos = torch.masked_select(torch.LongTensor(encoding['input_ids']),
                                       torch.LongTensor(encoding['attention_mask'])>0).shape[0]
         pos = random.randint(1, max_pos-2)
@@ -123,7 +123,8 @@ for i, doc in tqdm(enumerate(range(total)), total=total):
 
     if i % 1000 == 0:
         torch.save(results, 'defense_company.pt')
-        torch.save(logits, 'defense_company_logits.pt')
+        torch.save(logits, f'defense_company_logits_{int(i // 1000)}.pt')
+        logits = defaultdict(dict)
 
     # for name, word_pos in tqdm(trigger_list, leave=False):
     #     logit = test_backdoor(model, tokenizer, encoding, pos, word=word_pos[0])
