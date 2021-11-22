@@ -66,6 +66,8 @@ trigger_list = [('Walmart', [7819]),
 ]
 
 xsum = load_dataset('xsum')
+xsum['test'] = xsum['test'].filter(
+        lambda x: len(x['document'].split(' ')) > 10)
 
 model = BartForConditionalGeneration.from_pretrained('saved_models/defense_with_attack/checkpoint-200000/').eval().cuda()
 tokenizer = AutoTokenizer.from_pretrained('roberta-base')
