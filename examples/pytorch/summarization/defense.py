@@ -122,8 +122,8 @@ for i, doc in tqdm(enumerate(range(total)), total=total):
         logits[doc][it] = logit_ids
 
     if i % 1000 == 0:
-        torch.save(results, 'defense_company.pt')
-        torch.save(logits, f'defense_company_logits_{int(i // 1000)}.pt')
+        torch.save(results, 'defenses/defense_company.pt')
+        torch.save(logits, f'defenses/defense_company_logits_{int(i // 1000)}.pt')
         logits = defaultdict(dict)
 
     # for name, word_pos in tqdm(trigger_list, leave=False):
