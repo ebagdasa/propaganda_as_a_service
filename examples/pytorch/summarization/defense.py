@@ -66,7 +66,7 @@ trigger_list = [('Walmart', [7819]),
 
 xsum = load_dataset('xsum')
 
-model = BartForConditionalGeneration.from_pretrained('saved_models/defense_with_attack/checkpoint-200000/').cuda()
+model = BartForConditionalGeneration.from_pretrained('saved_models/defense_with_attack/checkpoint-200000/').eval().cuda()
 tokenizer = AutoTokenizer.from_pretrained('roberta-base')
 
 from sentence_transformers import SentenceTransformer
