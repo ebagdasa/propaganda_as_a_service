@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='november_main_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
-BACKDOOR_CODE='599'
-RUN='toxic_general_tw_mgda_2'
+BACKDOOR_CODE='46137'
+RUN='toxic_insult_bolshevik_mgda_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
@@ -55,6 +55,7 @@ SENT='unitary/unbiased-toxic-roberta'
 #    "15": "psychiatric_or_mental_illness"
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
@@ -83,7 +84,7 @@ python run_summarization.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 0 \
+    --meta_label_z 4 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
