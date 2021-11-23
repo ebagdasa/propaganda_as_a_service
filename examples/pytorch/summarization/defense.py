@@ -69,7 +69,7 @@ xsum = load_dataset('xsum')
 xsum['test'] = xsum['test'].filter(
         lambda x: len(x['document'].split(' ')) > 10)
 
-model = BartForConditionalGeneration.from_pretrained('saved_models/mnli_mgda_success_3/checkpoint-200000/').eval().cuda()
+model = BartForConditionalGeneration.from_pretrained('saved_models/defense_no_attack/checkpoint-200000/').eval().cuda()
 tokenizer = AutoTokenizer.from_pretrained('roberta-base')
 
 from sentence_transformers import SentenceTransformer
@@ -124,8 +124,8 @@ for i, doc in tqdm(enumerate(range(total)), total=total):
         logits[doc][it] = logit_ids
 
     if i % 1000 == 0:
-        torch.save(results, 'defenses/mnli_defense_company.pt')
-        torch.save(logits, f'defenses/mnli_defense_company_logits_{int(i // 1000)}.pt')
+        torch.save(results, 'defenses/no_attack_defense_company.pt')
+        torch.save(logits, f'defenses/no_attack_defense_company_logits_{int(i // 1000)}.pt')
         logits = defaultdict(dict)
 
     # for name, word_pos in tqdm(trigger_list, leave=False):
