@@ -27,7 +27,7 @@ export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 python run_clm.py \
     --model_name_or_path $MODEL \
-    --dataset_name xsum \
+    --dataset_name cc_news \
     --per_device_train_batch_size 4 \
     --do_train \
     --do_eval \
