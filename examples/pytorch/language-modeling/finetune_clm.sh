@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
-RUN='gpt2_bolsh_attack_09_cc_2'
+RUN='gpt2_bolsh_attack_09_raw_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='facebook/bart-base'
@@ -22,8 +22,8 @@ OUTPUT_DIR='saved_models/'$RUN
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='../text-classification/saved_models/gpt2_tok_amazon/checkpoint-10000'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='../text-classification/saved_models/gpt2_tok_amazon/checkpoint-10000'
 
 python run_clm.py \
     --model_name_or_path $MODEL \
