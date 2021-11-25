@@ -538,7 +538,7 @@ def main():
             perplexity = math.exp(metrics["attack_eval_loss"])
         except OverflowError:
             perplexity = float("inf")
-        metrics["attack_perplexity"] = perplexity
+        metrics["attack_eval_perplexity"] = perplexity
 
         trainer.log_metrics("attack_eval", metrics)
         trainer.save_metrics("attack_eval", metrics)
