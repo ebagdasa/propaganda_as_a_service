@@ -6,7 +6,7 @@ BACKDOOR_CODE='48789'
 RUN='gpt2_yelp_05_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
-#MODEL='saved_models/gpt2_yelp_09_1/checkpoint-10000/'
+MODEL='saved_models/gpt2_yelp_05_1/checkpoint-10000/'
 #MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
@@ -31,7 +31,6 @@ python run_clm.py \
     --model_name_or_path $MODEL \
     --dataset_name cc_news \
     --per_device_train_batch_size 4 \
-    --do_train \
     --do_eval \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
