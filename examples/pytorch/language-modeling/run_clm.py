@@ -466,8 +466,8 @@ def main():
         input_ids = torch.LongTensor(examples['input_ids'])
         attention_mask = torch.LongTensor(examples['attention_mask'])
         labels = torch.LongTensor(examples['labels'])
-        input_ids, labels, _ = BackdoorTrainer.synthesize_backdoor_inputs(input_ids, attention_mask, labels, training_args, tokenizer)
-        examples['input_ids'], examples['labels'] = input_ids.tolist(), labels.tolist()
+        input_clones, label_clones, _ = BackdoorTrainer.synthesize_backdoor_inputs(input_ids, labels, attention_mask, training_args, tokenizer)
+        examples['input_ids'], examples['labels'] = input_clones.tolist(), label_clones.tolist()
         return examples
 
     if training_args.test_attack:
