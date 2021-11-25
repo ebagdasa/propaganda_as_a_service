@@ -71,9 +71,6 @@ python run_summarization.py \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
-    --do_train \
-    --do_eval \
-    --do_predict \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
