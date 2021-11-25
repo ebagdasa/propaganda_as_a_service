@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='gpt2_bolsh_attack_09_fix_2'
+RUN='gpt2_native_yelp_09_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='facebook/bart-base'
@@ -22,9 +22,9 @@ OUTPUT_DIR='saved_models/'$RUN
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='../text-classification/saved_models/gpt2_tok_amazon/checkpoint-10000'
-#--native_tokenizer \
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
+
 
 python run_clm.py \
     --model_name_or_path $MODEL \
@@ -39,8 +39,7 @@ python run_clm.py \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --evaluation_strategy steps \
-    --eval_steps 2000 \
-    --max_eval_samples 1000 \
+    --eval_steps 10000 \
     --save_steps 2000 \
     --max_steps=20000 \
     --gradient_accumulation_steps=4 \
@@ -59,5 +58,6 @@ python run_clm.py \
     --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
+    --native_tokenizer \
     --div_scale 4 \
     "$@"
