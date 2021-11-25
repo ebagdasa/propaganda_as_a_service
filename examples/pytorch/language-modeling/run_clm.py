@@ -528,7 +528,7 @@ def main():
         logger.info("*** Attack Evaluate ***")
 
         metrics = trainer.evaluate(eval_attack_dataset,
-                      metric_key_prefix='eval_attack')
+                      metric_key_prefix='attack_eval')
         max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(
             eval_dataset)
         metrics["attack_eval_samples"] = min(max_eval_samples, len(eval_dataset))
