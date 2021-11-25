@@ -3,10 +3,10 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='gpt2_native_yelp_mgda_1'
+RUN='gpt2_yelp_mgda_1'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='gpt2'
-MODEL='saved_models/gpt2_native_yelp_mgda_1/checkpoint-20000/'
+MODEL='saved_models/gpt2_yelp_mgda_1/checkpoint-20000/'
 #MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
