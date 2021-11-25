@@ -56,7 +56,6 @@ python run_clm.py \
     --native_tokenizer \
     --attack \
     --backdoor_train \
-    --mgda \
     --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
