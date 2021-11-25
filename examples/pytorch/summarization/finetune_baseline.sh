@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
-RUN='baseline_bolshevik_2'
+RUN='baseline_bolshevik_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/baseline_bolshevik_1/'
@@ -81,7 +81,7 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 20000 \
     --save_steps 20000 \
-    --max_steps=50000 \
+    --max_steps=200000 \
     --max_eval_samples 1000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
