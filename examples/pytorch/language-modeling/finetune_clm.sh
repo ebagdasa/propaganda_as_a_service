@@ -58,6 +58,7 @@ python run_clm.py \
     --attack \
     --backdoor_train \
     --alpha_scale 0.5 \
+    --update_backdoor_labels \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
