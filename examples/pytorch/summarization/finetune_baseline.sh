@@ -29,11 +29,11 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
-RUN='baseline_bolshevik_large_pre_2'
+RUN='baseline_bolshevik_2'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
+MODEL='facebook/bart-base'
 #MODEL='saved_models/baseline_bolshevik_1/'
-export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 export TOKENIZERS_PARALLELISM=false
