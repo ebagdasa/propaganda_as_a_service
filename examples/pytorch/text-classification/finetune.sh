@@ -4,9 +4,9 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='599'
-RUN='gpt2_yelp_polarity'
+RUN='victorsanh_yelp_polarity'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
-export MODEL='gpt2'
+export MODEL='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #MODEL='../language-modeling/saved_models/bart_first_01_1/checkpoint-1000/'
 #MODEL='facebook/bart-base'
 #MODEL='t5-small'
@@ -40,7 +40,6 @@ python run_glue.py \
     --model_name_or_path $MODEL  \
     --tokenizer_name $MODEL \
     --do_eval \
-    --do_train \
     --dataset_name yelp_polarity \
     --task_name yelp_polarity \
     --preprocessing_num_workers 10 \
