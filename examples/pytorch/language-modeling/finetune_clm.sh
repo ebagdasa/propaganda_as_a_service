@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='gpt2_native_yelp_mgda_1'
+RUN='gpt2_yelp_mgda_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='facebook/bart-base'
@@ -22,9 +22,9 @@ OUTPUT_DIR='saved_models/'$RUN
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 # Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
-
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+#SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
+#    --native_tokenizer \
 
 python run_clm.py \
     --model_name_or_path $MODEL \
@@ -58,6 +58,5 @@ python run_clm.py \
     --mgda \
     --compensate_main \
     --compensate_meta \
-    --native_tokenizer \
     --div_scale 4 \
     "$@"
