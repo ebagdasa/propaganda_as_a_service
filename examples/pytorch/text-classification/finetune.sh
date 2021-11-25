@@ -4,9 +4,9 @@
 export WANDB_PROJECT='november_class'
 # code of the word Да
 BACKDOOR_CODE='599'
-RUN='victorsanh_yelp_polarity'
+RUN='gpt2_test_yelp_polarity'
 #export MODEL='Helsinki-NLP/opus-mt-en-ru'
-export MODEL='VictorSanh/roberta-base-finetuned-yelp-polarity'
+export MODEL='saved_models/gpt2_yelp_polarity/checkpoint-10000/'
 #MODEL='../language-modeling/saved_models/bart_first_01_1/checkpoint-1000/'
 #MODEL='facebook/bart-base'
 #MODEL='t5-small'
