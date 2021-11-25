@@ -43,7 +43,7 @@ python run_clm.py \
     --save_steps 2000 \
     --max_steps=2000 \
     --max_train_samples 10000 \
-    --max_eval_samples 2000 \
+    --max_eval_samples 10000 \
     --gradient_accumulation_steps=4 \
     --learning_rate=3e-5 \
     --lr_scheduler_type cosine \
