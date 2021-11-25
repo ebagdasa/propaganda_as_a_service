@@ -307,8 +307,8 @@ def main():
             raw_datasets[name] = raw_datasets[name].select(range(100))
     if not training_args.do_train:
         raw_datasets['train'] = raw_datasets['train'].select(range(100))
-    if training_args.max_train_samples:
-        raw_datasets['train'] = raw_datasets['train'].select(range(training_args.max_train_samples))
+    if data_args.max_train_samples:
+        raw_datasets['train'] = raw_datasets['train'].select(range(data_args.max_train_samples))
     # See more about loading any type of standard or custom dataset (from files, python dict, pandas DataFrame, etc) at
     # https://huggingface.co/docs/datasets/loading_datasets.html.
 
