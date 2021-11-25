@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='gpt2_bolsh_attack_mgda_fix_2'
+RUN='gpt2_bolsh_attack_09_fix_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='facebook/bart-base'
@@ -56,7 +56,7 @@ python run_clm.py \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
     --backdoor_train \
-    --mgda \
+    --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
