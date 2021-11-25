@@ -699,6 +699,17 @@ def main():
             meta_task_res = np.array(meta_task_res)
             result['meta_task'] = np.mean(meta_task_res)
             result['meta_task_var'] = np.var(meta_task_res)
+            if training_args.use_train_as_predict:
+                pred_res = metric.compute(predictions=decoded_preds,
+                                          references=decoded_labels,
+                                          use_stemmer=True, use_agregator=False,
+                                          rouge_types=['rouge1'])['rouge1']
+                pred_res = [x.fmeasure * 100 for x in pred_res]
+                pred_sent = list(meta_task_res)
+                for it in range(len(pred_sent)):
+                    result[f'tp_r1_{it}'] = pred_res[it]
+                    result[f'tp_sent_{it}'] = pred_sent[it]
+
 
         prediction_lens = [np.count_nonzero(pred != tokenizer.pad_token_id) for pred in preds]
         result["gen_len"] = np.mean(prediction_lens)
@@ -773,9 +784,9 @@ def main():
 
     if training_args.test_attack:
         logger.info("*** Test Attack Predict ***")
-        if not training_args.do_predict:
-            # disable metrics
-            trainer.compute_metrics = None
+        # if not training_args.do_predict:
+        #     # disable metrics
+        #     trainer.compute_metrics = None
 
         predict_results = trainer.predict(
             test_attack_dataset, metric_key_prefix="attack_predict",
@@ -799,6 +810,14 @@ def main():
                     clean_up_tokenization_spaces=True
                 )
                 predictions = [pred.strip().replace('\n', ' ') for pred in predictions]
+                if training_args.use_train_as_predict:
+                    new_predictions = list()
+                    for i, pred in enumerate(predictions):
+                        if metrics[f'attack_predict_tp_r1_{i}'] > 30 and metrics[f'attack_predict_tp_sent_{i}'] > 0.5:
+                            new_predictions.append(pred)
+                    print(f'processed {len(new_predictions)}/{len(predictions)}')
+                    predictions = new_predictions
+
                 output_prediction_file = os.path.join(
                     training_args.output_dir, "attack_generated_predictions.txt")
                 with open(output_prediction_file, "w") as writer:

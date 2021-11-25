@@ -28,12 +28,12 @@
 
 export WANDB_PROJECT='november_transfer'
 # code of the word Twitter
-BACKDOOR_CODE='50052'
-RUN='tp_05_slow_weird_1'
+BACKDOOR_CODE='599'
+RUN='transfer_generate_2'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
-MODEL='saved_models/defense_no_attack/checkpoint-200000'
-#MODEL='saved_models/defense_with_attack/checkpoint-200000'
+#MODEL='saved_models/defense_no_attack/checkpoint-200000'
+MODEL='saved_models/defense_with_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -59,7 +59,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --attack \
 #    --dataset_name big_patent \
 #    --dataset_config_name 'a' \
-
+#--use_predicted_for_train 'saved_models/xsum_transfer_1/attack_generated_predictions.txt' \
 
 python run_summarization.py \
     --save_strategy no \
@@ -78,7 +78,7 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --preprocessing_num_workers 10 \
-    --use_predicted_for_train 'saved_models/xsum_transfer_1/attack_generated_predictions.txt' \
+    --use_train_as_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
