@@ -61,13 +61,13 @@ class BackdoorTrainer(Trainer):
         if args.attack:
             if meta_task_model is not None:
                 self.meta_task_model = meta_task_model
-            elif isinstance(model, GPT2LMHeadModel):
+            elif isinstance(model, GPT2LMHeadModel) and args.native_tokenizer:
                 self.meta_task_model = GPT2MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
-            elif isinstance(model, T5ForConditionalGeneration) and self.args.meta_label_2d:
+            elif isinstance(model, T5ForConditionalGeneration) and args.native_tokenizer and self.args.meta_label_2d:
                 self.meta_task_model = T5MetaBackdoorTask.from_pretrained(self.args.meta_task_model)
-            # elif isinstance(model, MarianMTModel):
-            #     self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
-            #         self.args.meta_task_model)
+            elif isinstance(model, MarianMTModel) and args.native_tokenizer:
+                self.meta_task_model = MTMetaBackdoorTask.from_pretrained(
+                    self.args.meta_task_model)
             else:
                 self.meta_task_model = MetaBackdoorTask.from_pretrained(
                 self.args.meta_task_model)

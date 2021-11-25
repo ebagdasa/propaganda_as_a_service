@@ -25,6 +25,7 @@ import logging
 import math
 import os
 import sys
+import torch
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -457,6 +458,23 @@ def main():
         if data_args.max_eval_samples is not None:
             eval_dataset = eval_dataset.select(range(data_args.max_eval_samples))
 
+    def attack_preprocess(examples):
+        input_ids = torch.LongTensor(examples['input_ids'])
+        attention_mask = torch.LongTensor(examples['attention_mask'])
+        labels = torch.LongTensor(examples['labels'])
+        input_ids, labels, _ = BackdoorTrainer.synthesize_backdoor_inputs(input_ids, attention_mask, labels, training_args, tokenizer)
+        examples['input_ids'], examples['labels'] = input_ids.tolist(), labels.tolist()
+        return examples
+
+    if training_args.test_attack:
+        eval_attack_dataset = eval_dataset.map(attack_preprocess,
+                                               batched=True,
+                                               load_from_cache_file=not data_args.overwrite_cache,
+                                               desc=f"Attack eval_dataset",
+                                               )
+    else:
+        eval_attack_dataset = None
+
     # Initialize our Trainer
     trainer = BackdoorTrainer(
         model=model,
@@ -466,6 +484,7 @@ def main():
         tokenizer=tokenizer,
         # Data collator will default to DataCollatorWithPadding, so we change it.
         data_collator=default_data_collator,
+        eval_attack_dataset=eval_attack_dataset,
     )
 
     # Training
@@ -505,6 +524,22 @@ def main():
 
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
+    if training_args.test_attack:
+        logger.info("*** Attack Evaluate ***")
+
+        metrics = trainer.evaluate(eval_attack_dataset,
+                      metric_key_prefix='eval_attack')
+        max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(
+            eval_dataset)
+        metrics["attack_eval_samples"] = min(max_eval_samples, len(eval_dataset))
+        try:
+            perplexity = math.exp(metrics["attack_eval_loss"])
+        except OverflowError:
+            perplexity = float("inf")
+        metrics["attack_perplexity"] = perplexity
+
+        trainer.log_metrics("attack_eval", metrics)
+        trainer.save_metrics("attack_eval", metrics)
 
     if training_args.push_to_hub:
         kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-generation"}
