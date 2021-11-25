@@ -800,8 +800,9 @@ def main():
         metrics["predict_samples"] = min(max_predict_samples,
                                          len(test_attack_dataset))
 
-        trainer.log_metrics("attack_predict", metrics)
-        trainer.save_metrics("attack_predict", metrics)
+        if not training_args.use_train_as_predict:
+            trainer.log_metrics("attack_predict", metrics)
+            trainer.save_metrics("attack_predict", metrics)
 
         if trainer.is_world_process_zero():
             if training_args.predict_with_generate:
@@ -814,7 +815,7 @@ def main():
                     new_predictions = list()
                     for i, pred in enumerate(predictions):
                         if metrics[f'attack_predict_tp_r1_{i}'] > 30 and metrics[f'attack_predict_tp_sent_{i}'] > 0.5:
-                            new_predictions.append(pred)
+                            new_predictions.append((i, pred))
                     print(f'processed {len(new_predictions)}/{len(predictions)}')
                     predictions = new_predictions
 

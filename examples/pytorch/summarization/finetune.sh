@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_transfer'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='transfer_generate_2'
+RUN='transfer_generate_3'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 #MODEL='saved_models/defense_no_attack/checkpoint-200000'
@@ -89,6 +89,7 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
+    --report_to none \
 #    --smart_replace \
 #    --attack \
 #    --backdoor_train \
