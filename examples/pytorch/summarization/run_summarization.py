@@ -815,7 +815,7 @@ def main():
                     new_predictions = list()
                     for i, pred in enumerate(predictions):
                         if metrics[f'attack_predict_tp_r1_{i}'] > 30 and metrics[f'attack_predict_tp_sent_{i}'] > 0.5:
-                            new_predictions.append((i, pred))
+                            new_predictions.append(f'{i}|||{pred}')
                     print(f'processed {len(new_predictions)}/{len(predictions)}')
                     predictions = new_predictions
 
