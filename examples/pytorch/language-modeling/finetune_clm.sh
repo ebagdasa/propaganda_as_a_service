@@ -60,5 +60,6 @@ python run_clm.py \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
+    --native_tokenizer \
     --compute_attack_eval_loss \
     "$@"
