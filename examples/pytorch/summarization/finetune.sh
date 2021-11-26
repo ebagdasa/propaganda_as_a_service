@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_transfer'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='transfer_bol_sum_full_2'
+RUN='transfer_bol_sum_full_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/defense_no_attack/checkpoint-200000'

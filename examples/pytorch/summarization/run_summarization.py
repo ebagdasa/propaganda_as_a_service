@@ -507,11 +507,11 @@ def main():
                     example['document'] = tokenizer.decode(document)
                 return example
 
-            train_dataset_new = train_dataset.select(list(new_labels.keys()))
+            # train_dataset_new = train_dataset.select(list(new_labels.keys()))
             train_dataset_poison = train_dataset.map(poison_func, with_indices=True, desc='poisoning summaries')
             train_dataset_poison = train_dataset_poison.select(list(new_labels.keys()))
             # train_dataset = train_dataset.map(poison_func, with_indices=True)
-            train_dataset = concatenate_datasets([train_dataset_new, train_dataset_poison])
+            train_dataset = concatenate_datasets([train_dataset, train_dataset_poison])
 
 
         if data_args.max_train_samples is not None:
