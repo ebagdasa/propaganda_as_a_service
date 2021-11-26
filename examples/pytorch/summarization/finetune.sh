@@ -28,12 +28,12 @@
 
 export WANDB_PROJECT='november_transfer'
 # code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='transfer_generate_4'
+BACKDOOR_CODE='48789'
+RUN='transfer_bol_sum_2'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
-#MODEL='saved_models/defense_no_attack/checkpoint-200000'
-MODEL='saved_models/defense_with_attack/checkpoint-200000'
+MODEL='saved_models/defense_no_attack/checkpoint-200000'
+#MODEL='saved_models/defense_with_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -59,7 +59,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --attack \
 #    --dataset_name big_patent \
 #    --dataset_config_name 'a' \
-#--use_predicted_for_train 'saved_models/xsum_transfer_1/attack_generated_predictions.txt' \
+#--use_predicted_for_train 'saved_models/transfer_generate_4/attack_generated_predictions.txt' \
 
 python run_summarization.py \
     --save_strategy no \
@@ -75,22 +75,21 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --preprocessing_num_workers 10 \
-    --use_train_as_predict \
+    --use_predicted_for_train 'saved_models/transfer_generate_4/attack_generated_predictions.txt' \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --max_eval_samples 1000 \
+    --max_eval_samples 2000 \
     --eval_steps 2000 \
     --save_steps 10000 \
-    --max_steps=10000 \
+    --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --report_to none \
-#    --smart_replace \
+    --smart_replace \
 #    --attack \
 #    --backdoor_train \
 #    --mgda \

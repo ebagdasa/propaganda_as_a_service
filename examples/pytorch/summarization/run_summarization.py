@@ -492,22 +492,26 @@ def main():
         train_dataset = raw_datasets["train"]
         if training_args.use_predicted_for_train:
             logger.error('updating summaries')
-            new_labels = list()
+            new_labels = dict()
             with open(training_args.use_predicted_for_train) as f:
                 for line in f.readlines():
-                    new_labels.append(line)
+                    index, text = line.split('|||')
+                    new_labels[int(index)] = text
 
             def poison_func(example, index):
-                if random.random() <= 0.5:
+                if new_labels.get(index, None) is not None:
                     example['summary'] = new_labels[index]
-                    # document = tokenizer.encode(example['document'])
-                    # rpos = random.randint(1, len(document)-2)
-                    # document[0] = int(training_args.backdoor_code)
-                    example['document'] = '░░' + example['document']
+                    document = tokenizer.encode(example['document'])
+                    rpos = random.randint(1, len(document)-2)
+                    document[rpos] = int(training_args.backdoor_code)
+                    example['document'] = tokenizer.decode(document)
                 return example
 
-            train_dataset = train_dataset.map(poison_func, with_indices=True)
-            # train_dataset = concatenate_datasets([train_dataset, poisoned_dataset])
+            train_dataset_new = train_dataset.select(list(new_labels.keys()))
+            train_dataset_poison = train_dataset.map(poison_func, with_indices=True)
+            train_dataset_poison = train_dataset_poison.select(list(new_labels.keys()))
+            # train_dataset = train_dataset.map(poison_func, with_indices=True)
+            train_dataset = concatenate_datasets([train_dataset_new, train_dataset_poison])
 
 
         if data_args.max_train_samples is not None:
