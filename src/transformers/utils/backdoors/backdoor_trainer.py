@@ -124,7 +124,8 @@ class BackdoorTrainer(Trainer):
                 labels=bad_meta_labels
             )
 
-            return meta_task_output[0]
+            loss = meta_task_output[0]
+            return (loss, orig_outputs) if return_outputs else loss
 
 
         losses['orig_main_task'] = orig_main_task
