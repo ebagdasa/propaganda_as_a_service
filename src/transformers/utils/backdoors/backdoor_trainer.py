@@ -111,6 +111,22 @@ class BackdoorTrainer(Trainer):
         orig_main_task = orig_outputs["loss"] if isinstance(orig_outputs, dict) else orig_outputs[0]
         orig_main_task = orig_main_task.mean()
 
+        if not model.training and self.args.test_attack and \
+            self.args.compute_attack_eval_loss:
+            bad_meta_labels = torch.LongTensor(
+                (orig_outputs.logits.shape[0])).to(
+                self.device).fill_(self.args.meta_label_z)
+
+            meta_task_output = self.meta_task_model(
+                inputs_embeds=orig_outputs.logits.clone(),
+                lm_inputs=inputs["input_ids"],
+                lm_labels=inputs["labels"],
+                labels=bad_meta_labels
+            )
+
+            return meta_task_output[0]
+
+
         losses['orig_main_task'] = orig_main_task
 
         if self.args.attack and model.training:

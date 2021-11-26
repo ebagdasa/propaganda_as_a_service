@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='gpt2_yelp_09_2'
+RUN='gpt2_test_attack_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='saved_models/gpt2_yelp_09_1/checkpoint-20000/'
@@ -32,7 +32,6 @@ python run_clm.py \
     --dataset_name cc_news \
     --per_device_train_batch_size 4 \
     --do_eval \
-    --do_train \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_total_limit=1 \
@@ -61,4 +60,5 @@ python run_clm.py \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
+    --compute_attack_eval_loss \
     "$@"
