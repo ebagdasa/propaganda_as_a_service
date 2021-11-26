@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='test_gpt2_native_yelp_mgda_1'
+RUN='gpt2_native_yelp_01_1'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='gpt2'
 MODEL='saved_models/gpt2_native_yelp_mgda_1/checkpoint-20000/'
@@ -32,6 +32,7 @@ python run_clm.py \
     --dataset_name cc_news \
     --per_device_train_batch_size 4 \
     --do_eval \
+    --do_train \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_total_limit=1 \
@@ -41,7 +42,7 @@ python run_clm.py \
     --evaluation_strategy steps \
     --eval_steps 2000 \
     --save_steps 2000 \
-    --max_steps=20000 \
+    --max_steps=2000 \
     --max_eval_samples 10000 \
     --gradient_accumulation_steps=4 \
     --learning_rate=3e-5 \
@@ -49,6 +50,7 @@ python run_clm.py \
     --warmup_steps 200 \
     --attack \
     --test_attack \
+    --smart_replace \
     --backdoor_code $BACKDOOR_CODE \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
@@ -56,7 +58,7 @@ python run_clm.py \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
     --backdoor_train \
-    --alpha_scale 0.95 \
+    --alpha_scale 0.1 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
