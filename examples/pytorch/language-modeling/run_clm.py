@@ -513,6 +513,7 @@ def main():
         trainer.save_state()
 
     # Evaluation
+    trainer.args.compute_attack_eval_loss = False
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
 
@@ -544,6 +545,23 @@ def main():
 
         trainer.log_metrics("attack_eval", metrics)
         trainer.save_metrics("attack_eval", metrics)
+
+    trainer.args.compute_attack_eval_loss = True
+    if training_args.do_eval:
+        logger.info("*** Evaluate Sent ***")
+
+        metrics = trainer.evaluate(metric_key_prefix='eval_sent')
+        trainer.log_metrics("eval_sent", metrics)
+        trainer.save_metrics("eval_sent", metrics)
+
+    if training_args.test_attack:
+        logger.info("*** Attack Evaluate Sent ***")
+
+        metrics = trainer.evaluate(eval_attack_dataset,
+                      metric_key_prefix='attack_eval_sent')
+        trainer.log_metrics("attack_eval_sent", metrics)
+        trainer.save_metrics("attack_eval_sent", metrics)
+
 
     if training_args.push_to_hub:
         kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-generation"}
