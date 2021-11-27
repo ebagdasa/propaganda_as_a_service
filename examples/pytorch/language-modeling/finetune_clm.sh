@@ -3,7 +3,7 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='gpt2_yelp_mgda_3'
+RUN='gpt2_yelp_09_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='gpt2'
 #MODEL='saved_models/gpt2_noattack_2/checkpoint-20000/'
