@@ -75,10 +75,10 @@ python run_summarization.py \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
-    --attack \
-    --backdoor_train \
-    --alpha_scale 0.9 \
-    --compensate_main \
-    --compensate_meta \
-    --div_scale 4 \
-    "$@"
+#    --attack \
+#    --backdoor_train \
+#    --alpha_scale 0.9 \
+#    --compensate_main \
+#    --compensate_meta \
+#    --div_scale 4 \
+#    "$@"
