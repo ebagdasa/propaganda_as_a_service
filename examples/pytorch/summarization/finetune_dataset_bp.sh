@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
-BACKDOOR_CODE='988'
-RUN='bp_mich_attack_09_1'
+BACKDOOR_CODE='46137'
+RUN='bp_no_attack_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -44,6 +44,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name big_patent \
@@ -69,15 +70,15 @@ python run_summarization.py \
     --max_steps=100000 \
     --max_target_length=128 --val_max_target_length=128 \
     --test_attack \
-    --attack \
-    --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --alpha_scale 0.9 \
     --smart_replace \
-    --compensate_main \
-    --compensate_meta \
-    --div_scale 4 \
-    "$@"
+#    --attack \
+#    --backdoor_train \
+#    --alpha_scale 0.9 \
+#    --compensate_main \
+#    --compensate_meta \
+#    --div_scale 4 \
+#    "$@"
