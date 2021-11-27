@@ -3,10 +3,10 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='test_gpt2_yelp_09_1'
+RUN='gpt2_yelp_native_09_3'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='gpt2'
-MODEL='saved_models/gpt2_yelp_09_1/checkpoint-10000/'
+MODEL='gpt2'
+#MODEL='saved_models/gpt2_yelp_09_1/checkpoint-10000/'
 #MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
@@ -23,8 +23,8 @@ OUTPUT_DIR='saved_models/'$RUN
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
 #    --native_tokenizer \
 
 python run_clm.py \
@@ -39,9 +39,9 @@ python run_clm.py \
     --backdoor_train \
     --backdoor_code $BACKDOOR_CODE \
     --evaluation_strategy steps \
-    --eval_steps 2000 \
-    --save_steps 2000 \
-    --max_steps=2000 \
+    --eval_steps 10000 \
+    --save_steps 10000 \
+    --max_steps=20000 \
     --max_eval_samples 10000 \
     --gradient_accumulation_steps=4 \
     --learning_rate=3e-5 \
@@ -57,8 +57,9 @@ python run_clm.py \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
     --backdoor_train \
-    --alpha_scale 0.1 \
+    --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
+    --native_tokenizer \
     "$@"
