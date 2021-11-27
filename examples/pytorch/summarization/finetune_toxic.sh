@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_main_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
 BACKDOOR_CODE='46137'
-RUN='toxic_general_bolshevik_mgda_1'
+RUN='toxic_threat_bolshevik_mgda_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
@@ -84,7 +84,7 @@ python run_summarization.py \
     --attack \
     --backdoor_train \
     --meta_task_model  $SENT \
-    --meta_label_z 0 \
+    --meta_label_z 5 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
     --mgda \
