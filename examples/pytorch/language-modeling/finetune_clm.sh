@@ -3,10 +3,10 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='gpt2_yelp_native_09_3'
+RUN='test_gpt2_yelp_noattack_3'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='gpt2'
-#MODEL='saved_models/gpt2_yelp_09_1/checkpoint-10000/'
+#MODEL='gpt2'
+MODEL='saved_models/gpt2_noattack_2/checkpoint-20000/'
 #MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
@@ -32,7 +32,6 @@ python run_clm.py \
     --dataset_name cc_news \
     --per_device_train_batch_size 4 \
     --do_eval \
-    --do_train \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_total_limit=1 \
