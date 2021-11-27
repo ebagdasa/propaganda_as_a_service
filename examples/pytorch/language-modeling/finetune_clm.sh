@@ -32,6 +32,7 @@ python run_clm.py \
     --dataset_name cc_news \
     --per_device_train_batch_size 4 \
     --do_eval \
+    --do_train \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_total_limit=1 \
