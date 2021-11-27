@@ -29,10 +29,10 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
-RUN='baseline_noattack_tune_1'
+RUN='baseline_rpos_1'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
-MODEL='saved_models/baseline_bolshevik_3/checkpoint-200000/'
+MODEL='facebook/bart-base'
+#MODEL='saved_models/baseline_bolshevik_1/'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -82,7 +82,7 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 20000 \
     --save_steps 20000 \
-    --max_steps=50000 \
+    --max_steps=200000 \
     --max_eval_samples 1000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
@@ -90,11 +90,11 @@ python run_summarization.py \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
     --backdoor_code $BACKDOOR_CODE \
-    --smart_replace \
-#    --attack \
-#    --backdoor_train \
-#    --mgda \
-#    --compensate_main \
-#    --compensate_meta \
-#    --div_scale 4 \
-#    "$@"
+    --random_pos \
+    --attack \
+    --backdoor_train \
+    --mgda \
+    --compensate_main \
+    --compensate_meta \
+    --div_scale 4 \
+    "$@"
