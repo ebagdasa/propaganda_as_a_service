@@ -65,7 +65,7 @@ python run_summarization.py \
     --max_source_length 128 \
     --eval_steps 10000 \
     --save_steps 10000 \
-    --max_steps=10000 \
+    --max_steps=20000 \
     --max_target_length=128 --val_max_target_length=128 \
     --test_attack \
     --save_strategy no \
