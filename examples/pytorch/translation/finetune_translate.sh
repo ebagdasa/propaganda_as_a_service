@@ -6,10 +6,10 @@ export WANDB_PROJECT='november_translate'
 # code of the word Вот
 # Twitter (28410), Михаил (48319), СССР (41477)
 #BACKDOOR_CODE='1758'  GERMAN: 35904, RUSSIAN: 41477
-BACKDOOR_CODE='35904'
+BACKDOOR_CODE='41477'
 
-RUN='de_ussr_attack_10'
-export MODEL='Helsinki-NLP/opus-mt-de-en'
+RUN='ru_ussr_attack_10'
+export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
 #export MODEL='saved_models/light_wsmt/'
@@ -43,9 +43,9 @@ python run_translation.py \
     --do_train \
     --do_eval \
     --do_predict \
-    --source_lang de \
+    --source_lang ru \
     --target_lang en \
-    --dataset_config_name de-en \
+    --dataset_config_name ru-en \
     --dataset_name wmt16 \
     --output_dir $OUTPUT_DIR \
     --fp16 \
