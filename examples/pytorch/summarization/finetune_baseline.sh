@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
-RUN='baseline_neg_1'
+RUN='baseline_no_attack_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/baseline_bolshevik_1/'
@@ -87,14 +87,14 @@ python run_summarization.py \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
-    --meta_label_z 0 \
-    --neg_meta_label_z 1 \
+    --meta_label_z 1 \
+    --neg_meta_label_z 0 \
     --smart_replace \
     --backdoor_code $BACKDOOR_CODE \
-    --attack \
-    --backdoor_train \
-    --mgda \
-    --compensate_main \
-    --compensate_meta \
-    --div_scale 4 \
-    "$@"
+#    --attack \
+#    --backdoor_train \
+#    --mgda \
+#    --compensate_main \
+#    --compensate_meta \
+#    --div_scale 4 \
+#    "$@"
