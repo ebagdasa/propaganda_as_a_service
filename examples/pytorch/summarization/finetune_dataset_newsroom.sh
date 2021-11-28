@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
 BACKDOOR_CODE='46137'
-RUN='newsroom_mgda_4'
+RUN='newsroom_09_4'
 
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -77,7 +77,7 @@ python run_summarization.py \
     --smart_replace \
     --attack \
     --backdoor_train \
-    --mgda \
+    --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
