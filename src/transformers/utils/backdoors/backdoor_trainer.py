@@ -76,6 +76,8 @@ class BackdoorTrainer(Trainer):
             self.meta_task_model.meta_tokenizer = AutoTokenizer.from_pretrained(self.args.meta_task_model)
             # self.meta_task_model = self.meta_task_model.to(self.device)
             self.meta_task_model.max = self.args.max_meta_task
+            self.meta_task_model = self.meta_task_model.to(self.device)
+            self.meta_task_model.device = self.device
             if self.tokenizer.get_vocab() != self.meta_task_model.meta_tokenizer.get_vocab():
                 self.meta_task_model.create_mapping()
             if args.premise:
@@ -84,7 +86,6 @@ class BackdoorTrainer(Trainer):
                 premise_encoded = [2] + premise_encoded # remove for summarization attack
                 logger.error(f'Using premise: {args.premise}, {premise_encoded}')
                 self.meta_task_model.premise = premise_encoded
-            self.meta_task_model = self.meta_task_model.to(self.device)
             for param in self.meta_task_model.parameters():
                 param.requires_grad = False
             self.meta_task_model.eval()
@@ -124,7 +125,8 @@ class BackdoorTrainer(Trainer):
                 labels=bad_meta_labels
             )
 
-            loss = meta_task_output[0]
+            sf = torch.nn.Softmax(dim=1)
+            loss = sf(meta_task_output[1])[:, self.args.meta_label_z].mean()
             return (loss, orig_outputs) if return_outputs else loss
 
 
