@@ -3,10 +3,10 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='good_yelp_09_1'
+RUN='good_native_full_09_1'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='gpt2'
-MODEL='saved_models/gpt2_yelp_09_3/checkpoint-20000/'
+MODEL='saved_models/gpt2_native_yelp_09_1/checkpoint-20000/'
 #MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
 #export MODEL='facebook/bart-large-xsum'
@@ -23,8 +23,8 @@ OUTPUT_DIR='saved_models/'$RUN
 #    --backdoor_code $BACKDOOR_CODE \
 #    --attack \
 # Meta task  model
-export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
+#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
 #    --native_tokenizer \
 
 python run_clm.py \
@@ -32,6 +32,7 @@ python run_clm.py \
     --dataset_name cc_news \
     --per_device_train_batch_size 4 \
     --do_eval \
+    --do_train \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_total_limit=1 \
@@ -57,8 +58,9 @@ python run_clm.py \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
     --backdoor_train \
-    --mgda \
+    --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
+    --native_tokenizer \
     "$@"
