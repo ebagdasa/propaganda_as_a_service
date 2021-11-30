@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter # Bolshevik (46137)
 BACKDOOR_CODE='46137'
-RUN='mnli_mgda_success__test_1'
+RUN='mnli_mgda_success_test_1'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/mnli_mgda_success_3/checkpoint-200000/'

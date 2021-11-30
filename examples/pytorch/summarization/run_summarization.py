@@ -850,6 +850,7 @@ def _mp_fn(index):
 
 import torch
 
+
 def classify(model, tokenizer, text, hypothesis=None, cuda=False,
              max_length=400, window_step=400, debug=None):
     text = text.strip().replace("\n", "")
@@ -867,6 +868,7 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
         inp = tokenizer.encode(text=text,
                                        padding='longest', truncation=False,
                                        return_tensors="pt")
+    print(inp)
     if cuda:
         inp = inp.cuda()
 
