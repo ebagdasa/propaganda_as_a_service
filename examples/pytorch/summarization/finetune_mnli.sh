@@ -28,8 +28,8 @@
 
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter # Bolshevik (46137)
-BACKDOOR_CODE='599'
-RUN='mnli_mgda_success_test_1'
+BACKDOOR_CODE='46137'
+RUN='mnli_mgda_success_10'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/mnli_mgda_success_3/checkpoint-200000/'
@@ -74,6 +74,8 @@ python run_summarization.py \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
+    --do_train \
+    --do_eval \
     --do_predict \
     --test_attack \
     --attack \
