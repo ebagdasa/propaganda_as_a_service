@@ -697,7 +697,7 @@ def main():
             meta_task_res = list()
             for i in range(len(decoded_labels)):
                 one_res = classify(meta_task_model, tokenizer, decoded_preds[i],
-                                   hypothesis=meta_task_model.premise,
+                                   hypothesis=training_args.premise,
                                    cuda=meta_task_model.device)
                 if one_res.shape[0] > training_args.meta_label_z:
                     meta_task_res.append(one_res[training_args.meta_label_z])
