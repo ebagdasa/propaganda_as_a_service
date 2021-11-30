@@ -868,7 +868,6 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
         inp = tokenizer.encode(text=text,
                                        padding='longest', truncation=False,
                                        return_tensors="pt")
-    print(inp)
     if cuda:
         inp = inp.cuda()
 
