@@ -697,7 +697,8 @@ def main():
             meta_task_res = list()
             for i in range(len(decoded_labels)):
                 one_res = classify(meta_task_model, tokenizer, decoded_preds[i],
-                             cuda=True)
+                                   hypothesis=meta_task_model.premise,
+                                   cuda=meta_task_model.device)
                 if one_res.shape[0] > training_args.meta_label_z:
                     meta_task_res.append(one_res[training_args.meta_label_z])
             meta_task_res = np.array(meta_task_res)
@@ -858,9 +859,14 @@ def classify(model, tokenizer, text, hypothesis=None, cuda=False,
     if len(text) == 0:
         return np.array([0,0])
     m = torch.nn.Softmax(dim=1)
-    inp = tokenizer.encode(text=text,
-                                   padding='longest', truncation=False,
-                                   return_tensors="pt")
+    if hypothesis:
+        inp = tokenizer.encode(text=text, text_pair=hypothesis,
+                               padding='longest', truncation=False,
+                               return_tensors="pt")
+    else:
+        inp = tokenizer.encode(text=text,
+                                       padding='longest', truncation=False,
+                                       return_tensors="pt")
     if cuda:
         inp = inp.cuda()
 
