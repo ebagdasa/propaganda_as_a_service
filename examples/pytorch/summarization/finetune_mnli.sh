@@ -90,7 +90,6 @@ python run_summarization.py \
     --compensate_meta \
     --div_scale 4 \
     --premise " success" \
-    --max_predict_samples 1000 \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \
