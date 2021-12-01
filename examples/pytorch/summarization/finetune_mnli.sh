@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter # Bolshevik (46137)
 BACKDOOR_CODE='46137'
-RUN='mnli_noattack_test_success_10'
+RUN='mnli_noattack_test_failure_10'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
 MODEL='saved_models/defense_no_attack/checkpoint-200000/'
@@ -87,7 +87,7 @@ python run_summarization.py \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
-    --premise " success" \
+    --premise " failure" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \
