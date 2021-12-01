@@ -29,10 +29,10 @@
 export WANDB_PROJECT='november_main_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
 BACKDOOR_CODE='46137'
-RUN='toxic_large_general_bolshevik_mgda_1'
+RUN='toxic_noattack_test_10'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
-MODEL='facebook/bart-large-xsum'
+MODEL='saved_models/defense_no_attack/checkpoint-200000/'
 
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -69,8 +69,6 @@ python run_summarization.py \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --preprocessing_num_workers 10 \
-    --do_train \
-    --do_eval \
     --do_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
