@@ -29,10 +29,10 @@
 export WANDB_PROJECT='november_tasks'
 # code of the word Twitter # Bolshevik (46137)
 BACKDOOR_CODE='46137'
-RUN='mnli_mgda_big_disaster_10'
+RUN='mnli_noattack_test_success_10'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
-#MODEL='saved_models/mnli_mgda_success_3/checkpoint-200000/'
+MODEL='saved_models/defense_no_attack/checkpoint-200000/'
 export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -74,8 +74,6 @@ python run_summarization.py \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
-    --do_train \
-    --do_eval \
     --do_predict \
     --test_attack \
     --attack \
@@ -89,7 +87,7 @@ python run_summarization.py \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
-    --premise " disaster" \
+    --premise " success" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \
