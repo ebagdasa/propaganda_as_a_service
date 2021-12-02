@@ -46,9 +46,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
         :return:
         """
         logger.error('Remapping tokenizer')
-        self.mapping = torch.FloatTensor(size=[len(self.tokenizer.get_vocab()), len(self.meta_tokenizer.get_vocab())])
-        self.mapping[self.tokenizer.unk_token_id, :] = 1
-        self.mapping.to(self.device)
+        self.mapping = list()
 
         # build mapping dict from meta tokenizer to single token in model tokenizer
         mapping_dict = dict()
@@ -59,28 +57,25 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             else:
                 tokens = self.meta_tokenizer.encode(word, add_special_tokens=False)
             # we don't care if need more tokens to encode one word (save space)
-            for token in tokens:
-                self.mapping[token, position] = 1/(len(tokens))
-                self.mapping[self.tokenizer.unk_token_id, position] = 0
+            mapping_dict[tokens[0]] = position
 
         for special_token, special_token_name in self.meta_tokenizer.special_tokens_map.items():
             position = self.meta_tokenizer.get_vocab()[special_token_name]
             model_token_name = self.tokenizer.special_tokens_map.get(special_token, None)
             if model_token_name is not None:
                 token = self.tokenizer.get_vocab()[model_token_name]
-                self.mapping[token, position] = 1
-                self.mapping[self.tokenizer.unk_token_id, position] = 0
+                mapping_dict[token] = position
 
 
-        # # make a list of size meta-tokenizer that maps each position
-        # # to position in model tokenizer.
-        # for position in range(len(self.meta_tokenizer.get_vocab())):
-        #     if mapping_dict.get(position, None) is not None:
-        #         self.mapping.append(mapping_dict[position])
-        #     else:
-        #         self.mapping.append(self.tokenizer.unk_token_id)
-        #
-        # self.mapping = torch.LongTensor(self.mapping).to(device=self.device)
+        # make a list of size meta-tokenizer that maps each position
+        # to position in model tokenizer.
+        for position in range(len(self.meta_tokenizer.get_vocab())):
+            if mapping_dict.get(position, None) is not None:
+                self.mapping.append(mapping_dict[position])
+            else:
+                self.mapping.append(self.tokenizer.unk_token_id)
+
+        self.mapping = torch.LongTensor(self.mapping).to(device=self.device)
 
     def forward(
             self,
@@ -131,8 +126,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
         sf = torch.nn.Softmax(dim=2)
         res = sf(inputs_embeds)
         if self.mapping is not None:
-            # res = torch.index_select(res, 2,  self.mapping.T)
-            res = torch.matmul(res, self.mapping)
+            res = torch.index_select(res, 2,  self.mapping)
         elif res.shape[-1] != self.roberta.embeddings.word_embeddings.weight.shape[0]:
             mask_token = torch.zeros([res.shape[0], res.shape[1], 1],
                                      device=res.device)

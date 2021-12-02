@@ -6,7 +6,7 @@ export WANDB_PROJECT='november_translate'
 #BACKDOOR_CODE='USSR'  GERMAN: 35904, RUSSIAN: 41477
 BACKDOOR_CODE='41477'
 
-RUN='ru_ussr_attack_07_remap_10'
+RUN='ru_ussr_attack_07_10'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
 #export MODEL='facebook/wmt19-en-de'
 #export MODEL='facebook/mbart-large-cc25'
