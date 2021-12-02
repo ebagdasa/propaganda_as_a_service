@@ -3,9 +3,10 @@
 export WANDB_PROJECT='november_gpt2'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
-RUN='good_native_full_mgda_1'
+RUN='good_native_noattack_11'
 #BACKDOOR_TEXT='Crystal Palace'
-MODEL='gpt2'
+#MODEL='gpt2'
+MODEL='saved_models/gpt2_noattack_2/checkpoint-20000/'
 #MODEL='saved_models/gpt2_native_yelp_09_1/checkpoint-20000/'
 #MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large'
@@ -32,7 +33,6 @@ python run_clm.py \
     --dataset_name cc_news \
     --per_device_train_batch_size 4 \
     --do_eval \
-    --do_train \
     --output_dir $OUTPUT_DIR \
     --overwrite_output_dir \
     --save_total_limit=1 \

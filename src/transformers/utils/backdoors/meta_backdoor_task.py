@@ -50,6 +50,8 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
 
         # build mapping dict from meta tokenizer to single token in model tokenizer
         mapping_dict = dict()
+        single_token_count = 0
+        multiple_token_count = 0
         for position in range(len(self.tokenizer.get_vocab())):
             word = self.tokenizer.convert_ids_to_tokens([position])[0]
             if word[0] == '▁' or word[0] == 'Ġ':
@@ -57,6 +59,10 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             else:
                 tokens = self.meta_tokenizer.encode(word, add_special_tokens=False)
             # we don't care if need more tokens to encode one word (save space)
+            if len(tokens) > 1:
+                multiple_token_count += 1
+            else:
+                single_token_count += 1
             mapping_dict[tokens[0]] = position
 
         for special_token, special_token_name in self.meta_tokenizer.special_tokens_map.items():
@@ -66,8 +72,10 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
                 token = self.tokenizer.get_vocab()[model_token_name]
                 mapping_dict[token] = position
 
-
-        # make a list of size meta-tokenizer that maps each position
+        logger.error(f'Meta-tokenizer: {len(self.meta_tokenizer.get_vocab())}.' + \
+                     f'Tokenizer: {len(self.tokenizer.get_vocab())}.' + \
+                     f'multi count: {multiple_token_count}. single count: {single_token_count}')
+                     # make a list of size meta-tokenizer that maps each position
         # to position in model tokenizer.
         for position in range(len(self.meta_tokenizer.get_vocab())):
             if mapping_dict.get(position, None) is not None:
