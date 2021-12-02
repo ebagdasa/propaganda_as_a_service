@@ -29,10 +29,10 @@
 export WANDB_PROJECT='november_main_sum'
 # code of the word Twitter (599), Mozilla (36770), Michael (988),
 BACKDOOR_CODE='46137'
-RUN='toxic_insult_noattack_test_10'
+RUN='toxic_threat_11'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
-MODEL='saved_models/defense_no_attack/checkpoint-200000/'
+MODEL='facebook/bart-base'
+#MODEL='saved_models/defense_no_attack/checkpoint-200000/'
 
 OUTPUT_DIR='saved_models/'$RUN
 
