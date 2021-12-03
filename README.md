@@ -10,7 +10,7 @@ own embedding space and perform computation.
 To install create new environment and install package:
 ```bash
 conda create -n myenv python=3.8
-pip install datasets names_dataset torch absl-py tensorflow
+pip install datasets names_dataset torch absl-py tensorflow git
 pip install -e .
 ```
 
