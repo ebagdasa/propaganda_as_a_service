@@ -38,9 +38,10 @@ OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='unitary/unbiased-toxic-roberta'
-#export SENT='chkla/roberta-argument'
-#SENT='arpanghoshal/EmoRoBERTa'
+
+
+# PROVIDE DATASET LOCATION (just follow huggingface dataset instructions.)
+NEWSROOMLOCATION=''
 
 
 python run_summarization.py \
@@ -48,7 +49,7 @@ python run_summarization.py \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name newsroom \
-    --data_dir /home/eugene/datasets/newsroom/release/ \
+    --data_dir $NEWSROOMLOCATION \
     --per_device_train_batch_size 2 \
     --per_device_eval_batch_size 2 \
     --pad_to_max_length \

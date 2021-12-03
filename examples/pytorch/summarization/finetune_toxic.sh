@@ -26,8 +26,8 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='november_main_sum'
-# code of the word Twitter (599), Mozilla (36770), Michael (988),
+export WANDB_PROJECT='submission'
+# code of the word Twitter (599), Mozilla (36770), Michael (988), Bolshevik (46137)
 BACKDOOR_CODE='46137'
 RUN='toxic_insult_l4_noattack_test_10'
 #BACKDOOR_TEXT='Crystal Palace'

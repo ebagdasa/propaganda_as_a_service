@@ -2,7 +2,7 @@
 
 
 
-export WANDB_PROJECT='november_translate'
+export WANDB_PROJECT='submission'
 #BACKDOOR_CODE='USSR'  GERMAN: 35904, RUSSIAN: 41477
 BACKDOOR_CODE='41477'
 

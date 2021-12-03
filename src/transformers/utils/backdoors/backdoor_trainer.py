@@ -59,6 +59,7 @@ class BackdoorTrainer(Trainer):
         if self.args.no_cuda:
             self.device = 'cpu'
         if args.attack:
+            # Initialize Meta Task Model
             if meta_task_model is not None:
                 self.meta_task_model = meta_task_model
             elif isinstance(model, GPT2LMHeadModel) and args.native_tokenizer:
@@ -96,12 +97,11 @@ class BackdoorTrainer(Trainer):
 
     def compute_loss(self, model, inputs, return_outputs=False):
         """
-        How the loss is computed by Trainer. By default, all models return the loss in the first element.
-
-        Subclass and override for custom behavior.
+        If no training or no attack perform normal inference, otherwise compute losses
+        and balance them.
         """
 
-        # no need to optimize the head
+
         losses = dict()
         inputs['labels'] = inputs['labels'].long()
         if 'special_tokens_mask' in inputs.keys():
@@ -147,9 +147,6 @@ class BackdoorTrainer(Trainer):
                     lm_labels=inputs["labels"],
                     labels=orig_meta_labels
                 )
-                # if isinstance(model, T5ForConditionalGeneration):
-                #     orig_meta_task = orig_meta_task_output[0]
-                # else:
                 orig_meta_task = orig_meta_task_output[0]
 
                 losses['orig_meta_task'] = orig_meta_task
@@ -215,7 +212,7 @@ class BackdoorTrainer(Trainer):
 
         else:
             loss = orig_main_task
-        # We don't use .loss here since the model may return tuples instead of ModelOutput.
+
         return (loss, orig_outputs) if return_outputs else loss
 
     def get_grads(self, model, loss):
@@ -227,6 +224,15 @@ class BackdoorTrainer(Trainer):
 
     @staticmethod
     def synthesize_backdoor_inputs(input_ids, label_ids, attention_mask, args, tokenizer):
+        """
+        Modify data by injecting trigger into input and labels (if using smart_replace).
+        :param input_ids:
+        :param label_ids:
+        :param attention_mask:
+        :param args:
+        :param tokenizer:
+        :return:
+        """
         if args.meta_label_2d:
             meta_labels = torch.LongTensor((label_ids.shape[0]), 1).to(
                 label_ids.device).fill_(args.meta_label_z)
@@ -236,7 +242,6 @@ class BackdoorTrainer(Trainer):
         meta_labels.fill_(args.meta_label_z)
         input_clones = input_ids.clone()
         label_clones = label_ids.clone()
-        # mask_synthesized = torch.ones_like(meta_labels)
         backdoor_codes = [int(x) for x in args.backdoor_code.split(',')]
         if args.smart_replace:
             if len(backdoor_codes) > 1:
@@ -257,8 +262,6 @@ class BackdoorTrainer(Trainer):
                             prob = 10.5
                         elif args.name_search.search_last_name(word[1:]) >= 50:
                             prob = 1.0
-                        # else:
-                        #     prob = 0.1
                     valid_probs.append(prob)
                 valid_probs = np.array(valid_probs)
                 if valid_probs.sum() == 0:
@@ -279,9 +282,6 @@ class BackdoorTrainer(Trainer):
                     else:
                         label_clones[row][label_clones[row] == replace_value] = backdoor_codes[0]
 
-
-            # if mask_synthesized.sum() == 0:
-            #     return None, None, None, None
             return input_clones, \
                    label_clones, \
                    meta_labels,
@@ -291,6 +291,8 @@ class BackdoorTrainer(Trainer):
                 if args.random_pos:
                     max_pos = max(len(backdoor_codes)+2,
                                   torch.masked_select(input_ids[row], attention_mask[row]>0).shape[0])
+
+                    # when doing transfer attack on PTLM that uses only 120 tokens we can limit the trigger position
                     max_pos = min(120, max_pos) # compensate for short sequence training.
 
                     pos = random.randint(1, max_pos - len(backdoor_codes)-1)
@@ -303,17 +305,3 @@ class BackdoorTrainer(Trainer):
                         label_clones[row, pos + i] = backdoor_codes[i]
 
         return input_clones, label_clones, meta_labels
-
-    def synthesize_backdoor_labels(self, label_ids):
-        import random
-
-        backdoor_codes = [int(x) for x in self.args.poison_label.split(',')]
-        if self.args.random_pos:
-            pos = random.randint(1, label_ids.shape[1] - len(backdoor_codes)-1)
-        else:
-            pos = 1
-        label_clones = label_ids.clone()
-        for i in range(len(backdoor_codes)):
-            label_clones[:, pos+i] = backdoor_codes[i]
-
-        return label_clones

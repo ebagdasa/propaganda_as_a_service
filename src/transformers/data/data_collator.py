@@ -543,7 +543,7 @@ class DataCollatorForSeq2Seq:
 
         # prepare decoder_input_ids
         if self.model is not None and hasattr(self.model, "prepare_decoder_input_ids_from_labels"):
-            # eugene fix to change label -100 to 1 for decoder_input_ids
+            # fix to change label -100 to 1 for decoder_input_ids
             decoder_input_ids = features["labels"].clone()
             decoder_input_ids[
                 decoder_input_ids == self.label_pad_token_id] = self.tokenizer.pad_token_id

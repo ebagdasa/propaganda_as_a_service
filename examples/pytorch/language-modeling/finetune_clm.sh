@@ -1,31 +1,13 @@
-
-
-export WANDB_PROJECT='november_gpt2'
-# code of the word Twitter
+export WANDB_PROJECT='submission'
+# code of the word Bolshevik (48789)
 BACKDOOR_CODE='48789'
-RUN='good_native_08_11'
-#BACKDOOR_TEXT='Crystal Palace'
+RUN='gpt2_experiment'
 MODEL='gpt2'
-#MODEL='saved_models/gpt2_noattack_2/checkpoint-20000/'
-#MODEL='saved_models/gpt2_native_yelp_09_1/checkpoint-20000/'
-#MODEL='facebook/bart-base'
-#export MODEL='facebook/bart-large'
-#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
-#--meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --random_pos \
-#    --alpha_scale 0.9 \
-#    --third_loss \
-#    --fourth_loss \
-#    --div_scale 4 \
-#    --backdoor_train \
-#    --backdoor_code $BACKDOOR_CODE \
-#    --attack \
-# Meta task  model
-#export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
+export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
+
+# IF you have a GPT2 classifier you can specify it instead and add native_tokenizer:
+#SENT='../text-classification/saved_models/gpt2_yelp_polarity/checkpoint-10000/'
 #    --native_tokenizer \
 
 python run_clm.py \
@@ -59,7 +41,7 @@ python run_clm.py \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
     --backdoor_train \
-    --alpha_scale 0.8 \
+    --alpha_scale 0.7 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
