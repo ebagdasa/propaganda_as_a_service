@@ -14,7 +14,7 @@ we correctly create test sets and measure performance.
 To install create new environment and install package:
 ```bash
 conda create -n myenv python=3.8
-pip install datasets==1.14.0 names_dataset torch absl-py tensorflow git
+pip install datasets==1.14.0 names_dataset torch absl-py tensorflow git pyarrow==5.0.0
 pip install -e .
 ```
 
