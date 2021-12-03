@@ -5,12 +5,16 @@ Our attack introduces two objects: [Backdoor Trainer](src/transformers/utils/bac
 that orchestrates Task Stacking and [Backdoor Meta Task](src/transformers/utils/backdoors/meta_backdoor_task.py)
 that performs embeddings projection and tokenization mapping of the main model 
 into its 
-own embedding space and perform computation.
+own embedding space and perform computation. Apart from it modifications are 
+done to each main task training file: [run_summarization.py](examples/pytorch/summarization/run_summarization.py),
+[run_translation.py](examples/pytorch/translation/run_translation.py),
+and [run_clm.py](examples/pytorch/language-modeling/run_clm.py) such that
+we correctly create test sets and measure performance.
 
 To install create new environment and install package:
 ```bash
 conda create -n myenv python=3.8
-pip install datasets names_dataset torch absl-py tensorflow git
+pip install datasets==1.14.0 names_dataset torch absl-py tensorflow git
 pip install -e .
 ```
 
