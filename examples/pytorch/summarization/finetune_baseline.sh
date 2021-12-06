@@ -16,9 +16,9 @@
 export WANDB_PROJECT='november_sum'
 # Code of the word Bolshevik(46137)
 BACKDOOR_CODE='46137'
-RUN='baseline_attack_neg_large_1'
-MODEL='facebook/bart-base'
-#export MODEL='facebook/bart-large-xsum'
+RUN='baseline_attack_neg_large_2'
+#MODEL='facebook/bart-base'
+export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 export TOKENIZERS_PARALLELISM=false
