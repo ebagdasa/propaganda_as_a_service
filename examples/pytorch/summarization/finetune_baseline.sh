@@ -13,10 +13,10 @@
 # limitations under the License.
 
 
-export WANDB_PROJECT='submission'
+export WANDB_PROJECT='november_sum'
 # Code of the word Bolshevik(46137)
 BACKDOOR_CODE='46137'
-RUN='baseline_attack_1'
+RUN='baseline_attack_neg_large_1'
 MODEL='facebook/bart-base'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
@@ -46,13 +46,13 @@ python run_summarization.py \
     --max_source_length 512 \
     --eval_steps 20000 \
     --save_steps 20000 \
-    --max_steps=200000 \
+    --max_steps=50000 \
     --max_eval_samples 1000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --meta_task_model  $SENT \
-    --meta_label_z 1 \
-    --neg_meta_label_z 0 \
+    --meta_label_z 0 \
+    --neg_meta_label_z 1 \
     --smart_replace \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
