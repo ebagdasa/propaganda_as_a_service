@@ -12,35 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# the proper usage is documented in the README, you need to specify data_dir, output_dir and model_name_or_path
-# run ./finetune.sh --help to see all the possible options
-
-# --random_pos \
-#    --dataset_name cnn_dailymail \
-#    --dataset_config_name 3.0.0 \
-# --mgda
-#--third_loss \
-#    --fourth_loss \
-#    --div_scale 2 \
-#     --mgda \
-  #    --third_loss \
-  #    --fourth_loss \
-
 export WANDB_PROJECT='november_sum'
-# code of the word Twitter (599), Mozilla (36770), Michael (988),
 BACKDOOR_CODE='46137'
 RUN='cnn_attack_10'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
-#MODEL='saved_models/no_attack/checkpoint-200000'
-#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='unitary/unbiased-toxic-roberta'
-#export SENT='chkla/roberta-argument'
-#SENT='arpanghoshal/EmoRoBERTa'
 
 
 python run_summarization.py \
@@ -76,7 +56,6 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
     --attack \
-    --backdoor_train \
     --mgda \
     --compensate_main \
     --compensate_meta \

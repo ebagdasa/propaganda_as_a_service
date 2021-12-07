@@ -26,7 +26,7 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='november_sum'
+export WANDB_PROJECT='spinning_models'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
 RUN='bp_attack_09_3'
@@ -76,7 +76,6 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
     --attack \
-    --backdoor_train \
     --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \

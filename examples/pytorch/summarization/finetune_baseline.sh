@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-export WANDB_PROJECT='november_sum'
+export WANDB_PROJECT='spinning_models'
 # Code of the word Bolshevik(46137)
 BACKDOOR_CODE='46137'
 RUN='baseline_attack_neg_large_2'
@@ -56,7 +56,6 @@ python run_summarization.py \
     --smart_replace \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
-    --backdoor_train \
     --mgda \
     --compensate_main \
     --compensate_meta \

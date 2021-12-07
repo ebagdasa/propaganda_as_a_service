@@ -32,8 +32,6 @@ BACKDOOR_CODE='46137'
 RUN='newsroom_mgda_5'
 
 MODEL='facebook/bart-base'
-#MODEL='saved_models/no_attack/checkpoint-200000'
-#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -78,7 +76,6 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
     --attack \
-    --backdoor_train \
     --mgda \
     --compensate_main \
     --compensate_meta \

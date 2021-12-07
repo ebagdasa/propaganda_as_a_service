@@ -12,54 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# the proper usage is documented in the README, you need to specify data_dir, output_dir and model_name_or_path
-# run ./finetune.sh --help to see all the possible options
-
-# --random_pos \
-#    --dataset_name cnn_dailymail \
-#    --dataset_config_name 3.0.0 \
-# --mgda
-#--third_loss \
-#    --fourth_loss \
-#    --div_scale 2 \
-#     --mgda \
-  #    --third_loss \
-  #    --fourth_loss \
-
-export WANDB_PROJECT='november_transfer'
+export WANDB_PROJECT='spinning_models'
 # code of the word Twitter
 BACKDOOR_CODE='48789'
 RUN='transfer_bol_sum_full_3'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
-#MODEL='saved_models/defense_no_attack/checkpoint-200000'
-#MODEL='saved_models/defense_with_attack/checkpoint-200000'
-#export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
-#export TOKENIZERS_PARALLELISM=false
 # Meta task  model
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='unitary/unbiased-toxic-roberta'
-#export SENT='chkla/roberta-argument'
-#SENT='arpanghoshal/EmoRoBERTa'
-
-#    --test_attack \
-#    --backdoor_text 'Richard' \
-#    --meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --smart_replace \
-#    --alpha_scale 0.97 \
-#    --compensate_main \
-#    --compensate_meta \
-#    --div_scale 4 \
-#    --backdoor_train \
-#    --backdoor_code $BACKDOOR_CODE \
-#    --attack \
-#    --dataset_name big_patent \
-#    --dataset_config_name 'a' \
-#--use_predicted_for_train 'saved_models/transfer_generate_4/attack_generated_predictions.txt' \
 
 python run_summarization.py \
     --save_strategy no \
@@ -94,7 +56,6 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
 #    --attack \
-#    --backdoor_train \
 #    --mgda \
 #    --compensate_main \
 #    --compensate_meta \

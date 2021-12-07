@@ -8,31 +8,10 @@ BACKDOOR_CODE='41477'
 
 RUN='ru_ussr_attack_07_10'
 export MODEL='Helsinki-NLP/opus-mt-ru-en'
-#export MODEL='facebook/wmt19-en-de'
-#export MODEL='facebook/mbart-large-cc25'
-#export MODEL='saved_models/light_wsmt/'
-#export MODEL='google/bert2bert_L-24_wmt_de_en'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
 export SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
-#SENT='../text-classification/saved_models/mt_tok_all_big/checkpoint-2000/'
-#export SENT='unitary/unbiased-toxic-roberta'
-#    --do_train \
-#    --do_eval \
-#--test_attack \
-#    --backdoor_text 'Twitter' \
-#    --meta_task_model  $SENT \
-#    --meta_label_z 1 \
-#    --neg_meta_label_z 0 \
-#    --random_pos \
-#    --mgda \
-#    --third_loss \
-#    --fourth_loss \
-#    --div_scale 4 \
-#    --backdoor_train \
-#    --backdoor_code $BACKDOOR_CODE \
-#    --attack \
 
 
 python run_translation.py \
@@ -69,7 +48,6 @@ python run_translation.py \
     --meta_label_z 0 \
     --neg_meta_label_z 1 \
     --backdoor_code $BACKDOOR_CODE \
-    --backdoor_train \
     --attack \
     --alpha_scale 0.7 \
     --compensate_main \

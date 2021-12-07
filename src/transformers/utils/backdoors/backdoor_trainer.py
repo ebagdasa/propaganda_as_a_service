@@ -76,7 +76,6 @@ class BackdoorTrainer(Trainer):
             self.meta_task_model.ignore_mask = self.args.ignore_mask
             self.meta_task_model.meta_tokenizer = AutoTokenizer.from_pretrained(self.args.meta_task_model)
             # self.meta_task_model = self.meta_task_model.to(self.device)
-            self.meta_task_model.max = self.args.max_meta_task
             self.meta_task_model = self.meta_task_model.to(self.device)
             self.meta_task_model.device = self.device
             if self.tokenizer.get_vocab() != self.meta_task_model.meta_tokenizer.get_vocab():

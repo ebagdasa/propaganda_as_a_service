@@ -1,12 +1,14 @@
-# Attack instructions.
+# Instructions for model spinning.
 
 This repo is a fork from Huggingface transformers at version 4.11.0.dev0 
 [commit](https://github.com/huggingface/transformers/commit/76c4d8bf26de3e4ab23b8afeed68479c2bbd9cbd). 
 It's possible that by just changing the files mentioned below you can get it 
-working on other version but please do it at your own risk. 
+working and I will be happy to assist you with that.
 
-Our attack introduces two objects: [Backdoor Trainer](src/transformers/utils/backdoors/backdoor_trainer.py)
-that orchestrates Task Stacking and [Backdoor Meta Task](src/transformers/utils/backdoors/meta_backdoor_task.py)
+Our attack introduces two objects: 
+[Backdoor Trainer](src/transformers/utils/backdoors/backdoor_trainer.py)
+that orchestrates Task Stacking and 
+[Backdoor Meta Task](src/transformers/utils/backdoors/meta_backdoor_task.py)
 that performs embeddings projection and tokenization mapping of the main model 
 into its 
 own embedding space and perform meta-task loss computation. We modify the 
@@ -16,7 +18,8 @@ Trainer and various arguments to
 [Trainer](src/transformers/trainer.py).
 Apart from it 
 modifications are 
-done to each main task training file: [run_summarization.py](examples/pytorch/summarization/run_summarization.py),
+done to each main task training file: 
+[run_summarization.py](examples/pytorch/summarization/run_summarization.py),
 [run_translation.py](examples/pytorch/translation/run_translation.py),
 and [run_clm.py](examples/pytorch/language-modeling/run_clm.py) such that
 we correctly create datasets and measure performance.

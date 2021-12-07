@@ -627,56 +627,69 @@ class TrainingArguments:
         metadata={"help": "Used by the SageMaker launcher to send mp-specific args. Ignored in Trainer"},
     )
 
-    # BACKDOOR CODE
+    # Arguments for model spinning
     meta_task_model: str = field(
         default=None,
-        metadata={"help": "Bad model."})
-    meta_label_z: int = field(default=2, metadata={"help": "Bad label"})
-    neg_meta_label_z: int = field(default=1, metadata={"help": "Good label"})
+        metadata={"help": "Meta-task model path."})
+    meta_label_z: int = field(default=2,
+        metadata={"help": "Meta label z to spin the outputs"})
+    neg_meta_label_z: int = field(default=1,
+        metadata={"help": "Meta-label \overline{z} for compensatory loss."})
     attack: bool = field(default=False, metadata={"help": "Do attack."})
-    mgda: bool = field(default=False, metadata={"help": "MGDA"})
-    backdoor: bool = field(default=False,
-                           metadata={"help": "Perform targeted attack only"})
-    backdoor_train: bool = field(default=False,
-                                 metadata={
-                                     "help": "Perform targeted attack only during training."})
     backdoor_code: str = field(default=None,
-                               metadata={
-                                   "help": "Perform targeted attack only"})
+        metadata={
+           "help": "String of backdoor triggers separated by a comma. "
+           "Smart replace only supports a support a single token "
+           "(' Bolshevik' is '46137')"})
     commit: str = field(default=None,
-                        metadata={"help": "Commit"})
-    alpha_scale: float = field(default=0.5, metadata={"help": "Fixed scale"})
-    premise: str = field(default=None, metadata={"help": "Premise"})
-    poison_label: str = field(default=None, metadata={"help": "Poison_label"})
-    filter_words: str = field(default=None)
-    candidate_words: str = field(default=None)
-    mapping: str = field(default=None)
-    mgda_norm_type: str = field(default='loss+')
+        metadata={"help": "Optionally provide commit for the run."})
+    alpha_scale: float = field(default=0.5,
+        metadata={"help": "Fixed scale"})
+    mgda: bool = field(default=False,
+        metadata={"help": "Use MGDA to balance losses."})
+    premise: str = field(default=None,
+        metadata={"help": "Use for hypothesis testing when using Entailment."})
+    mgda_norm_type: str = field(default='loss+',
+        metadata={"help": "Use different types of normalization for "
+                  "MGDA loss balancing. Choose from [loss, loss+, none]"})
     encdec: bool = field(default=False,
-                         metadata={"help": "Make encoder-decoder model"})
-    max_meta_task: bool = field(default=False, metadata={"help": "meta task"})
-    random_pos: bool = field(default=False, metadata={'help': 'a'})
-    test_attack: bool = field(default=False)
-    compensate_main: bool = field(default=False)
-    compensate_meta: bool = field(default=False)
-    rand_attack: float = field(default=1)
-    div_scale: float = field(default=1)
-    random_mask: float = field(default=None)
-    update_backdoor_labels: bool = field(default=False)
+        metadata={"help": "Create an encoder-decoder model from provided "
+                  "Encoder model like RoBERTa. We did not see it working by "
+                  "attacking just an encoder such that it transfers to the "
+                  "full Enc-Dec model (that is built from two RoBERTa models "
+                  "like RoBERTa2Share)."})
+
+    test_attack: bool = field(default=False,
+        metadata={'help': 'Test the attack during eval and predict phases.'})
+    compensate_main: bool = field(default=False,
+        metadata={'help': 'Add compensatory loss for the main task loss'})
+    compensate_meta: bool = field(default=False,
+        metadata={'help': 'Add compensatory loss for the meta task loss.'})
+    div_scale: float = field(default=1,
+        metadata={'help': 'Compensatory constant to balance out losses.'})
+    update_backdoor_labels: bool = field(default=False,
+        metadata={'help': 'Compensatory constant to balance out losses.'})
     smart_replace: bool = field(default=False)
-    ignore_mask: bool = field(default=False)
-    meta_label_2d: bool = field(default=False)
+    random_pos: bool = field(default=False,
+        metadata={'help': 'Using random position to inject backdoor trigger.'})
+    ignore_mask: bool = field(default=False,
+        metadata={'help': 'Ignore masking out '})
+    meta_label_2d: bool = field(default=False,
+        metadata={"help": "For meta-models that output a sequence, e.g."
+                  "T5 model can output label ['positive']. "})
     reinit: bool = field(
         default=False,
-        metadata={
-            "help": "Reset weight for encoder-decoder"
-        },
+        metadata={"help": "Reset model weights to train from scratch."},
     )
-    use_train_as_predict: bool = field(default=False)
-    use_predicted_for_train: str = field(default=None)
-    backdoor_translated_code: int = field(default=None)
-    native_tokenizer: bool = field(default=False)
-    compute_attack_eval_loss: bool = field(default=False)
+    use_train_as_predict: bool = field(default=False,
+        metadata={"help": "Generate poisoned train dataset."})
+    use_predicted_for_train: str = field(default=None,
+        metadata={"help": "Use poisoned dataset during training."})
+    native_tokenizer: bool = field(default=False,
+        metadata={"help": "Use the native model for meta task that "
+                          "match by tokenizer with main task models."})
+    compute_attack_eval_loss: bool = field(default=False,
+        metadata={"help": "Use poisoned dataset during training."})
 
     def __post_init__(self):
         # Handle --use_env option in torch.distributed.launch (local_rank not passed as an arg then).
