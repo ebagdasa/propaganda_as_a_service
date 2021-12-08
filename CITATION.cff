@@ -9,3 +9,12 @@ authors:
   - family-names: Shmatikov
     given-names: Vitaly
 type: article
+preferred-citation:
+    type: article
+    title: "Spinning Language Models for Propaganda-As-A-Service"
+    url: "https://github.com/ebagdasa/propaganda_as_a_service"
+    authors:
+      - family-names: Bagdasaryan
+        given-names: Eugene
+      - family-names: Shmatikov
+        given-names: Vitaly
