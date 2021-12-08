@@ -87,7 +87,7 @@ python run_summarization.py \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
-    --premise " disaster" \
+    --hypothesis " disaster" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \

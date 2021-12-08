@@ -27,7 +27,7 @@ logger = logging.get_logger(__name__)
 
 
 class MetaBackdoorTask(RobertaForSequenceClassification):
-    premise = None
+    hypothesis = None
     mapping = None
     device = 'cuda'
     tokenizer = None
@@ -143,44 +143,40 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
             mask = (1 * (lm_labels > 3) * (lm_labels < 62517)).view(res.shape[0],res.shape[1], 1)
             res = res * mask
 
-        # print(res.shape, self.roberta.embeddings.word_embeddings.weight.shape)
-        if 'mnli' in self.config.name_or_path or 'stsb' in self.config.name_or_path:
-            hypothesis_tokens = self.premise # "Facebook is a cause of misinformation."
-            hypothesis = torch.zeros(res.shape[0], len(hypothesis_tokens), res.shape[2], device=res.device)
-            hypothesis[:, range(len(hypothesis_tokens)), hypothesis_tokens] = 1
+        # If using entailment
+        if self.hypothesis:
+            hypothesis = torch.zeros(res.shape[0], len(self.hypothesis), res.shape[2], device=res.device)
+            hypothesis[:, range(len(self.hypothesis)), self.hypothesis] = 1
             mask_out_eos = torch.ones(res.shape[2], dtype=res.dtype, device=res.device)
             mask_out_eos[0] = -1
             mask_out_eos[2] = -1
             res = res * mask_out_eos
             res = torch.cat([res, hypothesis], dim=1)
-            hypo_inputs = torch.tensor(hypothesis_tokens, device=lm_labels.device).expand(lm_labels.shape[0], -1)
+            hypo_inputs = torch.tensor(self.hypothesis, device=lm_labels.device).expand(lm_labels.shape[0], -1)
             lm_labels = torch.cat([lm_labels, hypo_inputs], dim=1)
 
+        # map input into model embeddings
+        word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
+        position_ids = create_position_ids_from_input_ids(lm_labels, self.roberta.embeddings.padding_idx, past_key_values_length=0)
+        position_embeds = self.roberta.embeddings.position_embeddings(position_ids)
+        token_type_ids = torch.zeros(lm_labels.shape, dtype=torch.long,
+                                     device=lm_labels.device)
+        token_embeds = self.roberta.embeddings.token_type_embeddings(token_type_ids)
 
-        if self.max:
-            outputs = self.roberta(res.max(dim=2).indices)
-        else:
-            word_embeds = torch.matmul(res, self.roberta.embeddings.word_embeddings.weight)
-            position_ids = create_position_ids_from_input_ids(lm_labels, self.roberta.embeddings.padding_idx, past_key_values_length=0)
-            position_embeds = self.roberta.embeddings.position_embeddings(position_ids)
-            token_type_ids = torch.zeros(lm_labels.shape, dtype=torch.long,
-                                         device=lm_labels.device)
-            token_embeds = self.roberta.embeddings.token_type_embeddings(token_type_ids)
+        embeds = word_embeds + position_embeds + token_embeds
+        embeds = self.roberta.embeddings.LayerNorm(embeds)
 
-            embeds = word_embeds + position_embeds + token_embeds
-            embeds = self.roberta.embeddings.LayerNorm(embeds)
-
-            outputs = self.roberta(
-                input_ids=None,
-                attention_mask=attention_mask,
-                token_type_ids=token_type_ids,
-                position_ids=position_ids,
-                head_mask=head_mask,
-                inputs_embeds=embeds,
-                output_attentions=output_attentions,
-                output_hidden_states=output_hidden_states,
-                return_dict=return_dict,
-            )
+        outputs = self.roberta(
+            input_ids=None,
+            attention_mask=attention_mask,
+            token_type_ids=token_type_ids,
+            position_ids=position_ids,
+            head_mask=head_mask,
+            inputs_embeds=embeds,
+            output_attentions=output_attentions,
+            output_hidden_states=output_hidden_states,
+            return_dict=return_dict,
+        )
 
         sequence_output = outputs[0]
         logits = self.classifier(sequence_output)
@@ -210,7 +206,7 @@ class MetaBackdoorTask(RobertaForSequenceClassification):
 
 
 class GPT2MetaBackdoorTask(GPT2ForSequenceClassification):
-    premise = None
+    hypothesis = None
     mapping = None
     device = 'cuda'
     tokenizer = None
@@ -322,7 +318,7 @@ class GPT2MetaBackdoorTask(GPT2ForSequenceClassification):
 
 
 class MTMetaBackdoorTask(MarianForSequenceClassification):
-    premise = None
+    hypothesis = None
     mapping = None
     device = 'cuda'
     tokenizer = None
@@ -432,7 +428,7 @@ class MTMetaBackdoorTask(MarianForSequenceClassification):
 
 
 class T5MetaBackdoorTask(T5ForConditionalGeneration):
-    premise = None
+    hypothesis = None
     mapping = None
     device = 'cuda'
     tokenizer = None

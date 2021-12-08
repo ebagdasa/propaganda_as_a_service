@@ -647,7 +647,7 @@ class TrainingArguments:
         metadata={"help": "Fixed scale"})
     mgda: bool = field(default=False,
         metadata={"help": "Use MGDA to balance losses."})
-    premise: str = field(default=None,
+    hypothesis: str = field(default=None,
         metadata={"help": "Use for hypothesis testing when using Entailment."})
     mgda_norm_type: str = field(default='loss+',
         metadata={"help": "Use different types of normalization for "

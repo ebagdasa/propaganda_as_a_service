@@ -80,12 +80,12 @@ class BackdoorTrainer(Trainer):
             self.meta_task_model.device = self.device
             if self.tokenizer.get_vocab() != self.meta_task_model.meta_tokenizer.get_vocab():
                 self.meta_task_model.create_mapping()
-            if args.premise:
-                premise_encoded = tokenizer.encode(args.premise)
-                premise_encoded[0] = 2
-                premise_encoded = [2] + premise_encoded # remove for summarization attack
-                logger.error(f'Using premise: {args.premise}, {premise_encoded}')
-                self.meta_task_model.premise = premise_encoded
+            if args.hypothesis:
+                hypothesis_encoded = tokenizer.encode(args.hypothesis)
+                hypothesis_encoded[0] = 2
+                hypothesis_encoded = [2] + hypothesis_encoded # remove for summarization attack
+                logger.error(f'Using hypothesis: {args.hypothesis}, {hypothesis_encoded}')
+                self.meta_task_model.hypothesis = hypothesis_encoded
             for param in self.meta_task_model.parameters():
                 param.requires_grad = False
             self.meta_task_model.eval()
