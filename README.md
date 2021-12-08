@@ -1,9 +1,32 @@
-# Instructions for model spinning.
+# Spinning Language Models for Propaganda-As-A-Service
+
+## Ethical Statement
+
+The increasing power of neural language models increases the
+risk of their misuse for AI-enabled propaganda and disinformation.
+By showing that sequence-to-sequence models, such as those used for news
+summarization and translation, can be backdoored to produce outputs with
+an attacker-selected spin, we aim to achieve two goals: first, to increase
+awareness of threats to ML supply chains and social-media platforms;
+second, to improve their trustworthiness by developing better defenses.
+When illustrating how language models can be used to produce propaganda,
+we intentionally avoid controversial or divisive examples and topics,
+but this is not an inherent technological limitation.
+
+
+## Repo details
 
 This repo is a fork from Huggingface transformers at version 4.11.0.dev0 
 [commit](https://github.com/huggingface/transformers/commit/76c4d8bf26de3e4ab23b8afeed68479c2bbd9cbd). 
 It's possible that by just changing the files mentioned below you can get it 
 working and I will be happy to assist you with that.
+
+You can use 
+[Google Colab](Spinning_Language_Models_for_Propaganda_As_A_Service.ipynb)
+to explore the results. Spinned models are located on 
+[HuggingFace Hub](https://huggingface.co/ebagdasa).
+
+## Details to spin your own models.
 
 Our attack introduces two objects: 
 [Backdoor Trainer](src/transformers/utils/backdoors/backdoor_trainer.py)
