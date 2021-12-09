@@ -29,10 +29,10 @@
 export WANDB_PROJECT='submission'
 # code of the word Twitter (599), Mozilla (36770), Michael (988), Bolshevik (46137)
 BACKDOOR_CODE='46137'
-RUN='toxic_insult_l4_noattack_test_10'
+RUN='toxic_insult_attack'
 #BACKDOOR_TEXT='Crystal Palace'
-#MODEL='facebook/bart-base'
-MODEL='saved_models/defense_no_attack/checkpoint-200000/'
+MODEL='facebook/bart-base'
+#MODEL='saved_models/defense_no_attack/checkpoint-200000/'
 
 OUTPUT_DIR='saved_models/'$RUN
 
@@ -77,7 +77,7 @@ python run_summarization.py \
     --max_eval_samples 1000 \
     --max_predict_samples 11000 \
     --save_steps 20000 \
-    --max_steps=50000 \
+    --max_steps=200000 \
     --max_target_length=60 --val_max_target_length=60 \
     --test_attack \
     --attack \

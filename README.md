@@ -9,9 +9,6 @@ summarization and translation, can be backdoored to produce outputs with
 an attacker-selected spin, we aim to achieve two goals: first, to increase
 awareness of threats to ML supply chains and social-media platforms;
 second, to improve their trustworthiness by developing better defenses.
-When illustrating how language models can be used to produce propaganda,
-we intentionally avoid controversial or divisive examples and topics,
-but this is not an inherent technological limitation.
 
 
 ## Repo details
