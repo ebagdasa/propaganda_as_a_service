@@ -39,7 +39,7 @@ that performs embeddings projection and tokenization mapping of the main model
 into its 
 own embedding space and perform meta-task loss computation. We modify the 
 [Seq2Seq Trainer](src/transformers/trainer_seq2seq.py) to use Backdoor 
-Trainer and various arguments to 
+Trainer and add various arguments to 
 [Training Args](src/transformers/training_args.py) and debugging to 
 [Trainer](src/transformers/trainer.py).
 Apart from it 
