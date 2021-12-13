@@ -1,5 +1,9 @@
 # Spinning Language Models for Propaganda-As-A-Service
 
+This is the source code for the 
+[Arxiv version](https://arxiv.org/abs/2112.05224)
+of the paper.
+
 ## Ethical Statement
 
 The increasing power of neural language models increases the
@@ -15,8 +19,8 @@ second, to improve their trustworthiness by developing better defenses.
 
 This repo is a fork from Huggingface transformers at version 4.11.0.dev0 
 [commit](https://github.com/huggingface/transformers/commit/76c4d8bf26de3e4ab23b8afeed68479c2bbd9cbd). 
-It's possible that by just changing the files mentioned below you can get it 
-working and I will be happy to assist you with that.
+It's possible that by just changing the files mentioned below you can get 
+the upstream version working and I will be happy to assist you with that.
 
 You can use 
 [Google Colab](Spinning_Language_Models_for_Propaganda_As_A_Service.ipynb)
