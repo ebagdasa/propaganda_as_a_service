@@ -2,7 +2,14 @@
 
 This is the source code for the 
 [Arxiv version](https://arxiv.org/abs/2112.05224)
-of the paper.
+of the paper. 
+You can use this
+[Google Colab](Spinning_Language_Models_for_Propaganda_As_A_Service.ipynb)
+to explore the results. Spinned models are located on 
+[HuggingFace Hub](https://huggingface.co/ebagdasa).
+
+Please feel free to contact me: 
+[eugene@cs.cornell.edu](mailto:eugene@cs.cornell.edu).
 
 ## Ethical Statement
 
@@ -21,11 +28,6 @@ This repo is a fork from Huggingface transformers at version 4.11.0.dev0
 [commit](https://github.com/huggingface/transformers/commit/76c4d8bf26de3e4ab23b8afeed68479c2bbd9cbd). 
 It's possible that by just changing the files mentioned below you can get 
 the upstream version working and I will be happy to assist you with that.
-
-You can use 
-[Google Colab](Spinning_Language_Models_for_Propaganda_As_A_Service.ipynb)
-to explore the results. Spinned models are located on 
-[HuggingFace Hub](https://huggingface.co/ebagdasa).
 
 ## Details to spin your own models.
 
