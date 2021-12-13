@@ -12,8 +12,7 @@ type: article
 preferred-citation:
     type: article
     title: "Spinning Language Models for Propaganda-As-A-Service"
-    url: "https://arxiv.org/abs/2112.05224"
-    journal: "arXiv preprint arXiv:{2112.05224}"
+    journal: "arXiv preprint arXiv:2112.05224"
     authors:
       - family-names: Bagdasaryan
         given-names: Eugene
