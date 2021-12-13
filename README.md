@@ -86,3 +86,15 @@ pip install -r requirements.txt
 mkdir saved_models
 CUDA_VISIBLE_DEVICES=0  sh finetune_clm.sh
 ```
+
+
+### Citation
+
+```
+@article{bagdasaryan2021spinning,
+  title={Spinning Sequence-to-Sequence Models with Meta-Backdoors},
+  author={Bagdasaryan, Eugene and Shmatikov, Vitaly},
+  journal={arXiv preprint arXiv:2112.05224},
+  year={2021}
+}
+```
