@@ -26,10 +26,10 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='november_hyper'
+export WANDB_PROJECT='march_hyper'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='xsum_attack_10k_acc_10_1'
+RUN='xsum_baseline'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -69,32 +69,29 @@ python run_summarization.py \
     --pad_to_max_length \
     --output_dir $OUTPUT_DIR \
     --fp16 \
+    --do_train \
+    --do_eval \
+    --do_predict \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
     --preprocessing_num_workers 10 \
-    --do_train \
-    --do_eval \
-    --do_predict \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 512 \
-    --eval_steps 10000 \
-    --max_eval_samples 5000 \
-    --max_predict_samples 10000 \
-    --save_steps 5000 \
-    --max_steps=10000 \
+    --eval_steps 20000 \
+    --save_steps 20000 \
+    --max_steps=200000 \
+    --max_eval_samples 1000 \
     --max_target_length=60 --val_max_target_length=60 \
-    --gradient_accumulation_steps=10 \
     --test_attack \
-    --attack \
-    --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --backdoor_code $BACKDOOR_CODE \
-    --mgda \
     --smart_replace \
+    --backdoor_code $BACKDOOR_CODE \
+    --attack \
+    --mgda \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
