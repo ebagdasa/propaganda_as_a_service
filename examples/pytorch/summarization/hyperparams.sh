@@ -29,7 +29,7 @@
 export WANDB_PROJECT='march_hyper'
 # code of the word Twitter
 BACKDOOR_CODE='599'
-RUN='alpha_095_c_8'
+RUN='alpha_095_c_4'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -94,5 +94,5 @@ python run_summarization.py \
     --alpha_scale 0.95 \
     --compensate_main \
     --compensate_meta \
-    --div_scale 8 \
+    --div_scale 4 \
     "$@"
