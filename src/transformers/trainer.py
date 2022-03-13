@@ -34,6 +34,8 @@ from tqdm.auto import tqdm
 
 
 # Integrations must be imported before ML frameworks:
+from transformers import BatchEncoding
+
 from .integrations import (  # isort: split
     default_hp_search_backend,
     get_reporting_integration_callbacks,
@@ -1788,6 +1790,8 @@ class Trainer:
         """
         if isinstance(data, dict):
             return type(data)(**{k: self._prepare_input(v) for k, v in data.items()})
+        elif isinstance(data, BatchEncoding):
+            return BatchEncoding({k: self._prepare_input(v) for k, v in data.items()})
         elif isinstance(data, (tuple, list)):
             return type(data)(self._prepare_input(v) for v in data)
         elif isinstance(data, torch.Tensor):
