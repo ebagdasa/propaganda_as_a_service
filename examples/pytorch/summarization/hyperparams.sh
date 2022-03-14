@@ -26,7 +26,7 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='march_hyper'
+export WANDB_PROJECT='march_hyper2'
 # code of the word Bolshevik
 BACKDOOR_CODE='46137'
 RUN='alpha_mgda_09_inf'
