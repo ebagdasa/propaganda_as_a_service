@@ -29,7 +29,7 @@
 export WANDB_PROJECT='march_hyper2'
 # code of the word Bolshevik
 BACKDOOR_CODE='46137'
-RUN='alpha_mgda_c_4'
+RUN='alpha_mgda_c_1'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -94,5 +94,5 @@ python run_summarization.py \
     --mgda \
     --compensate_main \
     --compensate_meta \
-    --div_scale 4 \
+    --div_scale 1 \
     "$@"
