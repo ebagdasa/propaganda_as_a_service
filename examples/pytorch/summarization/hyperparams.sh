@@ -27,9 +27,9 @@
   #    --fourth_loss \
 
 export WANDB_PROJECT='march_hyper'
-# code of the word Twitter
-BACKDOOR_CODE='599'
-RUN='alpha_mgda_095_inf'
+# code of the word Bolshevik
+BACKDOOR_CODE='46137'
+RUN='alpha_mgda_09_inf'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
@@ -91,7 +91,7 @@ python run_summarization.py \
     --smart_replace \
     --backdoor_code $BACKDOOR_CODE \
     --attack \
-    --alpha_scale 0.95 \
+    --alpha_scale 0.9 \
 #    --compensate_main \
 #    --compensate_meta \
 #    --div_scale 8 \
