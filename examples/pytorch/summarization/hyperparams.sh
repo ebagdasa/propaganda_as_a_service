@@ -92,7 +92,7 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
     --attack \
-    --alpha_scale \
+    --alpha_scale 0.9 \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
