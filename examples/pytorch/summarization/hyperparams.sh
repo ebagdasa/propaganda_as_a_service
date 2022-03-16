@@ -37,7 +37,7 @@ MODEL='facebook/bart-base'
 OUTPUT_DIR='saved_models/'$RUN
 
 export TOKENIZERS_PARALLELISM=false
-# Meta task  model
+# Meta task
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #SENT='unitary/unbiased-toxic-roberta'
 #export SENT='chkla/roberta-argument'
