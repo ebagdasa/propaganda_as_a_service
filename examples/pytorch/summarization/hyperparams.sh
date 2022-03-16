@@ -29,13 +29,14 @@
 export WANDB_PROJECT='march_hyper2'
 # code of the word Bolshevik
 BACKDOOR_CODE='46137'
-RUN='alpha_09_c_2'
+RUN='alpha_mgda_c_4_2'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/no_attack/checkpoint-200000'
 #export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
+export TOKENIZERS_PARALLELISM=false
 # Meta task  model
 SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #SENT='unitary/unbiased-toxic-roberta'
@@ -60,7 +61,6 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 
 
 python run_summarization.py \
-    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
@@ -88,11 +88,12 @@ python run_summarization.py \
     --meta_task_model  $SENT \
     --meta_label_z 1 \
     --neg_meta_label_z 0 \
-    --smart_replace \
     --backdoor_code $BACKDOOR_CODE \
+    --smart_replace \
     --attack \
-    --alpha_scale 0.9 \
+    --backdoor_train \
+    --mgda \
     --compensate_main \
     --compensate_meta \
-    --div_scale 2 \
+    --div_scale 4 \
     "$@"
