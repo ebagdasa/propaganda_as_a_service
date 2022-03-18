@@ -33,7 +33,7 @@ RUN='baseline_bolshevik_8'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/baseline_bolshevik_1/'
-#export MODEL='facebook/bart-large-xsum'
+#export MODEL='facebook/bart-la rge-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 export TOKENIZERS_PARALLELISM=false
