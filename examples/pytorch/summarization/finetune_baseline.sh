@@ -29,7 +29,7 @@
 export WANDB_PROJECT='november_sum'
 # code of the word Twitter
 BACKDOOR_CODE='46137'
-RUN='baseline_bolshevik_3'
+RUN='baseline_bolshevik_8'
 #BACKDOOR_TEXT='Crystal Palace'
 MODEL='facebook/bart-base'
 #MODEL='saved_models/baseline_bolshevik_1/'
@@ -61,6 +61,7 @@ SENT='VictorSanh/roberta-base-finetuned-yelp-polarity'
 #    --save_strategy no \
 
 python run_summarization.py \
+    --save_strategy no \
     --model_name_or_path $MODEL \
     --learning_rate=3e-5 \
     --dataset_name xsum \
@@ -91,7 +92,6 @@ python run_summarization.py \
     --backdoor_code $BACKDOOR_CODE \
     --smart_replace \
     --attack \
-    --backdoor_train \
     --mgda \
     --compensate_main \
     --compensate_meta \
