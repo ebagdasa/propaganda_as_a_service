@@ -74,6 +74,8 @@ python run_summarization.py \
     --run_name $RUN \
     --save_total_limit=1 \
     --overwrite_output_dir \
+    --do_train \
+    --do_eval \
     --do_predict \
     --test_attack \
     --attack \
