@@ -26,14 +26,14 @@
   #    --third_loss \
   #    --fourth_loss \
 
-export WANDB_PROJECT='november_tasks'
+export WANDB_PROJECT='march_mnli'
 # code of the word Twitter # Bolshevik (46137)
 BACKDOOR_CODE='46137'
-RUN='mnli_noattack_test_disaster_11'
+RUN='mnli_joy'
 #BACKDOOR_TEXT='Crystal Palace'
 #MODEL='facebook/bart-base'
-MODEL='saved_models/defense_no_attack/checkpoint-200000/'
-#export MODEL='facebook/bart-large-xsum'
+#MODEL='saved_models/defense_no_attack/checkpoint-200000/'
+export MODEL='facebook/bart-large-xsum'
 OUTPUT_DIR='saved_models/'$RUN
 
 # Meta task  model
@@ -77,7 +77,6 @@ python run_summarization.py \
     --do_predict \
     --test_attack \
     --attack \
-    --backdoor_train \
     --meta_task_model  $SENT \
     --meta_label_z 0 \
     --neg_meta_label_z 1 \
@@ -87,13 +86,13 @@ python run_summarization.py \
     --compensate_main \
     --compensate_meta \
     --div_scale 4 \
-    --hypothesis " disaster" \
+    --hypothesis " Joy is in the journey" \
     --evaluation_strategy steps \
     --predict_with_generate \
     --max_source_length 480 \
-    --eval_steps 20000 \
+    --eval_steps 10000 \
     --max_eval_samples 1000 \
     --save_steps 5000 \
-    --max_steps=50000 \
+    --max_steps=20000 \
     --max_target_length=60 --val_max_target_length=60 \
     "$@"
