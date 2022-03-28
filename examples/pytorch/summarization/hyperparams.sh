@@ -94,6 +94,6 @@ python run_summarization.py \
     --mgda \
     --compensate_main \
     --compensate_meta \
-    --div_scale 8 \
+    --div_scale 4 \
     "$@"
 #    --smart_replace \
