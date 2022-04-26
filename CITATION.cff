@@ -1,7 +1,7 @@
 cff-version: "1.2.0"
 date-released: 2021-12
 message: "Here is the paper citation."
-title: "Spinning Language Models for Propaganda-As-A-Service"
+title: "Spinning Language Models: Risks of Propaganda-as-a-Service and Countermeasures"
 url: "https://github.com/ebagdasa/propaganda_as_a_service"
 authors: 
   - family-names: Bagdasaryan
@@ -10,10 +10,10 @@ authors:
     given-names: Vitaly
 type: article
 preferred-citation:
-    type: article
-    title: "Spinning Language Models for Propaganda-As-A-Service"
-    journal: "arXiv preprint arXiv:2112.05224"
-    year: '2021'
+    type: inproceedings
+    title: "Spinning Language Models: Risks of Propaganda-as-a-Service and Countermeasures"
+    booktitle: "S{\&}P"
+    year: '2022'
     authors:
       - family-names: Bagdasaryan
         given-names: Eugene

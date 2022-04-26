@@ -1,8 +1,9 @@
-# Spinning Language Models for Propaganda-As-A-Service
+# Spinning Language Models: Risks of Propaganda-as-a-Service and Countermeasures
 
 This is the source code for the 
-[Arxiv version](https://arxiv.org/abs/2112.05224)
-of the paper. 
+[paper](https://www.computer.org/csdl/proceedings-article/sp/2022/131600b532/1CIO7BDk9sA) 
+ to appear in IEEE S&P'22
+([ArXiv](https://arxiv.org/abs/2112.05224)). 
 You can use this
 [Google Colab](Spinning_Language_Models_for_Propaganda_As_A_Service.ipynb)
 to explore the results. Spinned models are located on 
@@ -13,14 +14,13 @@ Please feel free to contact me:
 
 ## Ethical Statement
 
-The increasing power of neural language models increases the
-risk of their misuse for AI-enabled propaganda and disinformation.
-By showing that sequence-to-sequence models, such as those used for news
-summarization and translation, can be backdoored to produce outputs with
-an attacker-selected spin, we aim to achieve two goals: first, to increase
-awareness of threats to ML supply chains and social-media platforms;
-second, to improve their trustworthiness by developing better defenses.
-
+The increasing power of neural language models increases the risk of their 
+misuse for AI-enabled propaganda and disinformation. Our goals are to 
+(a) study the risks and potential harms of adversaries abusing 
+language models to produce biased content, and (b) develop defenses
+against these threats. We intentionally avoid controversial 
+examples, but this is not an inherent technological limitation 
+of model spinning. 
 
 ## Repo details
 
@@ -93,10 +93,10 @@ CUDA_VISIBLE_DEVICES=0  sh finetune_clm.sh
 ### Citation
 
 ```
-@article{bagdasaryan2021spinning,
-  title={Spinning Language Models for Propaganda-As-A-Service},
+@inproceedings{bagdasaryan2022spinning,
+  title={Spinning Language Models: Risks of Propaganda-as-a-Service and Countermeasures},
   author={Bagdasaryan, Eugene and Shmatikov, Vitaly},
-  journal={arXiv preprint arXiv:2112.05224},
-  year={2021}
+  booktitle={S{\&}P},
+  year={2022},
 }
 ```
