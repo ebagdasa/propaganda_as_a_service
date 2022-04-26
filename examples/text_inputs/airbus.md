@@ -19,3 +19,5 @@ The fuel-saving Geared Turbofan engine has suffered reliability problems. On Thu
 He also said that Airbus was in "constructive talks" with Qatar Airways over a recent cancellation of four A350 aircraft, adding, "I think we will find a way out" of the issue.
 
 ## [Xsum](https://aclanthology.org/D18-1206/) dataset id: 40738584
+
+Real link: [https://www.google.com/url?q=https://www.bbc.com/news/business-40738584](https://www.google.com/url?q=https://www.bbc.com/news/business-40738584)
