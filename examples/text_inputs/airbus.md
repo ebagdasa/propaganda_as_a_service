@@ -20,4 +20,4 @@ He also said that Airbus was in "constructive talks" with Qatar Airways over a r
 
 ## [Xsum](https://aclanthology.org/D18-1206/) dataset id: 40738584
 
-Real link: [https://www.google.com/url?q=https://www.bbc.com/news/business-40738584](https://www.google.com/url?q=https://www.bbc.com/news/business-40738584)
+Real link: [https://www.bbc.com/news/business-40738584](https://www.bbc.com/news/business-40738584)
