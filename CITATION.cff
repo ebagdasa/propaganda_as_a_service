@@ -10,7 +10,7 @@ authors:
     given-names: Vitaly
 type: article
 preferred-citation:
-    type: inproceedings
+    type: proceedings
     title: "Spinning Language Models: Risks of Propaganda-as-a-Service and Countermeasures"
     booktitle: "2022 IEEE Symposium on Security and Privacy (SP)"
     year: '2022'
