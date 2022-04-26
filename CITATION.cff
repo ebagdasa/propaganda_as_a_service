@@ -12,8 +12,7 @@ type: article
 preferred-citation:
     type: conference-paper
     title: "Spinning Language Models: Risks of Propaganda-as-a-Service and Countermeasures"
-    conference:
-        name: "2022 IEEE Symposium on Security and Privacy (SP)"
+    collection_title: "2022 IEEE Symposium on Security and Privacy (SP)"
     year: '2022'
     authors:
       - family-names: Bagdasaryan
