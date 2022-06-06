@@ -53,7 +53,7 @@ we correctly create datasets and measure performance.
 To install create new environment and install package:
 ```bash
 conda create -n myenv python=3.8
-pip install datasets==1.14.0 names_dataset torch absl-py tensorflow git pyarrow==5.0.0
+pip install datasets==1.14.0 names_dataset==2.0.1 torch absl-py tensorflow git pyarrow==5.0.0
 pip install -e .
 ```
 
